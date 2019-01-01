@@ -1,0 +1,1879 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head><meta name="generator" content="Hexo 3.8.0">
+    <meta charset="utf-8">
+<title>读书笔记：从Lucene到Elasticsearch:全文检索实战 - Black-Hole&#39;s Blog</title>
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+
+
+    <meta name="description" content="从Lucene到Elasticsearch:全文检索实战当前的笔记只介绍 Elasticsearch 的搜索部分。 文章中的搜索都是在 kibana 的 Dev tools 进行查询的。 准备工作需要安装 Elasticsearch、kibana、elasticsearch-analysis-ik 具体的安装方式，这里就不再阐述了。（安装完，记得重启 Elasticsearch ） 重启完成后，打">
+<meta name="keywords" content="Elasticsearch,DSL,Kibana">
+<meta property="og:type" content="article">
+<meta property="og:title" content="读书笔记：从Lucene到Elasticsearch:全文检索实战">
+<meta property="og:url" content="http://bugs.cc/2018/12/30/reading-notes-from-lucene-to-elasticsearch-full-text-search/index.html">
+<meta property="og:site_name" content="Black-Hole&#39;s Blog">
+<meta property="og:description" content="从Lucene到Elasticsearch:全文检索实战当前的笔记只介绍 Elasticsearch 的搜索部分。 文章中的搜索都是在 kibana 的 Dev tools 进行查询的。 准备工作需要安装 Elasticsearch、kibana、elasticsearch-analysis-ik 具体的安装方式，这里就不再阐述了。（安装完，记得重启 Elasticsearch ） 重启完成后，打">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:image" content="https://i.imgur.com/OtFSLsJ.png">
+<meta property="og:image" content="https://i.imgur.com/gj8C5Tn.png">
+<meta property="og:image" content="https://i.imgur.com/q6Jzabt.png">
+<meta property="og:image" content="https://i.imgur.com/UhJUIpx.png">
+<meta property="og:image" content="https://i.imgur.com/Z6ktfg8.png">
+<meta property="og:image" content="https://i.imgur.com/Qjc5rMR.png">
+<meta property="og:image" content="https://i.imgur.com/zz7pB96.png">
+<meta property="og:image" content="https://i.imgur.com/rIBnCjl.png">
+<meta property="og:image" content="https://i.imgur.com/aynvf74.png">
+<meta property="og:image" content="https://i.imgur.com/JuPrNlR.png">
+<meta property="og:image" content="https://i.imgur.com/9PnYUtg.png">
+<meta property="og:image" content="https://i.imgur.com/b7mJlT8.png">
+<meta property="og:image" content="https://i.imgur.com/qxr5pjX.png">
+<meta property="og:image" content="https://i.imgur.com/2Hi0Kby.png">
+<meta property="og:image" content="https://i.imgur.com/pTlnqRZ.png">
+<meta property="og:image" content="https://i.imgur.com/yUpl4OX.png">
+<meta property="og:image" content="https://i.imgur.com/jGu85Vb.png">
+<meta property="og:image" content="https://i.imgur.com/XkvXhkI.png">
+<meta property="og:image" content="https://i.imgur.com/edlmVeE.png">
+<meta property="og:updated_time" content="2018-12-31T15:11:46.195Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="读书笔记：从Lucene到Elasticsearch:全文检索实战">
+<meta name="twitter:description" content="从Lucene到Elasticsearch:全文检索实战当前的笔记只介绍 Elasticsearch 的搜索部分。 文章中的搜索都是在 kibana 的 Dev tools 进行查询的。 准备工作需要安装 Elasticsearch、kibana、elasticsearch-analysis-ik 具体的安装方式，这里就不再阐述了。（安装完，记得重启 Elasticsearch ） 重启完成后，打">
+<meta name="twitter:image" content="https://i.imgur.com/OtFSLsJ.png">
+<meta name="twitter:creator" content="@Free_BlackHole">
+<meta name="twitter:site" content="https://twitter.com/Free_BlackHole">
+
+
+
+<link rel="alternative" href="/atom.xml" title="读书笔记：从Lucene到Elasticsearch:全文检索实战" type="application/atom+xml">
+
+
+
+<link rel="icon" href="/images/favicon.ico">
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.7.2/css/bulma.css">
+<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.4.1/css/all.css">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Ubuntu:400,600|Source+Code+Pro">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/highlight.js@9.12.0/styles/atom-one-light.css">
+
+
+    
+    
+    
+    <style>body>.footer,body>.navbar,body>.section{opacity:0}</style>
+    
+
+    
+    
+    
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/lightgallery@1.6.8/dist/css/lightgallery.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/justifiedGallery@3.7.0/dist/css/justifiedGallery.min.css">
+    
+
+    
+    
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/outdatedbrowser@1.1.5/outdatedbrowser/outdatedbrowser.min.css">
+
+
+    
+    
+    
+    
+
+<link rel="stylesheet" href="/css/back-to-top.css">
+
+
+    
+    
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-90340553-1"></script>
+<script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+
+    gtag('config', 'UA-90340553-1');
+</script>
+
+
+    
+    
+    
+    
+
+    
+    
+<link rel="stylesheet" href="/css/progressbar.css">
+<script src="https://cdn.jsdelivr.net/npm/pace-js@1.0.2/pace.min.js"></script>
+
+    
+    
+    
+
+    
+
+
+<link rel="stylesheet" href="/css/style.css">
+</head>
+<body class="is-3-column">
+    <nav class="navbar navbar-main">
+    <div class="container">
+        <div class="navbar-brand is-flex-center">
+            <a class="navbar-item navbar-logo" href="/">
+            
+                <img src="/images/logo.png" alt="读书笔记：从Lucene到Elasticsearch:全文检索实战" height="28">
+            
+            </a>
+        </div>
+        <div class="navbar-menu">
+            
+            <div class="navbar-start">
+                
+                <a class="navbar-item" href="/">Home</a>
+                
+                <a class="navbar-item" href="/archives">Archives</a>
+                
+                <a class="navbar-item" href="/categories">Categories</a>
+                
+                <a class="navbar-item" href="/tags">Tags</a>
+                
+                <a class="navbar-item" href="/friends">Friends</a>
+                
+                <a class="navbar-item" href="/todo">Todo</a>
+                
+                <a class="navbar-item" href="/about">About</a>
+                
+            </div>
+            
+            <div class="navbar-end">
+                
+                    
+                    
+                    <a class="navbar-item" target="_blank" title="GitHub" href="https://github.com/BlackHole1">
+                        
+                        <i class="fab fa-github"></i>
+                        
+                    </a>
+                    
+                
+                
+                
+                <a class="navbar-item search" title="搜索" href="javascript:;">
+                    <i class="fas fa-search"></i>
+                </a>
+                
+            </div>
+        </div>
+    </div>
+</nav>
+    
+    <section class="section">
+        <div class="container">
+            <div class="columns">
+                <div class="column is-8-tablet is-8-desktop is-6-widescreen has-order-2 column-main"><div class="card">
+    
+    <div class="card-image">
+        <span class="image is-7by1">
+            <img class="thumbnail" src="/images/thumbnail/globalworming_43986209_2220823381486696_8628271851625393205_n.jpg" alt="读书笔记：从Lucene到Elasticsearch:全文检索实战">
+        </span>
+    </div>
+    
+    <div class="card-content article ">
+        
+        <div class="level article-meta is-size-7 is-uppercase is-mobile is-overflow-x-auto">
+            <div class="level-left">
+                <time class="level-item has-text-grey" datetime="2018-12-30T14:52:05.000Z">2018-12-30</time>
+                
+                <div class="level-item">
+                <a class="has-link-grey -link" href="/categories/Elasticsearch/">Elasticsearch</a>
+                </div>
+                
+                
+                <span class="level-item has-text-grey">
+                    
+                    
+                    24 分钟 读完 (大约 3600 个字)
+                </span>
+                
+            </div>
+        </div>
+        
+        <h1 class="title is-size-3 is-size-4-mobile has-text-weight-normal">
+            
+                读书笔记：从Lucene到Elasticsearch:全文检索实战
+            
+        </h1>
+        <div class="content">
+            <h1 id="从Lucene到Elasticsearch-全文检索实战"><a href="#从Lucene到Elasticsearch-全文检索实战" class="headerlink" title="从Lucene到Elasticsearch:全文检索实战"></a>从Lucene到Elasticsearch:全文检索实战</h1><p>当前的笔记只介绍 <code>Elasticsearch</code> 的搜索部分。</p>
+<p>文章中的搜索都是在 <code>kibana</code> 的 <code>Dev tools</code> 进行查询的。</p>
+<h2 id="准备工作"><a href="#准备工作" class="headerlink" title="准备工作"></a>准备工作</h2><p>需要安装 <code>Elasticsearch</code>、<code>kibana</code>、<code>elasticsearch-analysis-ik</code></p>
+<p>具体的安装方式，这里就不再阐述了。（安装完，记得重启 <code>Elasticsearch</code> ）</p>
+<p>重启完成后，打开 <code>kibana</code> 的 <code>Dev tools</code>，输入下面的DSL代码，并运行：</p>
+<figure class="highlight js hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br></pre></td><td class="code"><pre><span class="line">PUT books</span><br><span class="line">&#123;</span><br><span class="line">  <span class="hljs-string">"settings"</span>: &#123;</span><br><span class="line">    <span class="hljs-string">"number_of_replicas"</span>: <span class="hljs-number">1</span>,</span><br><span class="line">    <span class="hljs-string">"number_of_shards"</span>: <span class="hljs-number">3</span></span><br><span class="line">  &#125;,</span><br><span class="line">  <span class="hljs-string">"mappings"</span>: &#123;</span><br><span class="line">    <span class="hljs-string">"IT"</span>: &#123;</span><br><span class="line">      <span class="hljs-string">"properties"</span>: &#123;</span><br><span class="line">        <span class="hljs-string">"id"</span>: &#123;</span><br><span class="line">          <span class="hljs-string">"type"</span>: <span class="hljs-string">"long"</span></span><br><span class="line">        &#125;,</span><br><span class="line">        <span class="hljs-string">"title"</span>: &#123;</span><br><span class="line">          <span class="hljs-string">"type"</span>: <span class="hljs-string">"text"</span>,</span><br><span class="line">          <span class="hljs-string">"analyzer"</span>: <span class="hljs-string">"ik_max_word"</span></span><br><span class="line">        &#125;,</span><br><span class="line">        <span class="hljs-string">"language"</span>: &#123;</span><br><span class="line">          <span class="hljs-string">"type"</span>: <span class="hljs-string">"keyword"</span></span><br><span class="line">        &#125;,</span><br><span class="line">        <span class="hljs-string">"author"</span>: &#123;</span><br><span class="line">          <span class="hljs-string">"type"</span>: <span class="hljs-string">"keyword"</span></span><br><span class="line">        &#125;,</span><br><span class="line">        <span class="hljs-string">"price"</span>: &#123;</span><br><span class="line">          <span class="hljs-string">"type"</span>: <span class="hljs-string">"double"</span></span><br><span class="line">        &#125;,</span><br><span class="line">        <span class="hljs-string">"year"</span>: &#123;</span><br><span class="line">          <span class="hljs-string">"type"</span>: <span class="hljs-string">"date"</span>,</span><br><span class="line">          <span class="hljs-string">"format"</span>: <span class="hljs-string">"yyyy-MM-dd"</span></span><br><span class="line">        &#125;,</span><br><span class="line">        <span class="hljs-string">"description"</span>: &#123;</span><br><span class="line">          <span class="hljs-string">"type"</span>: <span class="hljs-string">"text"</span>,</span><br><span class="line">          <span class="hljs-string">"analyzer"</span>: <span class="hljs-string">"ik_max_word"</span></span><br><span class="line">        &#125;</span><br><span class="line">      &#125;</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<a id="more"></a>
+<p>运行好后，下载 <a href="https://gist.github.com/BlackHole1/786215b7978d0ea2d2d6a431b53c5b44" target="_blank" rel="noopener">books.json</a> 文件，并进行导入。如果你安装的 <code>Elasticsearch</code> 版本小于<code>6.0</code>，使用下面的命令进行导入 <code>books.json</code>：</p>
+<figure class="highlight bash hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">curl -XPOST <span class="hljs-string">"http://localhost:9200/_bulk?pretty"</span> --data-binary @books.json</span><br></pre></td></tr></table></figure>
+<p>如果你的 <code>Elasticsearch</code> 版本大于<code>6.0</code>，则使用下面的命令进行导入：</p>
+<figure class="highlight bash hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">curl -H <span class="hljs-string">"Content-Type: application/json"</span> -XPOST <span class="hljs-string">"http://localhost:9200/_bulk?pretty"</span> --data-binary @books.json</span><br></pre></td></tr></table></figure>
+<h2 id="基本搜索"><a href="#基本搜索" class="headerlink" title="基本搜索"></a>基本搜索</h2><h3 id="返回指定index的所有文档"><a href="#返回指定index的所有文档" class="headerlink" title="返回指定index的所有文档"></a>返回指定index的所有文档</h3><figure class="highlight js hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">GET books/_search</span><br><span class="line">&#123;</span><br><span class="line">  <span class="hljs-string">"query"</span>: &#123;</span><br><span class="line">    <span class="hljs-string">"match_all"</span>: &#123;&#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>可以简写为：</p>
+<figure class="highlight js hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">GET books/search</span><br></pre></td></tr></table></figure>
+<h3 id="查找指定字段中包含给定单词的文档"><a href="#查找指定字段中包含给定单词的文档" class="headerlink" title="查找指定字段中包含给定单词的文档"></a>查找指定字段中包含给定单词的文档</h3><p>使用<code>term</code>来进行查询，<code>term</code>查询不会被解析，只有查询的词和文档中的词精确匹配才会被搜索到，应用场景为：查询人名、地名等需要精准匹配的需求。</p>
+<p>查询title字段中含有<code>思想</code>的书籍</p>
+<figure class="highlight js hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">GET books/_search</span><br><span class="line">&#123;</span><br><span class="line">  <span class="hljs-string">"query"</span>: &#123;</span><br><span class="line">    <span class="hljs-string">"term"</span>: &#123;</span><br><span class="line">      <span class="hljs-string">"title"</span>: <span class="hljs-string">"思想"</span></span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>返回如下：</p>
+<p><img src="https://i.imgur.com/OtFSLsJ.png" alt="Imgur"></p>
+<h3 id="对查询结果进行分页"><a href="#对查询结果进行分页" class="headerlink" title="对查询结果进行分页"></a>对查询结果进行分页</h3><p>有时查询时，会返回成千上万的数据，这种情况下，分页的作用就出来了。</p>
+<p>分页有两个属性，分别是<code>from</code>、<code>size</code></p>
+<ul>
+<li>from: 从何处开始</li>
+<li>size: 返回的文档最大数量</li>
+</ul>
+<p>可以理解为：我从<code>from</code>位置把剩下的文档全部返回，然后<code>size</code>限制了返回的数量。</p>
+<p>用js代码来诠释就是：</p>
+<figure class="highlight js hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="hljs-keyword">const</span> <span class="hljs-keyword">from</span> = <span class="hljs-number">100</span> - <span class="hljs-number">1</span>; <span class="hljs-comment">// 数组从0开始，需要减一</span></span><br><span class="line"><span class="hljs-keyword">const</span> size = <span class="hljs-number">10</span>;</span><br><span class="line"><span class="hljs-keyword">const</span> data = [<span class="hljs-number">1</span>, <span class="hljs-number">2</span>, <span class="hljs-number">3</span>, ..., <span class="hljs-number">999</span>, <span class="hljs-number">1000</span>];</span><br><span class="line"></span><br><span class="line"><span class="hljs-keyword">const</span> fromDate = data.splice(<span class="hljs-keyword">from</span>);</span><br><span class="line"><span class="hljs-keyword">const</span> result = fromData.splice(<span class="hljs-number">0</span>, size);</span><br><span class="line"><span class="hljs-built_in">console</span>.log(result) <span class="hljs-comment">//=&gt; [100, 101, 102, 103, 104, 105, 106, 107, 108, 109]</span></span><br></pre></td></tr></table></figure>
+<h3 id="限制返回字段"><a href="#限制返回字段" class="headerlink" title="限制返回字段"></a>限制返回字段</h3><p>一般我们查询时，都是为了观察某一个字段，而不是想看全部的字段。而如果是默认情况下，<code>Elasticsearch</code> 会返回的文档的全部字段信息。会对工作造成一定的影响。于是，<code>Elasticsearch</code> 提供了一个接口，用于限制返回的字段。假设我只需要 <code>title</code> 和 <code>author</code> 字段：</p>
+<figure class="highlight js hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">GET books/_search</span><br><span class="line">&#123;</span><br><span class="line">  <span class="hljs-string">"_source"</span>: [<span class="hljs-string">"title"</span>, <span class="hljs-string">"author"</span>],</span><br><span class="line">  <span class="hljs-string">"query"</span>: &#123;</span><br><span class="line">    <span class="hljs-string">"term"</span>: &#123;</span><br><span class="line">      <span class="hljs-string">"title"</span>: <span class="hljs-string">"java"</span></span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>结果如图：</p>
+<p><img src="https://i.imgur.com/gj8C5Tn.png" alt="Imgur"></p>
+<h3 id="基于最小评分过滤"><a href="#基于最小评分过滤" class="headerlink" title="基于最小评分过滤"></a>基于最小评分过滤</h3><p>因为 <code>Elasticsearch</code> 在做普通的搜索时，是采用相关性进行搜索的，而相关性是由<code>评分</code> 取决的。所以当我们进行模糊搜索时，<code>Elasticsearch</code> 可能会返回一些相关性不那么高的文档。所以我们可以通过 <code>Elasticsearch</code> 提供的接口，来设置一个评分最低标准，低于这个标准的文档，将不会出现在结果页中。</p>
+<p>比如，我想搜索 <code>title</code> 里包含 <code>java</code> 的文档，并且评分不低于<code>0.7</code>：</p>
+<figure class="highlight js hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">GET books/_search</span><br><span class="line">&#123;</span><br><span class="line">  <span class="hljs-string">"min_score"</span>: <span class="hljs-number">0.7</span>,</span><br><span class="line">  <span class="hljs-string">"query"</span>: &#123;</span><br><span class="line">    <span class="hljs-string">"term"</span>: &#123;</span><br><span class="line">      <span class="hljs-string">"title"</span>: <span class="hljs-string">"java"</span></span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>结果如图：</p>
+<p><img src="https://i.imgur.com/q6Jzabt.png" alt="Imgur"></p>
+<h3 id="高亮关键字"><a href="#高亮关键字" class="headerlink" title="高亮关键字"></a>高亮关键字</h3><p>有时，我们会把 <code>Elasticsearch</code> 结果直接导入到网页中，这个时候需要高亮关键字，让用户更加清楚自己想要的东西，<code>Elasticsearch</code> 已经提供了一个接口，比如我想让搜索出来的结果中的关键字高亮：</p>
+<figure class="highlight js hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">GET books/_search</span><br><span class="line">&#123;</span><br><span class="line">  <span class="hljs-string">"_source"</span>: [<span class="hljs-string">"title"</span>],</span><br><span class="line">  <span class="hljs-string">"min_score"</span>: <span class="hljs-number">0.7</span>,</span><br><span class="line">  <span class="hljs-string">"query"</span>: &#123;</span><br><span class="line">    <span class="hljs-string">"term"</span>: &#123;</span><br><span class="line">      <span class="hljs-string">"title"</span>: <span class="hljs-string">"java"</span></span><br><span class="line">    &#125;</span><br><span class="line">  &#125;,</span><br><span class="line">  <span class="hljs-string">"highlight"</span>: &#123;</span><br><span class="line">    <span class="hljs-string">"fields"</span>: &#123;</span><br><span class="line">      <span class="hljs-string">"title"</span>: &#123;&#125;</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>结果如图：</p>
+<p><img src="https://i.imgur.com/UhJUIpx.png" alt="Imgur"></p>
+<p>默认的标签是<code>&lt;em&gt;&lt;/em&gt;</code>，如果你想自定义，可以使用： <code>pre_tags</code> 和 <code>post_tags</code>。最终查询代码为：</p>
+<figure class="highlight js hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">GET books/_search</span><br><span class="line">&#123;</span><br><span class="line">  <span class="hljs-string">"_source"</span>: [<span class="hljs-string">"title"</span>],</span><br><span class="line">  <span class="hljs-string">"min_score"</span>: <span class="hljs-number">0.7</span>,</span><br><span class="line">  <span class="hljs-string">"query"</span>: &#123;</span><br><span class="line">    <span class="hljs-string">"term"</span>: &#123;</span><br><span class="line">      <span class="hljs-string">"title"</span>: <span class="hljs-string">"java"</span></span><br><span class="line">    &#125;</span><br><span class="line">  &#125;,</span><br><span class="line">  <span class="hljs-string">"highlight"</span> : &#123;</span><br><span class="line">    <span class="hljs-string">"pre_tags"</span> : [<span class="hljs-string">"&lt;h1&gt;"</span>],</span><br><span class="line">    <span class="hljs-string">"post_tags"</span> : [<span class="hljs-string">"&lt;/h1&gt;"</span>],</span><br><span class="line">    <span class="hljs-string">"fields"</span> : &#123;</span><br><span class="line">      <span class="hljs-string">"title"</span> : &#123;&#125;</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>结果如图：</p>
+<p><img src="https://i.imgur.com/Z6ktfg8.png" alt="Imgur"></p>
+<h2 id="全文查询"><a href="#全文查询" class="headerlink" title="全文查询"></a>全文查询</h2><p>上节基本都是以 <code>term</code> 进行搜索，但其实 <code>Elasticsearch</code> 提供了很多搜索方法，本章就是介绍 <code>Elasticsearch</code> 有哪些搜索方法、分别起的作用。</p>
+<p>本章对 <code>common_terms query</code>、<code>query_string query</code>、<code>simple_query_string query</code> 没有解释说明，因为使用起来较少，而且解释起来较为麻烦。如果想了解，可以参考网上的文章。这里就不在阐述了。</p>
+<h3 id="match-query"><a href="#match-query" class="headerlink" title="match query"></a>match query</h3><p>我们先使用 <code>term</code> 进行一次查询：</p>
+<figure class="highlight js hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">GET books/_search</span><br><span class="line">&#123;</span><br><span class="line">  <span class="hljs-string">"_source"</span>: [<span class="hljs-string">"title"</span>, <span class="hljs-string">"author"</span>],</span><br><span class="line">  <span class="hljs-string">"query"</span>: &#123;</span><br><span class="line">    <span class="hljs-string">"term"</span>: &#123;</span><br><span class="line">      <span class="hljs-string">"title"</span>: <span class="hljs-string">"java编程"</span></span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>你会发现，其结果为空(但是数据库里是有这个数据的)，如图：</p>
+<p><img src="https://i.imgur.com/Qjc5rMR.png" alt="Imgur"></p>
+<p>这是因为 <code>term</code> 是匹配分词后的词项来进行查询的。比如刚刚我们查的 <code>java编程</code> ，在 <code>Elasticsearch</code> 进行分词时，会把 <code>java编程</code> 分为：<code>java</code> 和 <code>编程</code> 。导致匹配不起来。</p>
+<p>用代码诠释的话就是：</p>
+<figure class="highlight js hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="hljs-keyword">const</span> keyword = <span class="hljs-string">'java编程'</span>;</span><br><span class="line"><span class="hljs-keyword">const</span> data = [<span class="hljs-string">'java'</span>, <span class="hljs-string">'编程'</span>];</span><br><span class="line"><span class="hljs-keyword">const</span> result = data.includes(keyword);</span><br><span class="line"><span class="hljs-built_in">console</span>.log(result) <span class="hljs-comment">//=&gt; false</span></span><br></pre></td></tr></table></figure>
+<p>现在我们把 <code>term</code> 换成 <code>match</code> 来尝试下：</p>
+<figure class="highlight js hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">GET books/_search</span><br><span class="line">&#123;</span><br><span class="line">  <span class="hljs-string">"_source"</span>: [<span class="hljs-string">"title"</span>, <span class="hljs-string">"author"</span>],</span><br><span class="line">  <span class="hljs-string">"query"</span>: &#123;</span><br><span class="line">    <span class="hljs-string">"match"</span>: &#123;</span><br><span class="line">      <span class="hljs-string">"title"</span>: <span class="hljs-string">"java编程"</span></span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>结果如图：</p>
+<p><img src="https://i.imgur.com/zz7pB96.png" alt="Imgur"></p>
+<p>可以发现，已经有结果了，但是为什么会有两个呢？</p>
+<p>原因是因为 <code>match</code> 会对你的关键字进行分词，然后去匹配文档分词后的结果，只要文档里的词项能匹配关键字分词后的任何一个，都会返回到结果里。</p>
+<p>代码诠释：</p>
+<figure class="highlight js hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="hljs-keyword">const</span> data = [<span class="hljs-string">'java'</span>, <span class="hljs-string">'编程'</span>, <span class="hljs-string">'思想'</span>]; <span class="hljs-comment">// 分词后的文档里的数据</span></span><br><span class="line"><span class="hljs-keyword">const</span> keywords = [<span class="hljs-string">'java'</span>, <span class="hljs-string">'编程'</span>, <span class="hljs-string">'思想'</span>]; <span class="hljs-comment">// 分词后的关键字</span></span><br><span class="line"></span><br><span class="line"><span class="hljs-keyword">const</span> result = <span class="hljs-function">(<span class="hljs-params">(</span>) =&gt;</span> &#123;</span><br><span class="line">  <span class="hljs-keyword">for</span> (<span class="hljs-keyword">let</span> x = <span class="hljs-number">0</span>; x &lt; data.length; x++) &#123;</span><br><span class="line">    <span class="hljs-keyword">const</span> dataItem = data[x];</span><br><span class="line">    <span class="hljs-keyword">for</span> (<span class="hljs-keyword">let</span> y = <span class="hljs-number">0</span>; y &lt; keywords.length; y++) &#123;</span><br><span class="line">      <span class="hljs-keyword">const</span> keywordItem = keywords[y];</span><br><span class="line">      <span class="hljs-keyword">if</span> (dataItem === keywordItem) &#123;</span><br><span class="line">        <span class="hljs-keyword">return</span> <span class="hljs-literal">true</span>;</span><br><span class="line">      &#125;</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="hljs-keyword">return</span> <span class="hljs-literal">false</span>;</span><br><span class="line">&#125;)()</span><br></pre></td></tr></table></figure>
+<p>如果我只想让它返回一个呢，并且只能用 <code>match</code> 来做，可以么？</p>
+<p>是可以的，<code>match</code> 提供了一个属性：<code>operator</code>。可以用这个来帮助完成这个需求：</p>
+<figure class="highlight js hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">GET books/_search</span><br><span class="line">&#123;</span><br><span class="line">  <span class="hljs-string">"_source"</span>: [<span class="hljs-string">"title"</span>, <span class="hljs-string">"author"</span>],</span><br><span class="line">  <span class="hljs-string">"query"</span>: &#123;</span><br><span class="line">    <span class="hljs-string">"match"</span>: &#123;</span><br><span class="line">      <span class="hljs-string">"title"</span>: &#123;</span><br><span class="line">        <span class="hljs-string">"query"</span>: <span class="hljs-string">"java编程"</span>,</span><br><span class="line">        <span class="hljs-string">"operator"</span>: <span class="hljs-string">"and"</span></span><br><span class="line">      &#125;</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>最终的结果如图：</p>
+<p><img src="https://i.imgur.com/rIBnCjl.png" alt="Imgur"></p>
+<p>原理是因为 <code>operator</code> 属性的值为 <code>and</code>，这样的话，就告诉 <code>Elasticsearch</code> 我要让我的关键字都能和文档里的词项匹配上。有一个没匹配上，我都不要。</p>
+<p>如果 <code>operator</code> 属性的值为 <code>or</code>，那结果就和之前是一样的了。</p>
+<h3 id="match-phrase-query"><a href="#match-phrase-query" class="headerlink" title="match_phrase query"></a>match_phrase query</h3><p>你可以把这个方法理解为自带了 <code>operator</code> 属性的值为 <code>and</code> 的 <code>match</code>。</p>
+<p>这个方法有两个限制条件，只有都满足，才会在结果中显示出：</p>
+<ul>
+<li>分词后的所有词项都在该字段中，相当于 <code>operator: &quot;and&quot;</code></li>
+<li>顺序要一致</li>
+</ul>
+<p>顺序一致指的是什么呢？</p>
+<p>假设你使用 <code>match</code> 来匹配: <code>编程java</code>，那么结果还是和上面一样。所以如果你需要要求顺序一致性，那么你就可以使用 <code>match_phrase</code> 来做。</p>
+<p>如果使用 <code>编程java</code> 来搜索：</p>
+<p><img src="https://i.imgur.com/aynvf74.png" alt="Imgur"></p>
+<p>如果使用 <code>java编程</code>：</p>
+<p><img src="https://i.imgur.com/JuPrNlR.png" alt="Imgur"></p>
+<h3 id="match-phrase-prefix-query"><a href="#match-phrase-prefix-query" class="headerlink" title="match_phrase_prefix query"></a>match_phrase_prefix query</h3><p>这个方法和 <code>match_phrase</code> 方法类似，不过这个方法可以可以把最后一个词项作为前缀进行匹配，想象一下：用户在搜索栏中搜索 <code>辣鸡UZ</code>，然后下面列表中出现了 <code>辣鸡UZI</code>。</p>
+<p>首先 <code>match_phrase_prefix</code> 会先分词为: <code>辣鸡</code>，然后找了一个文档，再然后匹配 <code>辣鸡</code> 后面的字符串是否以 <code>UZ</code> 开头的。这个时候文档满足条件，就返回出结果。可以假想后面一直有一个<code>(.*)</code>的通配符，如：<code>辣鸡UZ(.*)</code>。</p>
+<p>知道原理了，我们现在写一个查询语句：</p>
+<figure class="highlight js hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">GET books/_search</span><br><span class="line">&#123;</span><br><span class="line">  <span class="hljs-string">"_source"</span>: [<span class="hljs-string">"title"</span>, <span class="hljs-string">"author"</span>],</span><br><span class="line">  <span class="hljs-string">"query"</span>: &#123;</span><br><span class="line">    <span class="hljs-string">"match_phrase_prefix"</span>: &#123;</span><br><span class="line">      <span class="hljs-string">"title"</span>: <span class="hljs-string">"java编"</span></span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>结果如图：</p>
+<p><img src="https://i.imgur.com/9PnYUtg.png" alt="Imgur"></p>
+<h3 id="multi-match-query"><a href="#multi-match-query" class="headerlink" title="multi_match query"></a>multi_match query</h3><p><code>multi_match</code> 是 <code>match</code> 的升级方法，可以用来搜索多个字段。</p>
+<p>比如我不想只在 <code>title</code> 里搜索 <code>java编程</code>，我还想在 <code>description</code> 里进行搜索。那应该怎么做呢？</p>
+<p><code>Elasticsearch</code> 已经提供了 <code>multi_match</code> 专门用来处理这件事情：</p>
+<figure class="highlight js hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">GET books/_search</span><br><span class="line">&#123;</span><br><span class="line">  <span class="hljs-string">"_source"</span>: [<span class="hljs-string">"title"</span>, <span class="hljs-string">"description"</span>],</span><br><span class="line">  <span class="hljs-string">"query"</span>: &#123;</span><br><span class="line">    <span class="hljs-string">"multi_match"</span>: &#123;</span><br><span class="line">      <span class="hljs-string">"query"</span>: <span class="hljs-string">"java编程"</span>,</span><br><span class="line">      <span class="hljs-string">"fields"</span>: [<span class="hljs-string">"title"</span>, <span class="hljs-string">"description"</span>]</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>最终结果如图：</p>
+<p><img src="https://i.imgur.com/b7mJlT8.png" alt="Imgur"></p>
+<p>并且 <code>multi_match</code> 还支持通配符。上面的查询语句，可以写成：</p>
+<figure class="highlight js hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">GET books/_search</span><br><span class="line">&#123;</span><br><span class="line">  <span class="hljs-string">"_source"</span>: [<span class="hljs-string">"title"</span>, <span class="hljs-string">"description"</span>],</span><br><span class="line">  <span class="hljs-string">"query"</span>: &#123;</span><br><span class="line">    <span class="hljs-string">"multi_match"</span>: &#123;</span><br><span class="line">      <span class="hljs-string">"query"</span>: <span class="hljs-string">"java编程"</span>,</span><br><span class="line">      <span class="hljs-string">"fields"</span>: [<span class="hljs-string">"title"</span>, <span class="hljs-string">"*tion"</span>]</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="词项查询"><a href="#词项查询" class="headerlink" title="词项查询"></a>词项查询</h2><p>上一章是全文查询，这一章是词项查询。他们俩的区别在于：</p>
+<ul>
+<li>全文查询：会对查询语句(query)进行分词，然后匹配文档里分词后的数据</li>
+<li>词项查询：不会对查询语句进行分词</li>
+</ul>
+<h3 id="term-query"><a href="#term-query" class="headerlink" title="term query"></a>term query</h3><p>第一章节已经介绍过了，这里就不再阐述了。</p>
+<h3 id="terms-query"><a href="#terms-query" class="headerlink" title="terms query"></a>terms query</h3><p><code>terms</code> 是 <code>term</code> 查询的升级版本，可以用来查询文档中某一字段，是否包含了其关键字。比如，我想查询 <code>title</code> 字段中包含了 <code>优化</code> 或者 <code>基础</code> 的文档：</p>
+<figure class="highlight js hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">GET books/_search</span><br><span class="line">&#123;</span><br><span class="line">  <span class="hljs-string">"_source"</span>: [<span class="hljs-string">"title"</span>],</span><br><span class="line">  <span class="hljs-string">"query"</span>: &#123;</span><br><span class="line">    <span class="hljs-string">"terms"</span>: &#123;</span><br><span class="line">      <span class="hljs-string">"title"</span>: [<span class="hljs-string">"优化"</span>, <span class="hljs-string">"基础"</span>]</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>其结果如图：</p>
+<p><img src="https://i.imgur.com/qxr5pjX.png" alt="Imgur"></p>
+<h3 id="range-query"><a href="#range-query" class="headerlink" title="range query"></a>range query</h3><p>从名字就能猜测出 <code>range</code> 是范围匹配。可以匹配 <code>number</code>、<code>date</code>、<code>string</code> (字符串范围查询比较特殊，比较少用，就不再阐述了)</p>
+<p><code>range</code> 支持以下查询参数：</p>
+<ul>
+<li>gt: 大于</li>
+<li>gte: 大于等于</li>
+<li>lt: 小于</li>
+<li>lte: 小于等于</li>
+</ul>
+<h4 id="number-范围查询"><a href="#number-范围查询" class="headerlink" title="number 范围查询"></a>number 范围查询</h4><p>现在我想查询价格低于70，并大于等于50的书籍。伪代码既：<code>(price &gt;= 50 &amp;&amp; price &lt; 70)</code> ：</p>
+<figure class="highlight js hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">GET books/_search</span><br><span class="line">&#123;</span><br><span class="line">  <span class="hljs-string">"_source"</span>: [<span class="hljs-string">"title"</span>, <span class="hljs-string">"price"</span>], </span><br><span class="line">  <span class="hljs-string">"query"</span>: &#123;</span><br><span class="line">    <span class="hljs-string">"range"</span>: &#123;</span><br><span class="line">      <span class="hljs-string">"price"</span>: &#123;</span><br><span class="line">        <span class="hljs-string">"gte"</span>: <span class="hljs-number">50</span>,</span><br><span class="line">        <span class="hljs-string">"lt"</span>: <span class="hljs-number">70</span></span><br><span class="line">      &#125;</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>其结果如图：</p>
+<p><img src="https://i.imgur.com/2Hi0Kby.png" alt="Imgur"></p>
+<h4 id="date-范围查询"><a href="#date-范围查询" class="headerlink" title="date 范围查询"></a>date 范围查询</h4><p>如果我想查询，出版日期在 <code>2016-1-1</code> 到 <code>2016-12-31</code> 之间的书籍，那么DSL查询语句就如同以下这样：</p>
+<figure class="highlight js hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">GET books/_search</span><br><span class="line">&#123;</span><br><span class="line">  <span class="hljs-string">"_source"</span>: [<span class="hljs-string">"title"</span>, <span class="hljs-string">"publish_time"</span>],</span><br><span class="line">  <span class="hljs-string">"query"</span>: &#123;</span><br><span class="line">    <span class="hljs-string">"range"</span>: &#123;</span><br><span class="line">      <span class="hljs-string">"publish_time"</span>: &#123;</span><br><span class="line">        <span class="hljs-string">"gte"</span>: <span class="hljs-string">"2016-1-1"</span>,</span><br><span class="line">        <span class="hljs-string">"lte"</span>: <span class="hljs-string">"2016-12-31"</span>,</span><br><span class="line">        <span class="hljs-string">"format"</span>: <span class="hljs-string">"yyyy-MM-dd"</span></span><br><span class="line">      &#125;</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>其结果如图：</p>
+<p><img src="https://i.imgur.com/pTlnqRZ.png" alt="Imgur"></p>
+<h3 id="exists-query"><a href="#exists-query" class="headerlink" title="exists query"></a>exists query</h3><p>匹配有这个属性的文档。比如我想找到存在 <code>title</code> 字段的文档：</p>
+<figure class="highlight js hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">GET books/_search</span><br><span class="line">&#123;</span><br><span class="line">  <span class="hljs-string">"_source"</span>: <span class="hljs-string">"title"</span>, </span><br><span class="line">  <span class="hljs-string">"query"</span>: &#123;</span><br><span class="line">    <span class="hljs-string">"exists"</span>: &#123;</span><br><span class="line">      <span class="hljs-string">"field"</span>: <span class="hljs-string">"title"</span></span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>结果会返回所有的文档。那么如何定义 <code>有这个属性</code> 呢？</p>
+<p>定义的规则如下：</p>
+<ul>
+<li><code>{&quot;title&quot;: &quot;js&quot;}</code>: 存在</li>
+<li><code>{&quot;title&quot;: &quot;&quot;}</code>: 存在</li>
+<li><code>{&quot;title&quot;: [&quot;js&quot;]}</code>: 存在</li>
+<li><code>{&quot;title&quot;: [&quot;js&quot;, null]}</code>: 存在(有一个值不为空就行)</li>
+<li><code>{&quot;title&quot;: null}</code>: 不存在</li>
+<li><code>{&quot;title&quot;: []}</code> 不存在</li>
+<li><code>{&quot;title&quot;: [null]}</code> 不存在</li>
+<li><code>{&quot;foo&quot;: &quot;bar&quot;}</code>: 不存在</li>
+</ul>
+<h3 id="perfix-query"><a href="#perfix-query" class="headerlink" title="perfix query"></a>perfix query</h3><p>用来匹配文档分词后的词项中的前缀。我们先写个DSL进行匹配下：</p>
+<figure class="highlight js hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">GET books/_search</span><br><span class="line">&#123;</span><br><span class="line">  <span class="hljs-string">"_source"</span>: <span class="hljs-string">"description"</span>, </span><br><span class="line">  <span class="hljs-string">"query"</span>: &#123;</span><br><span class="line">    <span class="hljs-string">"prefix"</span>: &#123;</span><br><span class="line">      <span class="hljs-string">"description"</span>: <span class="hljs-string">"wi"</span></span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>其结果如图：</p>
+<p><img src="https://i.imgur.com/yUpl4OX.png" alt="Imgur"></p>
+<p>为何 <code>wi</code> 可以匹配到这个呢？因为 <code>Elasticsearch</code> 会对 <code>description</code> 进行分词，其中会把 <code>winPython</code> 分为 <code>win</code> <code>Python</code>。那么这两个就是文档分词后的词项，而 <code>prefix</code> 匹配每个词项的开头是否匹配，相当于js的 <code>startsWith</code> 方法。用代码诠释的话就是：</p>
+<figure class="highlight js hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="hljs-keyword">const</span> dataItem = [<span class="hljs-string">'win'</span>, <span class="hljs-string">'python'</span>];</span><br><span class="line"><span class="hljs-keyword">const</span> prefixKeyword = <span class="hljs-string">'wi'</span>;</span><br><span class="line"></span><br><span class="line"><span class="hljs-keyword">const</span> result = dataItem.some(<span class="hljs-function"><span class="hljs-params">item</span> =&gt;</span> item.startsWith(prefixKeyword));</span><br><span class="line"></span><br><span class="line"><span class="hljs-built_in">console</span>.log(result); <span class="hljs-comment">//=&gt; true</span></span><br></pre></td></tr></table></figure>
+<h3 id="wildcard-query"><a href="#wildcard-query" class="headerlink" title="wildcard query"></a>wildcard query</h3><p><code>wildcard</code> 为通配符查询。不过目前只支持 <code>*</code> 和 <code>?</code>。所代表的含义为：</p>
+<ul>
+<li><code>*</code>: 零个或多个</li>
+<li><code>?</code>: 一个或多个</li>
+</ul>
+<p><strong>注意：<code>wildcard</code> 不是匹配全文，还是会对文档的字段进行分词，然后应用于每个词项</strong></p>
+<p>比如，我现在想查询 <code>wi*</code> 的文档：</p>
+<figure class="highlight js hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">GET books/_search</span><br><span class="line">&#123;</span><br><span class="line">  <span class="hljs-string">"_source"</span>: <span class="hljs-string">"description"</span>, </span><br><span class="line">  <span class="hljs-string">"query"</span>: &#123;</span><br><span class="line">    <span class="hljs-string">"wildcard"</span>: &#123;</span><br><span class="line">      <span class="hljs-string">"description"</span>: <span class="hljs-string">"wi*"</span></span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>其结果如图：</p>
+<p><img src="https://i.imgur.com/jGu85Vb.png" alt="Imgur"></p>
+<p>首先 <code>Elasticsearch</code> 会先对 <code>description</code> 进行分词为：<code>win</code> 和 <code>python</code>。然后 <code>wi*</code> 会应用到每个词项里，其中 <code>win</code> 符合规则，则显示在结果中。</p>
+<p>如果我用 <code>win?</code>，则不会有任何的结果，因为 <code>?</code> 代表的是一个或多个。那么匹配到 <code>win</code> 的时候，后面没有字符串了，则结果为空。</p>
+<h3 id="regexp-query"><a href="#regexp-query" class="headerlink" title="regexp query"></a>regexp query</h3><p>其为正则表达式查询，原理同 <code>wildcard</code>，这里就不在阐述了。</p>
+<h3 id="fuzzy-query"><a href="#fuzzy-query" class="headerlink" title="fuzzy query"></a>fuzzy query</h3><p>可以把 <code>fuzzy</code> 理解为模糊查询。比如用户输入关键字时，一不小心输入错了，变成了 <code>javascrpit</code>，那么 <code>fuzzy</code> 的作用就出来了。它仍可以搜索到 <code>javascript</code>:</p>
+<figure class="highlight js hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">GET books/_search</span><br><span class="line">&#123;</span><br><span class="line">  <span class="hljs-string">"_source"</span>: <span class="hljs-string">"description"</span>, </span><br><span class="line">  <span class="hljs-string">"query"</span>: &#123;</span><br><span class="line">    <span class="hljs-string">"fuzzy"</span>: &#123;</span><br><span class="line">      <span class="hljs-string">"description"</span>: <span class="hljs-string">"javascrpit"</span></span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>其结果如图：</p>
+<p><img src="https://i.imgur.com/XkvXhkI.png" alt="Imgur"></p>
+<h2 id="复合查询"><a href="#复合查询" class="headerlink" title="复合查询"></a>复合查询</h2><p>复合查询就是把简单的查询组合在一起，从而实现更加复杂的查询。并且复合查询还可以控制另一个查询的行为。</p>
+<h3 id="constant-score-query"><a href="#constant-score-query" class="headerlink" title="constant_score query"></a>constant_score query</h3><p>不太常用，用于对返回结果的文档进行打分。</p>
+<p>这里就不在阐述了，如果感兴趣，可见：<a href="https://blog.csdn.net/dm_vincent/article/details/42157577" target="_blank" rel="noopener">[Elasticsearch] 控制相关度 (四) - 忽略TF/IDF</a></p>
+<h3 id="bool-query"><a href="#bool-query" class="headerlink" title="bool query"></a>bool query</h3><p>这个查询方法，还是非常重要的。这个方法提供了以下操作方法：</p>
+<ul>
+<li>must: 文档必须满足 <code>must</code> 下面的查询条件，相当于<code>AND</code> 或者 <code>&amp;&amp;</code></li>
+<li>should: 文档可以匹配 <code>should</code> 下的查询条件，匹配不出来也没事。相当于 <code>OR</code> 或者 <code>||</code></li>
+<li>must_not: 和 <code>must</code> 相反，必须不满足 <code>must_not</code> 下面的查询条件，相当于 <code>!==</code></li>
+<li>filter: 其功能和 <code>must</code> 一样，但是不会打分，也就说不会影响文档的 <code>_score</code> 字段</li>
+</ul>
+<p>现在，我们想要查询：书籍作者(<code>author</code>)是 <code>葛一鸣</code>，书籍名称(<code>title</code>)里包含 <code>java</code> 的书籍，价格(<code>price</code>)不能高于 <code>70</code> 低于 <code>40</code>，并且书籍描述(<code>description</code>)可以包含或者不包含 <code>虚拟机</code> 的书籍。</p>
+<figure class="highlight js hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br></pre></td><td class="code"><pre><span class="line">GET books/_search</span><br><span class="line">&#123;</span><br><span class="line">  <span class="hljs-string">"query"</span>: &#123;</span><br><span class="line">    <span class="hljs-string">"bool"</span>: &#123;</span><br><span class="line">      <span class="hljs-string">"filter"</span>: &#123;</span><br><span class="line">        <span class="hljs-string">"term"</span>: &#123;</span><br><span class="line">          <span class="hljs-string">"author"</span>: <span class="hljs-string">"葛一鸣"</span></span><br><span class="line">        &#125;</span><br><span class="line">      &#125;,</span><br><span class="line">      <span class="hljs-string">"must"</span>: [</span><br><span class="line">        &#123;</span><br><span class="line">          <span class="hljs-string">"match"</span>: &#123;</span><br><span class="line">            <span class="hljs-string">"title"</span>: <span class="hljs-string">"java"</span></span><br><span class="line">          &#125;</span><br><span class="line">        &#125;</span><br><span class="line">      ],</span><br><span class="line">      <span class="hljs-string">"should"</span>: [</span><br><span class="line">        &#123;</span><br><span class="line">          <span class="hljs-string">"match"</span>: &#123;</span><br><span class="line">            <span class="hljs-string">"description"</span>: <span class="hljs-string">"虚拟机"</span></span><br><span class="line">          &#125;</span><br><span class="line">        &#125;</span><br><span class="line">      ],</span><br><span class="line">      <span class="hljs-string">"must_not"</span>: [</span><br><span class="line">        &#123;</span><br><span class="line">          <span class="hljs-string">"range"</span>: &#123;</span><br><span class="line">            <span class="hljs-string">"price"</span>: &#123;</span><br><span class="line">              <span class="hljs-string">"gt"</span>: <span class="hljs-number">70</span>,</span><br><span class="line">              <span class="hljs-string">"lt"</span>: <span class="hljs-number">40</span></span><br><span class="line">            &#125;</span><br><span class="line">          &#125;</span><br><span class="line">        &#125;</span><br><span class="line">      ]</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>其结果如图：</p>
+<p><img src="https://i.imgur.com/edlmVeE.png" alt="Imgur"></p>
+<h3 id="dis-max-query、function-score-query、boosting-query"><a href="#dis-max-query、function-score-query、boosting-query" class="headerlink" title="dis_max query、function_score query、boosting query"></a>dis_max query、function_score query、boosting query</h3><p>这三个就不在阐述了，其主要作用是关系到 <code>_score</code>，也就是关系到查询的结果的评分。感兴趣的，可以在网上搜下。</p>
+
+        </div>
+        
+        <div class="level is-size-7 is-uppercase">
+            <div class="level-start">
+                <div class="level-item">
+                    <span class="is-size-6 has-text-grey has-mr-7">#</span>
+                    <a class="has-link-grey -link" href="/tags/DSL/">DSL</a>, <a class="has-link-grey -link" href="/tags/Elasticsearch/">Elasticsearch</a>, <a class="has-link-grey -link" href="/tags/Kibana/">Kibana</a>
+                </div>
+            </div>
+        </div>
+        
+        
+        
+        
+<div class="sharethis-inline-share-buttons"></div>
+<script type="text/javascript" src="//platform-api.sharethis.com/js/sharethis.js#property=5c2a1d4fd02b6e0010eca6e3&amp;product=sticky-share-buttons" async="async"></script>
+
+        
+    </div>
+</div>
+
+
+
+<div class="card">
+    <div class="card-content">
+        <h3 class="menu-label has-text-centered">喜欢这篇文章？打赏一下作者吧</h3>
+        <div class="buttons is-centered">
+            
+                
+<a class="button is-info donate">
+    <span class="icon is-small">
+        <i class="fab fa-alipay"></i>
+    </span>
+    <span>支付宝</span>
+    <div class="qrcode"><img src="/images/alipay.jpg" alt="支付宝"></div>
+</a>
+
+                
+                
+<a class="button is-success donate">
+    <span class="icon is-small">
+        <i class="fab fa-weixin"></i>
+    </span>
+    <span>微信</span>
+    <div class="qrcode"><img src="/images/wechat.jpg" alt="微信"></div>
+</a>
+
+                
+                <!-- Visit https://www.paypal.com/donate/buttons/ to get your donate button -->
+
+<a class="button is-warning donate" onclick="document.getElementById(&#39;paypal-donate-form&#39;).submit()">
+    <span class="icon is-small">
+        <i class="fab fa-paypal"></i>
+    </span>
+    <span>Paypal</span>
+</a>
+<form action="https://www.paypal.com/cgi-bin/webscr" method="post" target="_blank" id="paypal-donate-form">
+    <input type="hidden" name="cmd" value="_donations">
+    <input type="hidden" name="business" value="158blackhole@gmail.com">
+    <input type="hidden" name="currency_code" value="USD">
+</form>
+
+                
+        </div>
+    </div>
+</div>
+
+
+
+<div class="card card-transparent">
+    <div class="level post-navigation is-flex-wrap is-mobile">
+        
+        
+        <div class="level-end">
+            <a class="level level-item has-link-grey  article-nav-next" href="/2018/08/24/javaScript-integration-sentry/">
+                <span class="level-item">JavaScript集成Sentry</span>
+                <i class="level-item fas fa-chevron-right"></i>
+            </a>
+        </div>
+        
+    </div>
+</div>
+
+
+
+<div class="card">
+    <div class="card-content">
+        <h3 class="title is-5 has-text-weight-normal">评论</h3>
+        
+<script>
+    var disqus_config = function () {
+        this.page.url = 'http://bugs.cc/2018/12/30/reading-notes-from-lucene-to-elasticsearch-full-text-search/';
+        this.page.identifier = '2018/12/30/reading-notes-from-lucene-to-elasticsearch-full-text-search/';
+    };
+    (function() {
+        var d = document, s = d.createElement('script');  
+        s.src = '//' + 'blackhole-1' + '.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+    })();
+</script>
+
+<div id="disqus_thread">
+    
+    <noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+    </div>
+</div>
+</div>
+                
+
+
+
+
+<div class="column is-4-tablet is-4-desktop is-3-widescreen  has-order-1 column-left ">
+    
+        
+<div class="card widget">
+    <div class="card-content">
+        <nav class="level">
+            <div class="level-item has-text-centered">
+                <div>
+                    <img class="image is-128x128 has-mb-6" style="border-radius: 290486px;" src="/images/avatar.png" alt="Black-Hole">
+                    
+                    <p class="is-size-4 is-block">
+                        Black-Hole
+                    </p>
+                    
+                    
+                    <p class="is-size-6 is-block">
+                        一只已经结束异地恋的前端恋爱狗
+                    </p>
+                    
+                    
+                    <p class="is-size-6 is-flex is-flex-center has-text-grey">
+                        <i class="fas fa-map-marker-alt has-mr-7"></i>
+                        <span>ShangHai</span>
+                    </p>
+                    
+                </div>
+            </div>
+        </nav>
+        <nav class="level is-mobile">
+            <div class="level-item has-text-centered is-marginless">
+                <div>
+                    <p class="heading">
+                        文章
+                    </p>
+                    <p class="title has-text-weight-normal">
+                        17
+                    </p>
+                </div>
+            </div>
+            <div class="level-item has-text-centered is-marginless">
+                <div>
+                    <p class="heading">
+                        分类
+                    </p>
+                    <p class="title has-text-weight-normal">
+                        8
+                    </p>
+                </div>
+            </div>
+            <div class="level-item has-text-centered is-marginless">
+                <div>
+                    <p class="heading">
+                        标签
+                    </p>
+                    <p class="title has-text-weight-normal">
+                        21
+                    </p>
+                </div>
+            </div>
+        </nav>
+        <div class="level">
+            <a class="level-item button is-link is-rounded" href="https://github.com/BlackHole1">
+                关注我</a>
+        </div>
+        
+        
+        <div class="level is-mobile">
+            
+            <a class="level-item button is-white is-marginless" target="_blank" title="Github" href="https://github.com/BlackHole1">
+                
+                <i class="fab fa-github"></i>
+                
+            </a>
+            
+            <a class="level-item button is-white is-marginless" target="_blank" title="Weibo" href="http://weibo.com/comelove">
+                
+                <i class="fab fa-weibo"></i>
+                
+            </a>
+            
+            <a class="level-item button is-white is-marginless" target="_blank" title="Twitter" href="https://twitter.com/Free_BlackHole">
+                
+                <i class="fab fa-twitter"></i>
+                
+            </a>
+            
+            <a class="level-item button is-white is-marginless" target="_blank" title="Npm" href="https://www.npmjs.com/~black_hole">
+                
+                <i class="fab fa-npm"></i>
+                
+            </a>
+            
+        </div>
+        
+    </div>
+</div>
+    
+        
+    
+        
+
+<div class="card widget">
+    <div class="card-content">
+        <div class="menu">
+        <h3 class="menu-label">
+            链接
+        </h3>
+        <ul class="menu-list">
+        
+            <li>
+                <a class="level is-mobile" href="https://github.com/alo7" target="_blank">
+                    <span class="level-left">
+                        <span class="level-item">Alo7 Inc</span>
+                    </span>
+                    <span class="level-right">
+                        <span class="level-item tag">github.com</span>
+                    </span>
+                </a>
+            </li>
+        
+            <li>
+                <a class="level is-mobile" href="https://github.com/Web-Security-Automation" target="_blank">
+                    <span class="level-left">
+                        <span class="level-item">Web Security Automation</span>
+                    </span>
+                    <span class="level-right">
+                        <span class="level-item tag">github.com</span>
+                    </span>
+                </a>
+            </li>
+        
+            <li>
+                <a class="level is-mobile" href="https://github.com/Calibre-Node" target="_blank">
+                    <span class="level-left">
+                        <span class="level-item">Calibre Node</span>
+                    </span>
+                    <span class="level-right">
+                        <span class="level-item tag">github.com</span>
+                    </span>
+                </a>
+            </li>
+        
+            <li>
+                <a class="level is-mobile" href="https://github.com/proxyee-down-org" target="_blank">
+                    <span class="level-left">
+                        <span class="level-item">Proxyee Down Org</span>
+                    </span>
+                    <span class="level-right">
+                        <span class="level-item tag">github.com</span>
+                    </span>
+                </a>
+            </li>
+        
+            <li>
+                <a class="level is-mobile" href="https://github.com/deepwn" target="_blank">
+                    <span class="level-left">
+                        <span class="level-item">Deepwn</span>
+                    </span>
+                    <span class="level-right">
+                        <span class="level-item tag">github.com</span>
+                    </span>
+                </a>
+            </li>
+        
+        </ul>
+        </div>
+    </div>
+</div>
+
+
+    
+        
+<div class="card widget">
+    <div class="card-content">
+        <div class="menu">
+            <h3 class="menu-label">
+                分类
+            </h3>
+            <ul class="menu-list">
+            <li>
+        <a class="level is-marginless" href="/categories/Elasticsearch/">
+            <span class="level-start">
+                <span class="level-item">Elasticsearch</span>
+            </span>
+            <span class="level-end">
+                <span class="level-item tag">1</span>
+            </span>
+        </a></li><li>
+        <a class="level is-marginless" href="/categories/JavaScript/">
+            <span class="level-start">
+                <span class="level-item">JavaScript</span>
+            </span>
+            <span class="level-end">
+                <span class="level-item tag">4</span>
+            </span>
+        </a></li><li>
+        <a class="level is-marginless" href="/categories/Linux/">
+            <span class="level-start">
+                <span class="level-item">Linux</span>
+            </span>
+            <span class="level-end">
+                <span class="level-item tag">1</span>
+            </span>
+        </a></li><li>
+        <a class="level is-marginless" href="/categories/NodeJs/">
+            <span class="level-start">
+                <span class="level-item">NodeJs</span>
+            </span>
+            <span class="level-end">
+                <span class="level-item tag">1</span>
+            </span>
+        </a></li><li>
+        <a class="level is-marginless" href="/categories/Python/">
+            <span class="level-start">
+                <span class="level-item">Python</span>
+            </span>
+            <span class="level-end">
+                <span class="level-item tag">1</span>
+            </span>
+        </a></li><li>
+        <a class="level is-marginless" href="/categories/Virtualization/">
+            <span class="level-start">
+                <span class="level-item">Virtualization</span>
+            </span>
+            <span class="level-end">
+                <span class="level-item tag">1</span>
+            </span>
+        </a></li><li>
+        <a class="level is-marginless" href="/categories/Web-Security/">
+            <span class="level-start">
+                <span class="level-item">Web Security</span>
+            </span>
+            <span class="level-end">
+                <span class="level-item tag">7</span>
+            </span>
+        </a></li><li>
+        <a class="level is-marginless" href="/categories/Wireless-Security/">
+            <span class="level-start">
+                <span class="level-item">Wireless Security</span>
+            </span>
+            <span class="level-end">
+                <span class="level-item tag">1</span>
+            </span>
+        </a></li>
+            </ul>
+        </div>
+    </div>
+</div>
+    
+        
+<div class="card widget">
+    <div class="card-content">
+        <h3 class="menu-label">
+            标签云
+        </h3>
+        <a href="/tags/Axios/" style="font-size: 10px;">Axios</a> <a href="/tags/Browser-Plugin/" style="font-size: 10px;">Browser Plugin</a> <a href="/tags/CSRF/" style="font-size: 13.33px;">CSRF</a> <a href="/tags/DSL/" style="font-size: 10px;">DSL</a> <a href="/tags/Elasticsearch/" style="font-size: 10px;">Elasticsearch</a> <a href="/tags/Electron/" style="font-size: 10px;">Electron</a> <a href="/tags/JavaScript/" style="font-size: 16.67px;">JavaScript</a> <a href="/tags/Kibana/" style="font-size: 10px;">Kibana</a> <a href="/tags/Koa/" style="font-size: 10px;">Koa</a> <a href="/tags/Linux/" style="font-size: 10px;">Linux</a> <a href="/tags/Markdown/" style="font-size: 10px;">Markdown</a> <a href="/tags/NodeJs/" style="font-size: 10px;">NodeJs</a> <a href="/tags/Promise/" style="font-size: 10px;">Promise</a> <a href="/tags/Python/" style="font-size: 10px;">Python</a> <a href="/tags/React/" style="font-size: 10px;">React</a> <a href="/tags/Virtualization/" style="font-size: 10px;">Virtualization</a> <a href="/tags/Vue/" style="font-size: 13.33px;">Vue</a> <a href="/tags/WAF/" style="font-size: 10px;">WAF</a> <a href="/tags/Web-Security/" style="font-size: 20px;">Web Security</a> <a href="/tags/Wireless-Security/" style="font-size: 10px;">Wireless Security</a> <a href="/tags/XSS/" style="font-size: 13.33px;">XSS</a>
+    </div>
+</div>
+
+    
+    
+        <div class="column-right-shadow is-hidden-widescreen ">
+        
+            
+<div class="card widget">
+    <div class="card-content">
+        <h3 class="menu-label">
+            最新文章
+        </h3>
+        
+        <article class="media">
+            
+            <a href="/2018/12/30/reading-notes-from-lucene-to-elasticsearch-full-text-search/" class="media-left">
+                <p class="image is-64x64">
+                    <img class="thumbnail" src="/images/thumbnail/globalworming_43986209_2220823381486696_8628271851625393205_n.jpg" alt="读书笔记：从Lucene到Elasticsearch:全文检索实战">
+                </p>
+            </a>
+            
+            <div class="media-content">
+                <div class="content">
+                    <div><time class="has-text-grey is-size-7 is-uppercase" datetime="2018-12-30T14:52:05.000Z">2018-12-30</time></div>
+                    <a href="/2018/12/30/reading-notes-from-lucene-to-elasticsearch-full-text-search/" class="has-link-black-ter is-size-6">读书笔记：从Lucene到Elasticsearch:全文检索实战</a>
+                    <p class="is-size-7 is-uppercase">
+                        <a class="has-link-grey -link" href="/categories/Elasticsearch/">Elasticsearch</a>
+                    </p>
+                </div>
+            </div>
+        </article>
+        
+        <article class="media">
+            
+            <a href="/2018/08/24/javaScript-integration-sentry/" class="media-left">
+                <p class="image is-64x64">
+                    <img class="thumbnail" src="/images/thumbnail/portrait-of-deer-in-forest-at-sunset.jpg" alt="JavaScript集成Sentry">
+                </p>
+            </a>
+            
+            <div class="media-content">
+                <div class="content">
+                    <div><time class="has-text-grey is-size-7 is-uppercase" datetime="2018-08-24T01:16:33.000Z">2018-08-24</time></div>
+                    <a href="/2018/08/24/javaScript-integration-sentry/" class="has-link-black-ter is-size-6">JavaScript集成Sentry</a>
+                    <p class="is-size-7 is-uppercase">
+                        <a class="has-link-grey -link" href="/categories/JavaScript/">JavaScript</a>
+                    </p>
+                </div>
+            </div>
+        </article>
+        
+        <article class="media">
+            
+            <a href="/2018/04/14/analyz-the-axios-source-to-find-out-why-you-cant-use-all-and-spread-methods/" class="media-left">
+                <p class="image is-64x64">
+                    <img class="thumbnail" src="/images/thumbnail/parisexplorer_43915379_1186317334867380_3406866474572309396_n.jpg" alt="分析axios源码来找出无法使用all和spread等方法的原因">
+                </p>
+            </a>
+            
+            <div class="media-content">
+                <div class="content">
+                    <div><time class="has-text-grey is-size-7 is-uppercase" datetime="2018-04-14T05:37:29.000Z">2018-04-14</time></div>
+                    <a href="/2018/04/14/analyz-the-axios-source-to-find-out-why-you-cant-use-all-and-spread-methods/" class="has-link-black-ter is-size-6">分析axios源码来找出无法使用all和spread等方法的原因</a>
+                    <p class="is-size-7 is-uppercase">
+                        <a class="has-link-grey -link" href="/categories/JavaScript/">JavaScript</a>
+                    </p>
+                </div>
+            </div>
+        </article>
+        
+        <article class="media">
+            
+            <a href="/2018/04/12/simplemde-realizes-some-thoughts-on-drag-and-drop-and-paste-function/" class="media-left">
+                <p class="image is-64x64">
+                    <img class="thumbnail" src="/images/thumbnail/punkodelish_43018283_328080891311441_4977042715385938518_n.jpg" alt="基于vue-simplemde实现图片拖拽、粘贴功能的一些思考">
+                </p>
+            </a>
+            
+            <div class="media-content">
+                <div class="content">
+                    <div><time class="has-text-grey is-size-7 is-uppercase" datetime="2018-04-12T03:00:12.000Z">2018-04-12</time></div>
+                    <a href="/2018/04/12/simplemde-realizes-some-thoughts-on-drag-and-drop-and-paste-function/" class="has-link-black-ter is-size-6">基于vue-simplemde实现图片拖拽、粘贴功能的一些思考</a>
+                    <p class="is-size-7 is-uppercase">
+                        <a class="has-link-grey -link" href="/categories/JavaScript/">JavaScript</a>
+                    </p>
+                </div>
+            </div>
+        </article>
+        
+        <article class="media">
+            
+            <a href="/2018/01/23/run-qcow2-image-in-vmware/" class="media-left">
+                <p class="image is-64x64">
+                    <img class="thumbnail" src="/images/thumbnail/pexels-photo-1183434.jpeg" alt="在vmware里运行qcow2镜像">
+                </p>
+            </a>
+            
+            <div class="media-content">
+                <div class="content">
+                    <div><time class="has-text-grey is-size-7 is-uppercase" datetime="2018-01-23T01:12:31.000Z">2018-01-23</time></div>
+                    <a href="/2018/01/23/run-qcow2-image-in-vmware/" class="has-link-black-ter is-size-6">在vmware里运行qcow2镜像</a>
+                    <p class="is-size-7 is-uppercase">
+                        <a class="has-link-grey -link" href="/categories/Virtualization/">Virtualization</a>
+                    </p>
+                </div>
+            </div>
+        </article>
+        
+    </div>
+</div>
+
+        
+            <div class="card widget">
+    <div class="card-content">
+        <div class="menu">
+        <h3 class="menu-label">
+            归档
+        </h3>
+        <ul class="menu-list">
+        
+        <li>
+            <a class="level is-marginless" href="/archives/2018/12/">
+                <span class="level-start">
+                    <span class="level-item">十二月 2018</span>
+                </span>
+                <span class="level-end">
+                    <span class="level-item tag">1</span>
+                </span>
+            </a>
+        </li>
+        
+        <li>
+            <a class="level is-marginless" href="/archives/2018/08/">
+                <span class="level-start">
+                    <span class="level-item">八月 2018</span>
+                </span>
+                <span class="level-end">
+                    <span class="level-item tag">1</span>
+                </span>
+            </a>
+        </li>
+        
+        <li>
+            <a class="level is-marginless" href="/archives/2018/04/">
+                <span class="level-start">
+                    <span class="level-item">四月 2018</span>
+                </span>
+                <span class="level-end">
+                    <span class="level-item tag">2</span>
+                </span>
+            </a>
+        </li>
+        
+        <li>
+            <a class="level is-marginless" href="/archives/2018/01/">
+                <span class="level-start">
+                    <span class="level-item">一月 2018</span>
+                </span>
+                <span class="level-end">
+                    <span class="level-item tag">2</span>
+                </span>
+            </a>
+        </li>
+        
+        <li>
+            <a class="level is-marginless" href="/archives/2017/11/">
+                <span class="level-start">
+                    <span class="level-item">十一月 2017</span>
+                </span>
+                <span class="level-end">
+                    <span class="level-item tag">2</span>
+                </span>
+            </a>
+        </li>
+        
+        <li>
+            <a class="level is-marginless" href="/archives/2017/03/">
+                <span class="level-start">
+                    <span class="level-item">三月 2017</span>
+                </span>
+                <span class="level-end">
+                    <span class="level-item tag">1</span>
+                </span>
+            </a>
+        </li>
+        
+        <li>
+            <a class="level is-marginless" href="/archives/2016/12/">
+                <span class="level-start">
+                    <span class="level-item">十二月 2016</span>
+                </span>
+                <span class="level-end">
+                    <span class="level-item tag">2</span>
+                </span>
+            </a>
+        </li>
+        
+        <li>
+            <a class="level is-marginless" href="/archives/2016/10/">
+                <span class="level-start">
+                    <span class="level-item">十月 2016</span>
+                </span>
+                <span class="level-end">
+                    <span class="level-item tag">1</span>
+                </span>
+            </a>
+        </li>
+        
+        <li>
+            <a class="level is-marginless" href="/archives/2016/08/">
+                <span class="level-start">
+                    <span class="level-item">八月 2016</span>
+                </span>
+                <span class="level-end">
+                    <span class="level-item tag">2</span>
+                </span>
+            </a>
+        </li>
+        
+        <li>
+            <a class="level is-marginless" href="/archives/2016/06/">
+                <span class="level-start">
+                    <span class="level-item">六月 2016</span>
+                </span>
+                <span class="level-end">
+                    <span class="level-item tag">2</span>
+                </span>
+            </a>
+        </li>
+        
+        <li>
+            <a class="level is-marginless" href="/archives/2016/05/">
+                <span class="level-start">
+                    <span class="level-item">五月 2016</span>
+                </span>
+                <span class="level-end">
+                    <span class="level-item tag">1</span>
+                </span>
+            </a>
+        </li>
+        
+        </ul>
+        </div>
+    </div>
+</div>
+        
+            <div class="card widget">
+    <div class="card-content">
+        <div class="menu">
+            <h3 class="menu-label">
+                标签
+            </h3>
+            <ul class="menu-list">
+                
+                <li>
+                    <a class="level is-marginless" href="/tags/Axios/">
+                        <span class="level-start">
+                            <span class="level-item">Axios</span>
+                        </span>
+                        <span class="level-end">
+                            <span class="level-item tag">1</span>
+                        </span>
+                    </a>
+                </li>
+                
+                <li>
+                    <a class="level is-marginless" href="/tags/Browser-Plugin/">
+                        <span class="level-start">
+                            <span class="level-item">Browser Plugin</span>
+                        </span>
+                        <span class="level-end">
+                            <span class="level-item tag">1</span>
+                        </span>
+                    </a>
+                </li>
+                
+                <li>
+                    <a class="level is-marginless" href="/tags/CSRF/">
+                        <span class="level-start">
+                            <span class="level-item">CSRF</span>
+                        </span>
+                        <span class="level-end">
+                            <span class="level-item tag">2</span>
+                        </span>
+                    </a>
+                </li>
+                
+                <li>
+                    <a class="level is-marginless" href="/tags/DSL/">
+                        <span class="level-start">
+                            <span class="level-item">DSL</span>
+                        </span>
+                        <span class="level-end">
+                            <span class="level-item tag">1</span>
+                        </span>
+                    </a>
+                </li>
+                
+                <li>
+                    <a class="level is-marginless" href="/tags/Elasticsearch/">
+                        <span class="level-start">
+                            <span class="level-item">Elasticsearch</span>
+                        </span>
+                        <span class="level-end">
+                            <span class="level-item tag">1</span>
+                        </span>
+                    </a>
+                </li>
+                
+                <li>
+                    <a class="level is-marginless" href="/tags/Electron/">
+                        <span class="level-start">
+                            <span class="level-item">Electron</span>
+                        </span>
+                        <span class="level-end">
+                            <span class="level-item tag">1</span>
+                        </span>
+                    </a>
+                </li>
+                
+                <li>
+                    <a class="level is-marginless" href="/tags/JavaScript/">
+                        <span class="level-start">
+                            <span class="level-item">JavaScript</span>
+                        </span>
+                        <span class="level-end">
+                            <span class="level-item tag">5</span>
+                        </span>
+                    </a>
+                </li>
+                
+                <li>
+                    <a class="level is-marginless" href="/tags/Kibana/">
+                        <span class="level-start">
+                            <span class="level-item">Kibana</span>
+                        </span>
+                        <span class="level-end">
+                            <span class="level-item tag">1</span>
+                        </span>
+                    </a>
+                </li>
+                
+                <li>
+                    <a class="level is-marginless" href="/tags/Koa/">
+                        <span class="level-start">
+                            <span class="level-item">Koa</span>
+                        </span>
+                        <span class="level-end">
+                            <span class="level-item tag">1</span>
+                        </span>
+                    </a>
+                </li>
+                
+                <li>
+                    <a class="level is-marginless" href="/tags/Linux/">
+                        <span class="level-start">
+                            <span class="level-item">Linux</span>
+                        </span>
+                        <span class="level-end">
+                            <span class="level-item tag">1</span>
+                        </span>
+                    </a>
+                </li>
+                
+                <li>
+                    <a class="level is-marginless" href="/tags/Markdown/">
+                        <span class="level-start">
+                            <span class="level-item">Markdown</span>
+                        </span>
+                        <span class="level-end">
+                            <span class="level-item tag">1</span>
+                        </span>
+                    </a>
+                </li>
+                
+                <li>
+                    <a class="level is-marginless" href="/tags/NodeJs/">
+                        <span class="level-start">
+                            <span class="level-item">NodeJs</span>
+                        </span>
+                        <span class="level-end">
+                            <span class="level-item tag">1</span>
+                        </span>
+                    </a>
+                </li>
+                
+                <li>
+                    <a class="level is-marginless" href="/tags/Promise/">
+                        <span class="level-start">
+                            <span class="level-item">Promise</span>
+                        </span>
+                        <span class="level-end">
+                            <span class="level-item tag">1</span>
+                        </span>
+                    </a>
+                </li>
+                
+                <li>
+                    <a class="level is-marginless" href="/tags/Python/">
+                        <span class="level-start">
+                            <span class="level-item">Python</span>
+                        </span>
+                        <span class="level-end">
+                            <span class="level-item tag">1</span>
+                        </span>
+                    </a>
+                </li>
+                
+                <li>
+                    <a class="level is-marginless" href="/tags/React/">
+                        <span class="level-start">
+                            <span class="level-item">React</span>
+                        </span>
+                        <span class="level-end">
+                            <span class="level-item tag">1</span>
+                        </span>
+                    </a>
+                </li>
+                
+                <li>
+                    <a class="level is-marginless" href="/tags/Virtualization/">
+                        <span class="level-start">
+                            <span class="level-item">Virtualization</span>
+                        </span>
+                        <span class="level-end">
+                            <span class="level-item tag">1</span>
+                        </span>
+                    </a>
+                </li>
+                
+                <li>
+                    <a class="level is-marginless" href="/tags/Vue/">
+                        <span class="level-start">
+                            <span class="level-item">Vue</span>
+                        </span>
+                        <span class="level-end">
+                            <span class="level-item tag">2</span>
+                        </span>
+                    </a>
+                </li>
+                
+                <li>
+                    <a class="level is-marginless" href="/tags/WAF/">
+                        <span class="level-start">
+                            <span class="level-item">WAF</span>
+                        </span>
+                        <span class="level-end">
+                            <span class="level-item tag">1</span>
+                        </span>
+                    </a>
+                </li>
+                
+                <li>
+                    <a class="level is-marginless" href="/tags/Web-Security/">
+                        <span class="level-start">
+                            <span class="level-item">Web Security</span>
+                        </span>
+                        <span class="level-end">
+                            <span class="level-item tag">7</span>
+                        </span>
+                    </a>
+                </li>
+                
+                <li>
+                    <a class="level is-marginless" href="/tags/Wireless-Security/">
+                        <span class="level-start">
+                            <span class="level-item">Wireless Security</span>
+                        </span>
+                        <span class="level-end">
+                            <span class="level-item tag">1</span>
+                        </span>
+                    </a>
+                </li>
+                
+                <li>
+                    <a class="level is-marginless" href="/tags/XSS/">
+                        <span class="level-start">
+                            <span class="level-item">XSS</span>
+                        </span>
+                        <span class="level-end">
+                            <span class="level-item tag">2</span>
+                        </span>
+                    </a>
+                </li>
+                
+            </ul>
+        </div>
+    </div>
+</div>
+        
+        </div>
+    
+</div>
+
+                
+
+
+
+
+<div class="column is-4-tablet is-4-desktop is-3-widescreen is-hidden-touch is-hidden-desktop-only has-order-3 column-right ">
+    
+        
+<div class="card widget">
+    <div class="card-content">
+        <h3 class="menu-label">
+            最新文章
+        </h3>
+        
+        <article class="media">
+            
+            <a href="/2018/12/30/reading-notes-from-lucene-to-elasticsearch-full-text-search/" class="media-left">
+                <p class="image is-64x64">
+                    <img class="thumbnail" src="/images/thumbnail/globalworming_43986209_2220823381486696_8628271851625393205_n.jpg" alt="读书笔记：从Lucene到Elasticsearch:全文检索实战">
+                </p>
+            </a>
+            
+            <div class="media-content">
+                <div class="content">
+                    <div><time class="has-text-grey is-size-7 is-uppercase" datetime="2018-12-30T14:52:05.000Z">2018-12-30</time></div>
+                    <a href="/2018/12/30/reading-notes-from-lucene-to-elasticsearch-full-text-search/" class="has-link-black-ter is-size-6">读书笔记：从Lucene到Elasticsearch:全文检索实战</a>
+                    <p class="is-size-7 is-uppercase">
+                        <a class="has-link-grey -link" href="/categories/Elasticsearch/">Elasticsearch</a>
+                    </p>
+                </div>
+            </div>
+        </article>
+        
+        <article class="media">
+            
+            <a href="/2018/08/24/javaScript-integration-sentry/" class="media-left">
+                <p class="image is-64x64">
+                    <img class="thumbnail" src="/images/thumbnail/portrait-of-deer-in-forest-at-sunset.jpg" alt="JavaScript集成Sentry">
+                </p>
+            </a>
+            
+            <div class="media-content">
+                <div class="content">
+                    <div><time class="has-text-grey is-size-7 is-uppercase" datetime="2018-08-24T01:16:33.000Z">2018-08-24</time></div>
+                    <a href="/2018/08/24/javaScript-integration-sentry/" class="has-link-black-ter is-size-6">JavaScript集成Sentry</a>
+                    <p class="is-size-7 is-uppercase">
+                        <a class="has-link-grey -link" href="/categories/JavaScript/">JavaScript</a>
+                    </p>
+                </div>
+            </div>
+        </article>
+        
+        <article class="media">
+            
+            <a href="/2018/04/14/analyz-the-axios-source-to-find-out-why-you-cant-use-all-and-spread-methods/" class="media-left">
+                <p class="image is-64x64">
+                    <img class="thumbnail" src="/images/thumbnail/parisexplorer_43915379_1186317334867380_3406866474572309396_n.jpg" alt="分析axios源码来找出无法使用all和spread等方法的原因">
+                </p>
+            </a>
+            
+            <div class="media-content">
+                <div class="content">
+                    <div><time class="has-text-grey is-size-7 is-uppercase" datetime="2018-04-14T05:37:29.000Z">2018-04-14</time></div>
+                    <a href="/2018/04/14/analyz-the-axios-source-to-find-out-why-you-cant-use-all-and-spread-methods/" class="has-link-black-ter is-size-6">分析axios源码来找出无法使用all和spread等方法的原因</a>
+                    <p class="is-size-7 is-uppercase">
+                        <a class="has-link-grey -link" href="/categories/JavaScript/">JavaScript</a>
+                    </p>
+                </div>
+            </div>
+        </article>
+        
+        <article class="media">
+            
+            <a href="/2018/04/12/simplemde-realizes-some-thoughts-on-drag-and-drop-and-paste-function/" class="media-left">
+                <p class="image is-64x64">
+                    <img class="thumbnail" src="/images/thumbnail/punkodelish_43018283_328080891311441_4977042715385938518_n.jpg" alt="基于vue-simplemde实现图片拖拽、粘贴功能的一些思考">
+                </p>
+            </a>
+            
+            <div class="media-content">
+                <div class="content">
+                    <div><time class="has-text-grey is-size-7 is-uppercase" datetime="2018-04-12T03:00:12.000Z">2018-04-12</time></div>
+                    <a href="/2018/04/12/simplemde-realizes-some-thoughts-on-drag-and-drop-and-paste-function/" class="has-link-black-ter is-size-6">基于vue-simplemde实现图片拖拽、粘贴功能的一些思考</a>
+                    <p class="is-size-7 is-uppercase">
+                        <a class="has-link-grey -link" href="/categories/JavaScript/">JavaScript</a>
+                    </p>
+                </div>
+            </div>
+        </article>
+        
+        <article class="media">
+            
+            <a href="/2018/01/23/run-qcow2-image-in-vmware/" class="media-left">
+                <p class="image is-64x64">
+                    <img class="thumbnail" src="/images/thumbnail/pexels-photo-1183434.jpeg" alt="在vmware里运行qcow2镜像">
+                </p>
+            </a>
+            
+            <div class="media-content">
+                <div class="content">
+                    <div><time class="has-text-grey is-size-7 is-uppercase" datetime="2018-01-23T01:12:31.000Z">2018-01-23</time></div>
+                    <a href="/2018/01/23/run-qcow2-image-in-vmware/" class="has-link-black-ter is-size-6">在vmware里运行qcow2镜像</a>
+                    <p class="is-size-7 is-uppercase">
+                        <a class="has-link-grey -link" href="/categories/Virtualization/">Virtualization</a>
+                    </p>
+                </div>
+            </div>
+        </article>
+        
+    </div>
+</div>
+
+    
+        <div class="card widget">
+    <div class="card-content">
+        <div class="menu">
+        <h3 class="menu-label">
+            归档
+        </h3>
+        <ul class="menu-list">
+        
+        <li>
+            <a class="level is-marginless" href="/archives/2018/12/">
+                <span class="level-start">
+                    <span class="level-item">十二月 2018</span>
+                </span>
+                <span class="level-end">
+                    <span class="level-item tag">1</span>
+                </span>
+            </a>
+        </li>
+        
+        <li>
+            <a class="level is-marginless" href="/archives/2018/08/">
+                <span class="level-start">
+                    <span class="level-item">八月 2018</span>
+                </span>
+                <span class="level-end">
+                    <span class="level-item tag">1</span>
+                </span>
+            </a>
+        </li>
+        
+        <li>
+            <a class="level is-marginless" href="/archives/2018/04/">
+                <span class="level-start">
+                    <span class="level-item">四月 2018</span>
+                </span>
+                <span class="level-end">
+                    <span class="level-item tag">2</span>
+                </span>
+            </a>
+        </li>
+        
+        <li>
+            <a class="level is-marginless" href="/archives/2018/01/">
+                <span class="level-start">
+                    <span class="level-item">一月 2018</span>
+                </span>
+                <span class="level-end">
+                    <span class="level-item tag">2</span>
+                </span>
+            </a>
+        </li>
+        
+        <li>
+            <a class="level is-marginless" href="/archives/2017/11/">
+                <span class="level-start">
+                    <span class="level-item">十一月 2017</span>
+                </span>
+                <span class="level-end">
+                    <span class="level-item tag">2</span>
+                </span>
+            </a>
+        </li>
+        
+        <li>
+            <a class="level is-marginless" href="/archives/2017/03/">
+                <span class="level-start">
+                    <span class="level-item">三月 2017</span>
+                </span>
+                <span class="level-end">
+                    <span class="level-item tag">1</span>
+                </span>
+            </a>
+        </li>
+        
+        <li>
+            <a class="level is-marginless" href="/archives/2016/12/">
+                <span class="level-start">
+                    <span class="level-item">十二月 2016</span>
+                </span>
+                <span class="level-end">
+                    <span class="level-item tag">2</span>
+                </span>
+            </a>
+        </li>
+        
+        <li>
+            <a class="level is-marginless" href="/archives/2016/10/">
+                <span class="level-start">
+                    <span class="level-item">十月 2016</span>
+                </span>
+                <span class="level-end">
+                    <span class="level-item tag">1</span>
+                </span>
+            </a>
+        </li>
+        
+        <li>
+            <a class="level is-marginless" href="/archives/2016/08/">
+                <span class="level-start">
+                    <span class="level-item">八月 2016</span>
+                </span>
+                <span class="level-end">
+                    <span class="level-item tag">2</span>
+                </span>
+            </a>
+        </li>
+        
+        <li>
+            <a class="level is-marginless" href="/archives/2016/06/">
+                <span class="level-start">
+                    <span class="level-item">六月 2016</span>
+                </span>
+                <span class="level-end">
+                    <span class="level-item tag">2</span>
+                </span>
+            </a>
+        </li>
+        
+        <li>
+            <a class="level is-marginless" href="/archives/2016/05/">
+                <span class="level-start">
+                    <span class="level-item">五月 2016</span>
+                </span>
+                <span class="level-end">
+                    <span class="level-item tag">1</span>
+                </span>
+            </a>
+        </li>
+        
+        </ul>
+        </div>
+    </div>
+</div>
+    
+        <div class="card widget">
+    <div class="card-content">
+        <div class="menu">
+            <h3 class="menu-label">
+                标签
+            </h3>
+            <ul class="menu-list">
+                
+                <li>
+                    <a class="level is-marginless" href="/tags/Axios/">
+                        <span class="level-start">
+                            <span class="level-item">Axios</span>
+                        </span>
+                        <span class="level-end">
+                            <span class="level-item tag">1</span>
+                        </span>
+                    </a>
+                </li>
+                
+                <li>
+                    <a class="level is-marginless" href="/tags/Browser-Plugin/">
+                        <span class="level-start">
+                            <span class="level-item">Browser Plugin</span>
+                        </span>
+                        <span class="level-end">
+                            <span class="level-item tag">1</span>
+                        </span>
+                    </a>
+                </li>
+                
+                <li>
+                    <a class="level is-marginless" href="/tags/CSRF/">
+                        <span class="level-start">
+                            <span class="level-item">CSRF</span>
+                        </span>
+                        <span class="level-end">
+                            <span class="level-item tag">2</span>
+                        </span>
+                    </a>
+                </li>
+                
+                <li>
+                    <a class="level is-marginless" href="/tags/DSL/">
+                        <span class="level-start">
+                            <span class="level-item">DSL</span>
+                        </span>
+                        <span class="level-end">
+                            <span class="level-item tag">1</span>
+                        </span>
+                    </a>
+                </li>
+                
+                <li>
+                    <a class="level is-marginless" href="/tags/Elasticsearch/">
+                        <span class="level-start">
+                            <span class="level-item">Elasticsearch</span>
+                        </span>
+                        <span class="level-end">
+                            <span class="level-item tag">1</span>
+                        </span>
+                    </a>
+                </li>
+                
+                <li>
+                    <a class="level is-marginless" href="/tags/Electron/">
+                        <span class="level-start">
+                            <span class="level-item">Electron</span>
+                        </span>
+                        <span class="level-end">
+                            <span class="level-item tag">1</span>
+                        </span>
+                    </a>
+                </li>
+                
+                <li>
+                    <a class="level is-marginless" href="/tags/JavaScript/">
+                        <span class="level-start">
+                            <span class="level-item">JavaScript</span>
+                        </span>
+                        <span class="level-end">
+                            <span class="level-item tag">5</span>
+                        </span>
+                    </a>
+                </li>
+                
+                <li>
+                    <a class="level is-marginless" href="/tags/Kibana/">
+                        <span class="level-start">
+                            <span class="level-item">Kibana</span>
+                        </span>
+                        <span class="level-end">
+                            <span class="level-item tag">1</span>
+                        </span>
+                    </a>
+                </li>
+                
+                <li>
+                    <a class="level is-marginless" href="/tags/Koa/">
+                        <span class="level-start">
+                            <span class="level-item">Koa</span>
+                        </span>
+                        <span class="level-end">
+                            <span class="level-item tag">1</span>
+                        </span>
+                    </a>
+                </li>
+                
+                <li>
+                    <a class="level is-marginless" href="/tags/Linux/">
+                        <span class="level-start">
+                            <span class="level-item">Linux</span>
+                        </span>
+                        <span class="level-end">
+                            <span class="level-item tag">1</span>
+                        </span>
+                    </a>
+                </li>
+                
+                <li>
+                    <a class="level is-marginless" href="/tags/Markdown/">
+                        <span class="level-start">
+                            <span class="level-item">Markdown</span>
+                        </span>
+                        <span class="level-end">
+                            <span class="level-item tag">1</span>
+                        </span>
+                    </a>
+                </li>
+                
+                <li>
+                    <a class="level is-marginless" href="/tags/NodeJs/">
+                        <span class="level-start">
+                            <span class="level-item">NodeJs</span>
+                        </span>
+                        <span class="level-end">
+                            <span class="level-item tag">1</span>
+                        </span>
+                    </a>
+                </li>
+                
+                <li>
+                    <a class="level is-marginless" href="/tags/Promise/">
+                        <span class="level-start">
+                            <span class="level-item">Promise</span>
+                        </span>
+                        <span class="level-end">
+                            <span class="level-item tag">1</span>
+                        </span>
+                    </a>
+                </li>
+                
+                <li>
+                    <a class="level is-marginless" href="/tags/Python/">
+                        <span class="level-start">
+                            <span class="level-item">Python</span>
+                        </span>
+                        <span class="level-end">
+                            <span class="level-item tag">1</span>
+                        </span>
+                    </a>
+                </li>
+                
+                <li>
+                    <a class="level is-marginless" href="/tags/React/">
+                        <span class="level-start">
+                            <span class="level-item">React</span>
+                        </span>
+                        <span class="level-end">
+                            <span class="level-item tag">1</span>
+                        </span>
+                    </a>
+                </li>
+                
+                <li>
+                    <a class="level is-marginless" href="/tags/Virtualization/">
+                        <span class="level-start">
+                            <span class="level-item">Virtualization</span>
+                        </span>
+                        <span class="level-end">
+                            <span class="level-item tag">1</span>
+                        </span>
+                    </a>
+                </li>
+                
+                <li>
+                    <a class="level is-marginless" href="/tags/Vue/">
+                        <span class="level-start">
+                            <span class="level-item">Vue</span>
+                        </span>
+                        <span class="level-end">
+                            <span class="level-item tag">2</span>
+                        </span>
+                    </a>
+                </li>
+                
+                <li>
+                    <a class="level is-marginless" href="/tags/WAF/">
+                        <span class="level-start">
+                            <span class="level-item">WAF</span>
+                        </span>
+                        <span class="level-end">
+                            <span class="level-item tag">1</span>
+                        </span>
+                    </a>
+                </li>
+                
+                <li>
+                    <a class="level is-marginless" href="/tags/Web-Security/">
+                        <span class="level-start">
+                            <span class="level-item">Web Security</span>
+                        </span>
+                        <span class="level-end">
+                            <span class="level-item tag">7</span>
+                        </span>
+                    </a>
+                </li>
+                
+                <li>
+                    <a class="level is-marginless" href="/tags/Wireless-Security/">
+                        <span class="level-start">
+                            <span class="level-item">Wireless Security</span>
+                        </span>
+                        <span class="level-end">
+                            <span class="level-item tag">1</span>
+                        </span>
+                    </a>
+                </li>
+                
+                <li>
+                    <a class="level is-marginless" href="/tags/XSS/">
+                        <span class="level-start">
+                            <span class="level-item">XSS</span>
+                        </span>
+                        <span class="level-end">
+                            <span class="level-item tag">2</span>
+                        </span>
+                    </a>
+                </li>
+                
+            </ul>
+        </div>
+    </div>
+</div>
+    
+    
+</div>
+
+            </div>
+        </div>
+    </section>
+    <footer class="footer">
+    <div class="container">
+        <div class="level">
+            <div class="level-start has-text-centered-mobile">
+                <a class="footer-logo is-block has-mb-6" href="/">
+                
+                    <img src="/images/logo.png" alt="读书笔记：从Lucene到Elasticsearch:全文检索实战" height="28">
+                
+                </a>
+                <p class="is-size-7">
+                &copy; 2019 Black-Hole&nbsp;
+                Powered by <a href="http://hexo.io/" target="_blank">Hexo</a> & <a href="http://github.com/ppoffice/hexo-theme-icarus">Icarus</a>
+                </p>
+            </div>
+            <div class="level-end">
+            
+            </div>
+        </div>
+    </div>
+</footer>
+    <script src="https://cdn.jsdelivr.net/npm/jquery@3.3.1/dist/jquery.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/moment@2.22.2/min/moment-with-locales.min.js"></script>
+<script>moment.locale("zh-CN");</script>
+
+
+    
+    
+    
+    <script src="/js/animation.js"></script>
+    
+
+    
+    
+    
+    <script src="https://cdn.jsdelivr.net/npm/lightgallery@1.6.8/dist/js/lightgallery.min.js" defer></script>
+    <script src="https://cdn.jsdelivr.net/npm/justifiedGallery@3.7.0/dist/js/jquery.justifiedGallery.min.js" defer></script>
+    <script src="/js/gallery.js" defer></script>
+    
+
+    
+    
+
+<div id="outdated">
+    <h6>Your browser is out-of-date!</h6>
+    <p>Update your browser to view this website correctly. <a id="btnUpdateBrowser" href="http://outdatedbrowser.com/">Update
+            my browser now </a></p>
+    <p class="last"><a href="#" id="btnCloseUpdateBrowser" title="Close">&times;</a></p>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/outdatedbrowser@1.1.5/outdatedbrowser/outdatedbrowser.min.js" defer></script>
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        outdatedBrowser({
+            bgColor: '#f25648',
+            color: '#ffffff',
+            lowerThan: 'flex'
+        });
+    });
+</script>
+
+
+    
+    
+<script src="https://cdn.jsdelivr.net/npm/mathjax@2.7.5/unpacked/MathJax.js?config=TeX-MML-AM_CHTML" defer></script>
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    MathJax.Hub.Config({
+        'HTML-CSS': {matchFontHeight: false},
+        SVG: {matchFontHeight: false},
+        CommonHTML: {matchFontHeight: false}
+    });
+});
+</script>
+
+    
+    
+
+<a id="back-to-top" title="回到顶端" href="javascript:;">
+    <i class="fas fa-chevron-up"></i>
+</a>
+<script src="/js/back-to-top.js" defer></script>
+
+
+    
+    
+
+    
+    
+    
+    
+
+    
+    
+    
+    
+    
+    <script src="https://cdn.jsdelivr.net/npm/clipboard@2.0.4/dist/clipboard.min.js" defer></script>
+    <script src="/js/clipboard.js" defer></script>
+    
+
+    
+
+
+<script src="/js/main.js" defer></script>
+
+    
+    <div class="searchbox ins-search">
+    <div class="searchbox-container ins-search-container">
+        <div class="searchbox-input-wrapper">
+            <input type="text" class="searchbox-input ins-search-input" placeholder="想要查找什么...">
+            <span class="searchbox-close ins-close ins-selectable"><i class="fa fa-times-circle"></i></span>
+        </div>
+        <div class="searchbox-result-wrapper ins-section-wrapper">
+            <div class="ins-section-container"></div>
+        </div>
+    </div>
+</div>
+<script>
+    (function (window) {
+        var INSIGHT_CONFIG = {
+            TRANSLATION: {
+                POSTS: '文章',
+                PAGES: '页面',
+                CATEGORIES: '分类',
+                TAGS: '标签',
+                UNTITLED: '(无标题)',
+            },
+            CONTENT_URL: '/content.json',
+        };
+        window.INSIGHT_CONFIG = INSIGHT_CONFIG;
+    })(window);
+</script>
+<script src="/js/insight.js" defer></script>
+<link rel="stylesheet" href="/css/search.css">
+<link rel="stylesheet" href="/css/insight.css">
+    
+</body>
+</html>

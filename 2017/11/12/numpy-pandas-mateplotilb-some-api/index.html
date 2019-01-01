@@ -1,0 +1,1730 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head><meta name="generator" content="Hexo 3.8.0">
+    <meta charset="utf-8">
+<title>Numpy &amp; Pandas &amp; Matplotilb部分API操作 - Black-Hole&#39;s Blog</title>
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+
+
+    <meta name="description" content="Numpy导入import numpy as np API创建数组1234567891011121314151617181920212223242526272829303132333435363738np.array([10, 11, 12, 13])# [10 11 12 13]np.array([10, 11, 12, 13, 14 ,15]).reshape([2,3])# [#   [10">
+<meta name="keywords" content="Python">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Numpy &amp; Pandas &amp; Matplotilb部分API操作">
+<meta property="og:url" content="http://bugs.cc/2017/11/12/numpy-pandas-mateplotilb-some-api/index.html">
+<meta property="og:site_name" content="Black-Hole&#39;s Blog">
+<meta property="og:description" content="Numpy导入import numpy as np API创建数组1234567891011121314151617181920212223242526272829303132333435363738np.array([10, 11, 12, 13])# [10 11 12 13]np.array([10, 11, 12, 13, 14 ,15]).reshape([2,3])# [#   [10">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:image" content="http://on7r0tqgu.bkt.clouddn.com/FhRJurrbSU5aEHqc8YCqGbe_4Jgt.png">
+<meta property="og:image" content="http://on7r0tqgu.bkt.clouddn.com/FsJ_DYXc73SJRqiiuuDJfW_prGB7.png">
+<meta property="og:image" content="http://on7r0tqgu.bkt.clouddn.com/Fp-jimPylCiXfqYpO4pw8ZDal_14.png">
+<meta property="og:image" content="http://on7r0tqgu.bkt.clouddn.com/FrXBC3oqO9Jv-K-2SFlTy3EKAv7z.png">
+<meta property="og:updated_time" content="2018-12-31T15:11:52.055Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Numpy &amp; Pandas &amp; Matplotilb部分API操作">
+<meta name="twitter:description" content="Numpy导入import numpy as np API创建数组1234567891011121314151617181920212223242526272829303132333435363738np.array([10, 11, 12, 13])# [10 11 12 13]np.array([10, 11, 12, 13, 14 ,15]).reshape([2,3])# [#   [10">
+<meta name="twitter:image" content="http://on7r0tqgu.bkt.clouddn.com/FhRJurrbSU5aEHqc8YCqGbe_4Jgt.png">
+<meta name="twitter:creator" content="@Free_BlackHole">
+<meta name="twitter:site" content="https://twitter.com/Free_BlackHole">
+
+
+
+<link rel="alternative" href="/atom.xml" title="Numpy &amp; Pandas &amp; Matplotilb部分API操作" type="application/atom+xml">
+
+
+
+<link rel="icon" href="/images/favicon.ico">
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.7.2/css/bulma.css">
+<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.4.1/css/all.css">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Ubuntu:400,600|Source+Code+Pro">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/highlight.js@9.12.0/styles/atom-one-light.css">
+
+
+    
+    
+    
+    <style>body>.footer,body>.navbar,body>.section{opacity:0}</style>
+    
+
+    
+    
+    
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/lightgallery@1.6.8/dist/css/lightgallery.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/justifiedGallery@3.7.0/dist/css/justifiedGallery.min.css">
+    
+
+    
+    
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/outdatedbrowser@1.1.5/outdatedbrowser/outdatedbrowser.min.css">
+
+
+    
+    
+    
+    
+
+<link rel="stylesheet" href="/css/back-to-top.css">
+
+
+    
+    
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-90340553-1"></script>
+<script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+
+    gtag('config', 'UA-90340553-1');
+</script>
+
+
+    
+    
+    
+    
+
+    
+    
+<link rel="stylesheet" href="/css/progressbar.css">
+<script src="https://cdn.jsdelivr.net/npm/pace-js@1.0.2/pace.min.js"></script>
+
+    
+    
+    
+
+    
+
+
+<link rel="stylesheet" href="/css/style.css">
+</head>
+<body class="is-3-column">
+    <nav class="navbar navbar-main">
+    <div class="container">
+        <div class="navbar-brand is-flex-center">
+            <a class="navbar-item navbar-logo" href="/">
+            
+                <img src="/images/logo.png" alt="Numpy &amp; Pandas &amp; Matplotilb部分API操作" height="28">
+            
+            </a>
+        </div>
+        <div class="navbar-menu">
+            
+            <div class="navbar-start">
+                
+                <a class="navbar-item" href="/">Home</a>
+                
+                <a class="navbar-item" href="/archives">Archives</a>
+                
+                <a class="navbar-item" href="/categories">Categories</a>
+                
+                <a class="navbar-item" href="/tags">Tags</a>
+                
+                <a class="navbar-item" href="/friends">Friends</a>
+                
+                <a class="navbar-item" href="/todo">Todo</a>
+                
+                <a class="navbar-item" href="/about">About</a>
+                
+            </div>
+            
+            <div class="navbar-end">
+                
+                    
+                    
+                    <a class="navbar-item" target="_blank" title="GitHub" href="https://github.com/BlackHole1">
+                        
+                        <i class="fab fa-github"></i>
+                        
+                    </a>
+                    
+                
+                
+                
+                <a class="navbar-item search" title="搜索" href="javascript:;">
+                    <i class="fas fa-search"></i>
+                </a>
+                
+            </div>
+        </div>
+    </div>
+</nav>
+    
+    <section class="section">
+        <div class="container">
+            <div class="columns">
+                <div class="column is-8-tablet is-8-desktop is-6-widescreen has-order-2 column-main"><div class="card">
+    
+    <div class="card-image">
+        <span class="image is-7by1">
+            <img class="thumbnail" src="/images/thumbnail/Bw4aNbJsN7O.jpg" alt="Numpy &amp; Pandas &amp; Matplotilb部分API操作">
+        </span>
+    </div>
+    
+    <div class="card-content article ">
+        
+        <div class="level article-meta is-size-7 is-uppercase is-mobile is-overflow-x-auto">
+            <div class="level-left">
+                <time class="level-item has-text-grey" datetime="2017-11-12T13:04:48.000Z">2017-11-12</time>
+                
+                <div class="level-item">
+                <a class="has-link-grey -link" href="/categories/Python/">Python</a>
+                </div>
+                
+                
+                <span class="level-item has-text-grey">
+                    
+                    
+                    11 分钟 读完 (大约 1694 个字)
+                </span>
+                
+            </div>
+        </div>
+        
+        <h1 class="title is-size-3 is-size-4-mobile has-text-weight-normal">
+            
+                Numpy &amp; Pandas &amp; Matplotilb部分API操作
+            
+        </h1>
+        <div class="content">
+            <h2 id="Numpy"><a href="#Numpy" class="headerlink" title="Numpy"></a>Numpy</h2><h3 id="导入"><a href="#导入" class="headerlink" title="导入"></a>导入</h3><p><code>import numpy as np</code></p>
+<h3 id="API"><a href="#API" class="headerlink" title="API"></a>API</h3><h4 id="创建数组"><a href="#创建数组" class="headerlink" title="创建数组"></a>创建数组</h4><figure class="highlight python hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br></pre></td><td class="code"><pre><span class="line">np.array([<span class="hljs-number">10</span>, <span class="hljs-number">11</span>, <span class="hljs-number">12</span>, <span class="hljs-number">13</span>])</span><br><span class="line"><span class="hljs-comment"># [10 11 12 13]</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">np.array([<span class="hljs-number">10</span>, <span class="hljs-number">11</span>, <span class="hljs-number">12</span>, <span class="hljs-number">13</span>, <span class="hljs-number">14</span> ,<span class="hljs-number">15</span>]).reshape([<span class="hljs-number">2</span>,<span class="hljs-number">3</span>])</span><br><span class="line"><span class="hljs-comment"># [</span></span><br><span class="line"><span class="hljs-comment">#   [10 11 12]</span></span><br><span class="line"><span class="hljs-comment">#   [13 14 15]</span></span><br><span class="line"><span class="hljs-comment"># ]</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">np.array([[<span class="hljs-number">1</span>, <span class="hljs-number">2</span>], [<span class="hljs-number">3</span>, <span class="hljs-number">4</span>]])</span><br><span class="line"><span class="hljs-comment"># [</span></span><br><span class="line"><span class="hljs-comment">#   [1 2]</span></span><br><span class="line"><span class="hljs-comment">#   [3 4]</span></span><br><span class="line"><span class="hljs-comment"># ]</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">np.arange(<span class="hljs-number">4</span>)</span><br><span class="line"><span class="hljs-comment"># [0 1 2 3]</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">np.arange(<span class="hljs-number">2</span>, <span class="hljs-number">6</span>)</span><br><span class="line"><span class="hljs-comment"># [2 3 4 5]</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">np.arange(<span class="hljs-number">4</span>).reshape([<span class="hljs-number">2</span>,<span class="hljs-number">2</span>])</span><br><span class="line"><span class="hljs-comment"># [</span></span><br><span class="line"><span class="hljs-comment">#   [0 1]</span></span><br><span class="line"><span class="hljs-comment">#   [2 3]</span></span><br><span class="line"><span class="hljs-comment"># ]</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">np.random.random([<span class="hljs-number">2</span>,<span class="hljs-number">3</span>])</span><br><span class="line"><span class="hljs-comment"># [</span></span><br><span class="line"><span class="hljs-comment">#   [ 0.00136044  0.46854718  0.59149907]</span></span><br><span class="line"><span class="hljs-comment">#   [ 0.75636339  0.18204628  0.53191402]</span></span><br><span class="line"><span class="hljs-comment"># ]</span></span><br></pre></td></tr></table></figure>
+<a id="more"></a>
+<h4 id="求值"><a href="#求值" class="headerlink" title="求值"></a>求值</h4><figure class="highlight python hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br></pre></td><td class="code"><pre><span class="line">arr = np.array([<span class="hljs-number">10</span>, <span class="hljs-number">11</span>, <span class="hljs-number">12</span>, <span class="hljs-number">13</span>, <span class="hljs-number">14</span> ,<span class="hljs-number">15</span>]).reshape([<span class="hljs-number">2</span>,<span class="hljs-number">3</span>])</span><br><span class="line"><span class="hljs-comment"># [</span></span><br><span class="line"><span class="hljs-comment">#   [10 11 12]</span></span><br><span class="line"><span class="hljs-comment">#   [13 14 15]</span></span><br><span class="line"><span class="hljs-comment"># ]</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="hljs-comment"># 总数</span></span><br><span class="line">np.sum(arr, axis=<span class="hljs-number">0</span>)</span><br><span class="line"><span class="hljs-comment"># [23 25 27]</span></span><br><span class="line">np.sum(arr, axis=<span class="hljs-number">1</span>)</span><br><span class="line"><span class="hljs-comment"># [33 42]</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="hljs-comment"># 最小数</span></span><br><span class="line">np.min(arr, axis=<span class="hljs-number">0</span>)</span><br><span class="line"><span class="hljs-comment"># [10 11 12]</span></span><br><span class="line">np.min(arr, axis=<span class="hljs-number">1</span>)</span><br><span class="line"><span class="hljs-comment"># [10 13]</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="hljs-comment"># 最大数</span></span><br><span class="line">np.max(arr, axis=<span class="hljs-number">0</span>)</span><br><span class="line"><span class="hljs-comment"># [13 14 15]</span></span><br><span class="line">np.max(arr, axis=<span class="hljs-number">1</span>)</span><br><span class="line"><span class="hljs-comment"># [12 15]</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="hljs-comment"># 最大/小值得索引值</span></span><br><span class="line">np.argmin(arr)</span><br><span class="line"><span class="hljs-comment"># 0 0是索引</span></span><br><span class="line">np.argmax(arr)</span><br><span class="line"><span class="hljs-comment"># 5 5是索引</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="hljs-comment"># 平均值</span></span><br><span class="line">arr.mean()</span><br><span class="line"><span class="hljs-comment"># np.mean(arr)</span></span><br><span class="line"><span class="hljs-comment"># 12.5</span></span><br><span class="line">np.average(arr)</span><br><span class="line"><span class="hljs-comment"># 12.5</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="hljs-comment"># 逐步增加</span></span><br><span class="line">np.cumsum(arr)</span><br><span class="line"><span class="hljs-comment"># [10 21 33 46 60 75]</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="hljs-comment"># 相差</span></span><br><span class="line">np.diff(arr)</span><br><span class="line"><span class="hljs-comment"># [</span></span><br><span class="line"><span class="hljs-comment">#   [1 1]</span></span><br><span class="line"><span class="hljs-comment">#   [1 1]</span></span><br><span class="line"><span class="hljs-comment"># ]</span></span><br><span class="line"></span><br><span class="line"><span class="hljs-comment"># 替换</span></span><br><span class="line">np.clip(arr, <span class="hljs-number">11</span>, <span class="hljs-number">14</span>)</span><br><span class="line"><span class="hljs-comment"># [</span></span><br><span class="line"><span class="hljs-comment">#   [11 11 12]</span></span><br><span class="line"><span class="hljs-comment">#    [13 14 14]</span></span><br><span class="line"><span class="hljs-comment"># ]</span></span><br><span class="line"><span class="hljs-comment"># 小于11的数替换成11, 大于14的数替换成14, 其他数不变</span></span><br></pre></td></tr></table></figure>
+<h4 id="索引"><a href="#索引" class="headerlink" title="索引"></a>索引</h4><figure class="highlight python hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line">arr = np.arange(<span class="hljs-number">3</span>, <span class="hljs-number">15</span>).reshape([<span class="hljs-number">3</span>,<span class="hljs-number">4</span>])</span><br><span class="line"><span class="hljs-comment"># [</span></span><br><span class="line"><span class="hljs-comment">#   [ 3  4  5  6]</span></span><br><span class="line"><span class="hljs-comment">#   [ 7  8  9 10]</span></span><br><span class="line"><span class="hljs-comment">#   [11 12 13 14]</span></span><br><span class="line"><span class="hljs-comment"># ]</span></span><br><span class="line"></span><br><span class="line">arr[<span class="hljs-number">1</span>, <span class="hljs-number">1</span>]</span><br><span class="line"><span class="hljs-comment"># arr[1][1]</span></span><br><span class="line"><span class="hljs-comment"># 8</span></span><br><span class="line"></span><br><span class="line">arr[:, <span class="hljs-number">1</span>]</span><br><span class="line"><span class="hljs-comment"># [ 4 8 12]</span></span><br><span class="line"></span><br><span class="line">arr[<span class="hljs-number">1</span>, :]</span><br><span class="line"><span class="hljs-comment"># [ 7 8 9 10]</span></span><br><span class="line"></span><br><span class="line">arr[<span class="hljs-number">1</span>, <span class="hljs-number">1</span>:<span class="hljs-number">3</span>]</span><br><span class="line"><span class="hljs-comment"># [8 9]</span></span><br><span class="line"></span><br><span class="line">arr.flatten()</span><br><span class="line"><span class="hljs-comment"># [ 3  4  5  6  7  8  9 10 11 12 13 14]</span></span><br><span class="line"></span><br><span class="line"><span class="hljs-keyword">for</span> i <span class="hljs-keyword">in</span> arr.flat:</span><br><span class="line">  print(i)</span><br><span class="line"><span class="hljs-comment"># 每行打印出值。arr.flat是迭代器</span></span><br></pre></td></tr></table></figure>
+<h4 id="合并"><a href="#合并" class="headerlink" title="合并"></a>合并</h4><figure class="highlight python hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">A = np.array([<span class="hljs-number">1</span>, <span class="hljs-number">1</span>, <span class="hljs-number">1</span>])</span><br><span class="line">B = np.array([<span class="hljs-number">2</span>, <span class="hljs-number">2</span>, <span class="hljs-number">2</span>])</span><br><span class="line"></span><br><span class="line">np.vstack((A, B))</span><br><span class="line"><span class="hljs-comment"># [</span></span><br><span class="line"><span class="hljs-comment">#   [1 1 1]</span></span><br><span class="line"><span class="hljs-comment">#   [2 2 2]</span></span><br><span class="line"><span class="hljs-comment"># ]</span></span><br><span class="line">np.hstack((A, B))</span><br><span class="line"><span class="hljs-comment"># [1 1 1 2 2 2]</span></span><br></pre></td></tr></table></figure>
+<h4 id="分割"><a href="#分割" class="headerlink" title="分割"></a>分割</h4><figure class="highlight python hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">arr = np.arange(<span class="hljs-number">12</span>).reshape([<span class="hljs-number">3</span>,<span class="hljs-number">4</span>])</span><br><span class="line"><span class="hljs-comment"># [</span></span><br><span class="line"><span class="hljs-comment">#   [ 0  1  2  3]</span></span><br><span class="line"><span class="hljs-comment">#   [ 4  5  6  7]</span></span><br><span class="line"><span class="hljs-comment">#   [ 8  9 10 11]</span></span><br><span class="line"><span class="hljs-comment"># ]</span></span><br><span class="line"></span><br><span class="line">np.split(arr, <span class="hljs-number">2</span>, axis=<span class="hljs-number">1</span>)</span><br><span class="line"><span class="hljs-comment"># [array([</span></span><br><span class="line"><span class="hljs-comment">#   [0, 1],</span></span><br><span class="line"><span class="hljs-comment">#   [4, 5],</span></span><br><span class="line"><span class="hljs-comment">#   [8, 9]</span></span><br><span class="line"><span class="hljs-comment"># ]),</span></span><br><span class="line"><span class="hljs-comment"># array([</span></span><br><span class="line"><span class="hljs-comment">#   [ 2,  3],</span></span><br><span class="line"><span class="hljs-comment">#   [ 6,  7],</span></span><br><span class="line"><span class="hljs-comment">#   [10, 11]]</span></span><br><span class="line"><span class="hljs-comment"># )]</span></span><br></pre></td></tr></table></figure>
+<hr>
+<h2 id="Pandas"><a href="#Pandas" class="headerlink" title="Pandas"></a>Pandas</h2><h3 id="导入-1"><a href="#导入-1" class="headerlink" title="导入"></a>导入</h3><p><code>import pandas as pd</code></p>
+<h3 id="API-1"><a href="#API-1" class="headerlink" title="API"></a>API</h3><h4 id="创建列表"><a href="#创建列表" class="headerlink" title="创建列表"></a>创建列表</h4><figure class="highlight python hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br></pre></td><td class="code"><pre><span class="line">pd.Series([<span class="hljs-number">1</span>, <span class="hljs-number">3</span>, <span class="hljs-number">6</span>, np.nan, <span class="hljs-number">44</span>, <span class="hljs-number">1</span>])</span><br><span class="line"><span class="hljs-comment"># 0     1.0</span></span><br><span class="line"><span class="hljs-comment"># 1     3.0</span></span><br><span class="line"><span class="hljs-comment"># 2     6.0</span></span><br><span class="line"><span class="hljs-comment"># 3     NaN</span></span><br><span class="line"><span class="hljs-comment"># 4    44.0</span></span><br><span class="line"><span class="hljs-comment"># 5     1.0</span></span><br><span class="line"><span class="hljs-comment"># dtype: float64</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">pd.date_range(<span class="hljs-string">'20171108'</span>, periods=<span class="hljs-number">6</span>)</span><br><span class="line"><span class="hljs-comment"># DatetimeIndex(</span></span><br><span class="line"><span class="hljs-comment">#   ['2017-11-08', '2017-11-09', '2017-11-10', '2017-11-11','2017-11-12', '2017-11-13'],</span></span><br><span class="line"><span class="hljs-comment">#   dtype='datetime64[ns]', </span></span><br><span class="line"><span class="hljs-comment">#   freq='D'</span></span><br><span class="line"><span class="hljs-comment"># )</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">dates = pd.date_range(<span class="hljs-string">'20171108'</span>, periods=<span class="hljs-number">6</span>)</span><br><span class="line">pd.DataFrame(np.random.randn(<span class="hljs-number">6</span>, <span class="hljs-number">4</span>), index=dates, columns=[<span class="hljs-string">'a'</span>, <span class="hljs-string">'b'</span>, <span class="hljs-string">'c'</span>, <span class="hljs-string">'d'</span>])</span><br><span class="line"><span class="hljs-comment">#                    a         b         c         d</span></span><br><span class="line"><span class="hljs-comment"># 2017-11-08  0.644350  1.122020 -1.263401  0.163371</span></span><br><span class="line"><span class="hljs-comment"># 2017-11-09  0.573329 -0.242054 -0.342220  1.070905</span></span><br><span class="line"><span class="hljs-comment"># 2017-11-10  0.714291 -0.721509 -2.298672 -0.513572</span></span><br><span class="line"><span class="hljs-comment"># 2017-11-11 -0.614927  2.010482 -1.369179 -0.901276</span></span><br><span class="line"><span class="hljs-comment"># 2017-11-12  0.709672 -0.430620  1.070244 -2.308874</span></span><br><span class="line"><span class="hljs-comment"># 2017-11-13  1.284080  1.169807  1.668942  0.859300</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">pd.DataFrame(&#123;</span><br><span class="line">  <span class="hljs-string">'A'</span>: <span class="hljs-number">1.</span>,</span><br><span class="line">  <span class="hljs-string">'B'</span>: pd.Timestamp(<span class="hljs-string">'20171108'</span>),</span><br><span class="line">  <span class="hljs-string">'C'</span>: pd.Series(<span class="hljs-number">1</span>, index=list(range(<span class="hljs-number">4</span>)), dtype=<span class="hljs-string">'float32'</span>),</span><br><span class="line">  <span class="hljs-string">'D'</span>: np.array([<span class="hljs-number">3</span>] * <span class="hljs-number">4</span>, dtype=<span class="hljs-string">'int32'</span>),</span><br><span class="line">  <span class="hljs-string">'E'</span>: pd.Categorical([<span class="hljs-string">'test'</span>, <span class="hljs-string">'train'</span>, <span class="hljs-string">'test'</span>, <span class="hljs-string">'train'</span>]),</span><br><span class="line">  <span class="hljs-string">'F'</span>: <span class="hljs-string">'foo'</span></span><br><span class="line">&#125;)</span><br><span class="line"><span class="hljs-comment">#      A          B    C  D      E    F</span></span><br><span class="line"><span class="hljs-comment"># 0  1.0 2017-11-08  1.0  3   test  foo</span></span><br><span class="line"><span class="hljs-comment"># 1  1.0 2017-11-08  1.0  3  train  foo</span></span><br><span class="line"><span class="hljs-comment"># 2  1.0 2017-11-08  1.0  3   test  foo</span></span><br><span class="line"><span class="hljs-comment"># 3  1.0 2017-11-08  1.0  3  train  foo</span></span><br></pre></td></tr></table></figure>
+<h4 id="选择获取"><a href="#选择获取" class="headerlink" title="选择获取"></a>选择获取</h4><figure class="highlight python hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br></pre></td><td class="code"><pre><span class="line">datas = pd.DataFrame(&#123;</span><br><span class="line">  <span class="hljs-string">'A'</span>: <span class="hljs-number">1.</span>,</span><br><span class="line">  <span class="hljs-string">'B'</span>: pd.Timestamp(<span class="hljs-string">'20171108'</span>),</span><br><span class="line">  <span class="hljs-string">'C'</span>: pd.Series(<span class="hljs-number">1</span>, index=list(range(<span class="hljs-number">4</span>)), dtype=<span class="hljs-string">'float32'</span>),</span><br><span class="line">  <span class="hljs-string">'D'</span>: np.array([<span class="hljs-number">3</span>] * <span class="hljs-number">4</span>, dtype=<span class="hljs-string">'int32'</span>),</span><br><span class="line">  <span class="hljs-string">'E'</span>: pd.Categorical([<span class="hljs-string">'test'</span>, <span class="hljs-string">'train'</span>, <span class="hljs-string">'test'</span>, <span class="hljs-string">'train'</span>]),</span><br><span class="line">  <span class="hljs-string">'F'</span>: <span class="hljs-string">'foo'</span></span><br><span class="line">&#125;)</span><br><span class="line"><span class="hljs-comment">#     A          B    C  D      E    F</span></span><br><span class="line"><span class="hljs-comment"># 0  1.0 2017-11-08  1.0  3   test  foo</span></span><br><span class="line"><span class="hljs-comment"># 1  1.0 2017-11-08  1.0  3  train  foo</span></span><br><span class="line"><span class="hljs-comment"># 2  1.0 2017-11-08  1.0  3   test  foo</span></span><br><span class="line"><span class="hljs-comment"># 3  1.0 2017-11-08  1.0  3  train  foo</span></span><br><span class="line"></span><br><span class="line">datas.A</span><br><span class="line"><span class="hljs-comment"># datas['A']</span></span><br><span class="line"><span class="hljs-comment"># 0    1.0</span></span><br><span class="line"><span class="hljs-comment"># 1    1.0</span></span><br><span class="line"><span class="hljs-comment"># 2    1.0</span></span><br><span class="line"><span class="hljs-comment"># 3    1.0</span></span><br><span class="line"><span class="hljs-comment"># Name: A, dtype: float64</span></span><br><span class="line"></span><br><span class="line">datas[<span class="hljs-number">0</span>:<span class="hljs-number">3</span>]</span><br><span class="line"><span class="hljs-comment">#      A          B    C  D      E    F</span></span><br><span class="line"><span class="hljs-comment"># 0  1.0 2017-11-08  1.0  3   test  foo</span></span><br><span class="line"><span class="hljs-comment"># 1  1.0 2017-11-08  1.0  3  train  foo</span></span><br><span class="line"><span class="hljs-comment"># 2  1.0 2017-11-08  1.0  3   test  foo</span></span><br><span class="line"></span><br><span class="line">datas.loc[<span class="hljs-number">0</span>]</span><br><span class="line"><span class="hljs-comment"># 当index是类似'2017-11-8的时候', datas.loc['20171108']</span></span><br><span class="line"><span class="hljs-comment"># A                      1</span></span><br><span class="line"><span class="hljs-comment"># B    2017-11-08 00:00:00</span></span><br><span class="line"><span class="hljs-comment"># C                      1</span></span><br><span class="line"><span class="hljs-comment"># D                      3</span></span><br><span class="line"><span class="hljs-comment"># E                   test</span></span><br><span class="line"><span class="hljs-comment"># F                    foo</span></span><br><span class="line"><span class="hljs-comment"># Name: 0, dtype: object</span></span><br><span class="line"></span><br><span class="line">datas.loc[:,[<span class="hljs-string">'A'</span>, <span class="hljs-string">'B'</span>]]</span><br><span class="line"><span class="hljs-comment">#      A          B</span></span><br><span class="line"><span class="hljs-comment"># 0  1.0 2017-11-08</span></span><br><span class="line"><span class="hljs-comment"># 1  1.0 2017-11-08</span></span><br><span class="line"><span class="hljs-comment"># 2  1.0 2017-11-08</span></span><br><span class="line"><span class="hljs-comment"># 3  1.0 2017-11-08</span></span><br><span class="line"></span><br><span class="line">datas.loc[[<span class="hljs-number">1</span>, <span class="hljs-number">3</span>],[<span class="hljs-string">'A'</span>, <span class="hljs-string">'B'</span>]]</span><br><span class="line"><span class="hljs-comment">#      A          B</span></span><br><span class="line"><span class="hljs-comment"># 1  1.0 2017-11-08</span></span><br><span class="line"><span class="hljs-comment"># 3  1.0 2017-11-08</span></span><br><span class="line"></span><br><span class="line"><span class="hljs-comment"># icol是基于行号获取的, col是基于index获取的, ix是他们俩的混合(index、行号都可以)</span></span><br><span class="line"><span class="hljs-comment"># icol[1]</span></span><br><span class="line"><span class="hljs-comment"># ix[1]</span></span><br><span class="line"><span class="hljs-comment"># 当index为2017-11-08时, ix['20171108']</span></span><br><span class="line"></span><br><span class="line">datas[datas.E == <span class="hljs-string">'test'</span>]</span><br><span class="line"><span class="hljs-comment">#               A          B    C  D     E    F</span></span><br><span class="line"><span class="hljs-comment"># 2017-11-08  1.0 2017-11-08  1.0  3  test  foo</span></span><br><span class="line"><span class="hljs-comment"># 2017-11-10  1.0 2017-11-08  1.0  3  test  foo</span></span><br><span class="line"></span><br><span class="line">datas.index</span><br><span class="line"><span class="hljs-comment"># Int64Index([0, 1, 2, 3], dtype='int64')</span></span><br><span class="line"></span><br><span class="line">datas.columns</span><br><span class="line"><span class="hljs-comment"># Index([u'A', u'B', u'C', u'D', u'E', u'F'], dtype='object')</span></span><br><span class="line"></span><br><span class="line">datas.values</span><br><span class="line"><span class="hljs-comment"># array(</span></span><br><span class="line"><span class="hljs-comment"># [</span></span><br><span class="line"><span class="hljs-comment">#   [1.0, Timestamp('2017-11-08 00:00:00'), 1.0, 3, 'test', 'foo'],</span></span><br><span class="line"><span class="hljs-comment">#   [1.0, Timestamp('2017-11-08 00:00:00'), 1.0, 3, 'train', 'foo'],</span></span><br><span class="line"><span class="hljs-comment">#   [1.0, Timestamp('2017-11-08 00:00:00'), 1.0, 3, 'test', 'foo'],</span></span><br><span class="line"><span class="hljs-comment">#   [1.0, Timestamp('2017-11-08 00:00:00'), 1.0, 3, 'train', 'foo']</span></span><br><span class="line"><span class="hljs-comment"># ],</span></span><br><span class="line"><span class="hljs-comment"># dtype=object)</span></span><br></pre></td></tr></table></figure>
+<h4 id="排序"><a href="#排序" class="headerlink" title="排序"></a>排序</h4><figure class="highlight python hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line">datas.sort_index(axis=<span class="hljs-number">0</span>, ascending=<span class="hljs-keyword">False</span>)</span><br><span class="line"><span class="hljs-comment">#      F      E  D    C          B    A</span></span><br><span class="line"><span class="hljs-comment"># 0  foo   test  3  1.0 2017-11-08  1.0</span></span><br><span class="line"><span class="hljs-comment"># 1  foo  train  3  1.0 2017-11-08  1.0</span></span><br><span class="line"><span class="hljs-comment"># 2  foo   test  3  1.0 2017-11-08  1.0</span></span><br><span class="line"><span class="hljs-comment"># 3  foo  train  3  1.0 2017-11-08  1.0</span></span><br><span class="line"></span><br><span class="line">datas.sort_index(axis=<span class="hljs-number">0</span>, ascending=<span class="hljs-keyword">False</span>)</span><br><span class="line"><span class="hljs-comment">#      A          B    C  D      E    F</span></span><br><span class="line"><span class="hljs-comment"># 3  1.0 2017-11-08  1.0  3  train  foo</span></span><br><span class="line"><span class="hljs-comment"># 2  1.0 2017-11-08  1.0  3   test  foo</span></span><br><span class="line"><span class="hljs-comment"># 1  1.0 2017-11-08  1.0  3  train  foo</span></span><br><span class="line"><span class="hljs-comment"># 0  1.0 2017-11-08  1.0  3   test  foo</span></span><br><span class="line"></span><br><span class="line">datas.sort_values(by=<span class="hljs-string">'E'</span>)</span><br><span class="line"><span class="hljs-comment">#      A          B    C  D      E    F</span></span><br><span class="line"><span class="hljs-comment"># 0  1.0 2017-11-08  1.0  3   test  foo</span></span><br><span class="line"><span class="hljs-comment"># 2  1.0 2017-11-08  1.0  3   test  foo</span></span><br><span class="line"><span class="hljs-comment"># 1  1.0 2017-11-08  1.0  3  train  foo</span></span><br><span class="line"><span class="hljs-comment"># 3  1.0 2017-11-08  1.0  3  train  foo</span></span><br></pre></td></tr></table></figure>
+<h4 id="设置值"><a href="#设置值" class="headerlink" title="设置值"></a>设置值</h4><figure class="highlight python hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br></pre></td><td class="code"><pre><span class="line">datas = pd.DataFrame(&#123;</span><br><span class="line">  <span class="hljs-string">'A'</span>: pd.Series([<span class="hljs-number">1</span>, <span class="hljs-number">5</span>, <span class="hljs-string">'test'</span>, <span class="hljs-string">'foo'</span>], index=list(range(<span class="hljs-number">4</span>))),</span><br><span class="line">  <span class="hljs-string">'B'</span>: pd.Series([np.nan, <span class="hljs-number">1</span>, np.nan, <span class="hljs-string">'test'</span>], index=list(range(<span class="hljs-number">4</span>))),</span><br><span class="line">  <span class="hljs-string">'C'</span>: pd.Series(<span class="hljs-number">1</span>, index=list(range(<span class="hljs-number">4</span>)), dtype=<span class="hljs-string">'float32'</span>),</span><br><span class="line">&#125;)</span><br><span class="line"><span class="hljs-comment">#       A     B    C</span></span><br><span class="line"><span class="hljs-comment"># 0     1   NaN  1.0</span></span><br><span class="line"><span class="hljs-comment"># 1     5     1  1.0</span></span><br><span class="line"><span class="hljs-comment"># 2  test   NaN  1.0</span></span><br><span class="line"><span class="hljs-comment"># 3   foo  test  1.0</span></span><br><span class="line"></span><br><span class="line">datas.dropna(axis=<span class="hljs-number">0</span>, how=<span class="hljs-string">'any'</span>)</span><br><span class="line"><span class="hljs-comment"># 当axis是1时，则判断竖向里是否含有NaN的值</span></span><br><span class="line"><span class="hljs-comment"># how = 'any' || 'all' 默认是any</span></span><br><span class="line"><span class="hljs-comment"># 当是any的时候, 有一个值是NaN的时, 就删除这一行。</span></span><br><span class="line"><span class="hljs-comment"># 当时all的时候, 这一行全部为NaN时, 就删除这一行</span></span><br><span class="line"><span class="hljs-comment">#      A     B    C</span></span><br><span class="line"><span class="hljs-comment"># 1    5     1  1.0</span></span><br><span class="line"><span class="hljs-comment"># 3  foo  test  1.0</span></span><br><span class="line"></span><br><span class="line">datas.fillna(value=<span class="hljs-number">0</span>)</span><br><span class="line"><span class="hljs-comment">#       A     B    C</span></span><br><span class="line"><span class="hljs-comment"># 0     1     0  1.0</span></span><br><span class="line"><span class="hljs-comment"># 1     5     1  1.0</span></span><br><span class="line"><span class="hljs-comment"># 2  test     0  1.0</span></span><br><span class="line"><span class="hljs-comment"># 3   foo  test  1.0</span></span><br><span class="line"></span><br><span class="line">datas.isnull()</span><br><span class="line"><span class="hljs-comment">#        A      B      C</span></span><br><span class="line"><span class="hljs-comment"># 0  False   True  False</span></span><br><span class="line"><span class="hljs-comment"># 1  False  False  False</span></span><br><span class="line"><span class="hljs-comment"># 2  False   True  False</span></span><br><span class="line"><span class="hljs-comment"># 3  False  False  False</span></span><br><span class="line"></span><br><span class="line"><span class="hljs-comment"># 当数据特别大的时候, 或者只想判断是否有值是NaN的值时</span></span><br><span class="line"><span class="hljs-comment"># np.any(datas.isnull()) == True</span></span><br><span class="line"><span class="hljs-comment">#   当有值时NaN时, 将返回True</span></span><br></pre></td></tr></table></figure>
+<h4 id="导入导出"><a href="#导入导出" class="headerlink" title="导入导出"></a>导入导出</h4><figure class="highlight python hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">pd.read_csv(<span class="hljs-string">'***.csv'</span>,delimiter=<span class="hljs-string">','</span>,encoding=<span class="hljs-string">'utf-8'</span>,names=[<span class="hljs-string">'test1'</span>,<span class="hljs-string">'test2'</span>,<span class="hljs-string">'test3'</span>])</span><br><span class="line"><span class="hljs-comment"># 参数一：读取的目标文件</span></span><br><span class="line"><span class="hljs-comment"># 参数二：csv文件的分隔符</span></span><br><span class="line"><span class="hljs-comment"># 参数三：编码</span></span><br><span class="line"><span class="hljs-comment"># 参数四：设置列名</span></span><br><span class="line"></span><br><span class="line"><span class="hljs-comment">#           test1     test2          test3</span></span><br><span class="line"><span class="hljs-comment"># 0    2017-11-18       ABC        51315.0</span></span><br><span class="line"><span class="hljs-comment"># 1    2017-11-19       DEF         5659.0</span></span><br><span class="line"><span class="hljs-comment"># 2    2017-11-20       GHI         1599.0</span></span><br><span class="line"><span class="hljs-comment"># 3    2017-11-21       JKL         2224.0</span></span><br><span class="line"></span><br><span class="line">datas.to_csv(<span class="hljs-string">'**.csv'</span>)</span><br></pre></td></tr></table></figure>
+<p><img src="http://on7r0tqgu.bkt.clouddn.com/FhRJurrbSU5aEHqc8YCqGbe_4Jgt.png" alt=""></p>
+<h4 id="合并-1"><a href="#合并-1" class="headerlink" title="合并"></a>合并</h4><h5 id="concat"><a href="#concat" class="headerlink" title="concat"></a>concat</h5><figure class="highlight python hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br></pre></td><td class="code"><pre><span class="line">datas1 = pd.DataFrame(np.ones((<span class="hljs-number">3</span>, <span class="hljs-number">4</span>)) * <span class="hljs-number">0</span>, columns=[<span class="hljs-string">'a'</span>, <span class="hljs-string">'b'</span>, <span class="hljs-string">'c'</span>, <span class="hljs-string">'d'</span>])</span><br><span class="line"><span class="hljs-comment">#      a    b    c    d</span></span><br><span class="line"><span class="hljs-comment"># 0  0.0  0.0  0.0  0.0</span></span><br><span class="line"><span class="hljs-comment"># 1  0.0  0.0  0.0  0.0</span></span><br><span class="line"><span class="hljs-comment"># 2  0.0  0.0  0.0  0.0</span></span><br><span class="line"></span><br><span class="line">datas2 = pd.DataFrame(np.ones((<span class="hljs-number">3</span>, <span class="hljs-number">4</span>)) * <span class="hljs-number">1</span>, columns=[<span class="hljs-string">'a'</span>, <span class="hljs-string">'b'</span>, <span class="hljs-string">'c'</span>, <span class="hljs-string">'d'</span>])</span><br><span class="line"><span class="hljs-comment">#      a    b    c    d</span></span><br><span class="line"><span class="hljs-comment"># 0  1.0  1.0  1.0  1.0</span></span><br><span class="line"><span class="hljs-comment"># 1  1.0  1.0  1.0  1.0</span></span><br><span class="line"><span class="hljs-comment"># 2  1.0  1.0  1.0  1.0</span></span><br><span class="line"></span><br><span class="line">datas3 = pd.DataFrame(np.ones((<span class="hljs-number">3</span>, <span class="hljs-number">4</span>)) * <span class="hljs-number">2</span>, columns=[<span class="hljs-string">'a'</span>, <span class="hljs-string">'b'</span>, <span class="hljs-string">'c'</span>, <span class="hljs-string">'d'</span>])</span><br><span class="line"><span class="hljs-comment">#      a    b    c    d</span></span><br><span class="line"><span class="hljs-comment"># 0  2.0  2.0  2.0  2.0</span></span><br><span class="line"><span class="hljs-comment"># 1  2.0  2.0  2.0  2.0</span></span><br><span class="line"><span class="hljs-comment"># 2  2.0  2.0  2.0  2.0</span></span><br><span class="line"></span><br><span class="line">pd.concat([datas1, datas2, datas3], axis=<span class="hljs-number">0</span>, ignore_index=<span class="hljs-keyword">True</span>)</span><br><span class="line"><span class="hljs-comment">#      a    b    c    d</span></span><br><span class="line"><span class="hljs-comment"># 0  0.0  0.0  0.0  0.0</span></span><br><span class="line"><span class="hljs-comment"># 1  0.0  0.0  0.0  0.0</span></span><br><span class="line"><span class="hljs-comment"># 2  0.0  0.0  0.0  0.0</span></span><br><span class="line"><span class="hljs-comment"># 3  1.0  1.0  1.0  1.0</span></span><br><span class="line"><span class="hljs-comment"># 4  1.0  1.0  1.0  1.0</span></span><br><span class="line"><span class="hljs-comment"># 5  1.0  1.0  1.0  1.0</span></span><br><span class="line"><span class="hljs-comment"># 6  2.0  2.0  2.0  2.0</span></span><br><span class="line"><span class="hljs-comment"># 7  2.0  2.0  2.0  2.0</span></span><br><span class="line"><span class="hljs-comment"># 8  2.0  2.0  2.0  2.0</span></span><br><span class="line"></span><br><span class="line">pd.concat([datas1, datas2, datas3], axis=<span class="hljs-number">1</span>)</span><br><span class="line"><span class="hljs-comment">#      a    b    c    d    a    b    c    d    a    b    c    d</span></span><br><span class="line"><span class="hljs-comment"># 0  0.0  0.0  0.0  0.0  1.0  1.0  1.0  1.0  2.0  2.0  2.0  2.0</span></span><br><span class="line"><span class="hljs-comment"># 1  0.0  0.0  0.0  0.0  1.0  1.0  1.0  1.0  2.0  2.0  2.0  2.0</span></span><br><span class="line"><span class="hljs-comment"># 2  0.0  0.0  0.0  0.0  1.0  1.0  1.0  1.0  2.0  2.0  2.0  2.0</span></span><br></pre></td></tr></table></figure>
+<h6 id="concat-部分参数"><a href="#concat-部分参数" class="headerlink" title="concat 部分参数"></a>concat 部分参数</h6><blockquote>
+<p>在concat里, join的默认参数时outer</p>
+</blockquote>
+<figure class="highlight python hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br></pre></td><td class="code"><pre><span class="line">datas1 = pd.DataFrame(np.ones((<span class="hljs-number">3</span>, <span class="hljs-number">4</span>)) * <span class="hljs-number">0</span>, columns=[<span class="hljs-string">'a'</span>, <span class="hljs-string">'b'</span>, <span class="hljs-string">'c'</span>, <span class="hljs-string">'d'</span>], index=[<span class="hljs-number">1</span>, <span class="hljs-number">2</span>, <span class="hljs-number">3</span>])</span><br><span class="line"><span class="hljs-comment">#      a    b    c    d</span></span><br><span class="line"><span class="hljs-comment"># 1  0.0  0.0  0.0  0.0</span></span><br><span class="line"><span class="hljs-comment"># 2  0.0  0.0  0.0  0.0</span></span><br><span class="line"><span class="hljs-comment"># 3  0.0  0.0  0.0  0.0</span></span><br><span class="line"></span><br><span class="line">datas2 = pd.DataFrame(np.ones((<span class="hljs-number">3</span>, <span class="hljs-number">4</span>)) * <span class="hljs-number">1</span>, columns=[<span class="hljs-string">'b'</span>, <span class="hljs-string">'c'</span>, <span class="hljs-string">'d'</span>, <span class="hljs-string">'e'</span>], index=[<span class="hljs-number">2</span>, <span class="hljs-number">3</span>, <span class="hljs-number">4</span>])</span><br><span class="line"><span class="hljs-comment">#      b    c    d    e</span></span><br><span class="line"><span class="hljs-comment"># 2  1.0  1.0  1.0  1.0</span></span><br><span class="line"><span class="hljs-comment"># 3  1.0  1.0  1.0  1.0</span></span><br><span class="line"><span class="hljs-comment"># 4  1.0  1.0  1.0  1.0</span></span><br><span class="line"></span><br><span class="line">pd.concat([datas1, datas2], join=<span class="hljs-string">'outer'</span>)</span><br><span class="line"><span class="hljs-comment">#      a    b    c    d    e</span></span><br><span class="line"><span class="hljs-comment"># 1  0.0  0.0  0.0  0.0  NaN</span></span><br><span class="line"><span class="hljs-comment"># 2  0.0  0.0  0.0  0.0  NaN</span></span><br><span class="line"><span class="hljs-comment"># 3  0.0  0.0  0.0  0.0  NaN</span></span><br><span class="line"><span class="hljs-comment"># 2  NaN  1.0  1.0  1.0  1.0</span></span><br><span class="line"><span class="hljs-comment"># 3  NaN  1.0  1.0  1.0  1.0</span></span><br><span class="line"><span class="hljs-comment"># 4  NaN  1.0  1.0  1.0  1.0</span></span><br><span class="line"></span><br><span class="line">pd.concat([datas1, datas2], join=<span class="hljs-string">'inner'</span>)</span><br><span class="line"><span class="hljs-comment">#      b    c    d</span></span><br><span class="line"><span class="hljs-comment"># 1  0.0  0.0  0.0</span></span><br><span class="line"><span class="hljs-comment"># 2  0.0  0.0  0.0</span></span><br><span class="line"><span class="hljs-comment"># 3  0.0  0.0  0.0</span></span><br><span class="line"><span class="hljs-comment"># 2  1.0  1.0  1.0</span></span><br><span class="line"><span class="hljs-comment"># 3  1.0  1.0  1.0</span></span><br><span class="line"><span class="hljs-comment"># 4  1.0  1.0  1.0</span></span><br><span class="line"></span><br><span class="line">pd.concat([datas1, datas2], axis=<span class="hljs-number">1</span>, join_axes=[datas2.index])</span><br><span class="line"><span class="hljs-comment">#      a    b    c    d    b    c    d    e</span></span><br><span class="line"><span class="hljs-comment"># 2  0.0  0.0  0.0  0.0  1.0  1.0  1.0  1.0</span></span><br><span class="line"><span class="hljs-comment"># 3  0.0  0.0  0.0  0.0  1.0  1.0  1.0  1.0</span></span><br><span class="line"><span class="hljs-comment"># 4  NaN  NaN  NaN  NaN  1.0  1.0  1.0  1.0</span></span><br><span class="line"><span class="hljs-comment"># 如果没有join_axes值时:</span></span><br><span class="line"><span class="hljs-comment">#      a    b    c    d    b    c    d    e</span></span><br><span class="line"><span class="hljs-comment"># 1  0.0  0.0  0.0  0.0  NaN  NaN  NaN  NaN</span></span><br><span class="line"><span class="hljs-comment"># 2  0.0  0.0  0.0  0.0  1.0  1.0  1.0  1.0</span></span><br><span class="line"><span class="hljs-comment"># 3  0.0  0.0  0.0  0.0  1.0  1.0  1.0  1.0</span></span><br><span class="line"><span class="hljs-comment"># 4  NaN  NaN  NaN  NaN  1.0  1.0  1.0  1.0</span></span><br></pre></td></tr></table></figure>
+<h5 id="append"><a href="#append" class="headerlink" title="append"></a>append</h5><figure class="highlight python hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">datas1 = pd.DataFrame(np.ones((<span class="hljs-number">3</span>, <span class="hljs-number">4</span>)) * <span class="hljs-number">0</span>, columns=[<span class="hljs-string">'a'</span>, <span class="hljs-string">'b'</span>, <span class="hljs-string">'c'</span>, <span class="hljs-string">'d'</span>])</span><br><span class="line"><span class="hljs-comment">#      a    b    c    d</span></span><br><span class="line"><span class="hljs-comment"># 0  0.0  0.0  0.0  0.0</span></span><br><span class="line"><span class="hljs-comment"># 1  0.0  0.0  0.0  0.0</span></span><br><span class="line"><span class="hljs-comment"># 2  0.0  0.0  0.0  0.0</span></span><br><span class="line"></span><br><span class="line">datas2 = pd.Series([<span class="hljs-number">1</span>, <span class="hljs-number">2</span>, <span class="hljs-number">3</span>, <span class="hljs-number">4</span>], index=[<span class="hljs-string">'a'</span>, <span class="hljs-string">'b'</span>, <span class="hljs-string">'c'</span>, <span class="hljs-string">'d'</span>])</span><br><span class="line"><span class="hljs-comment"># a    1</span></span><br><span class="line"><span class="hljs-comment"># b    2</span></span><br><span class="line"><span class="hljs-comment"># c    3</span></span><br><span class="line"><span class="hljs-comment"># d    4</span></span><br><span class="line"><span class="hljs-comment"># dtype: int64</span></span><br><span class="line"></span><br><span class="line">datas1.append(datas2, ignore_index=<span class="hljs-keyword">True</span>)</span><br><span class="line"><span class="hljs-comment">#      a    b    c    d</span></span><br><span class="line"><span class="hljs-comment"># 0  0.0  0.0  0.0  0.0</span></span><br><span class="line"><span class="hljs-comment"># 1  0.0  0.0  0.0  0.0</span></span><br><span class="line"><span class="hljs-comment"># 2  0.0  0.0  0.0  0.0</span></span><br><span class="line"><span class="hljs-comment"># 3  1.0  2.0  3.0  4.0</span></span><br></pre></td></tr></table></figure>
+<h5 id="merge"><a href="#merge" class="headerlink" title="merge"></a>merge</h5><figure class="highlight python hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line">left = pd.DataFrame(&#123;</span><br><span class="line">  <span class="hljs-string">'key'</span>: [<span class="hljs-string">'k0'</span>, <span class="hljs-string">'k1'</span>, <span class="hljs-string">'k2'</span>, <span class="hljs-string">'k3'</span>],</span><br><span class="line">  <span class="hljs-string">'A'</span>: [<span class="hljs-string">'A0'</span>, <span class="hljs-string">'A1'</span>, <span class="hljs-string">'A2'</span>, <span class="hljs-string">'A3'</span>],</span><br><span class="line">  <span class="hljs-string">'B'</span>: [<span class="hljs-string">'B0'</span>, <span class="hljs-string">'B1'</span>, <span class="hljs-string">'B2'</span>, <span class="hljs-string">'B3'</span>]</span><br><span class="line">&#125;)</span><br><span class="line"><span class="hljs-comment">#     A   B key</span></span><br><span class="line"><span class="hljs-comment"># 0  A0  B0  k0</span></span><br><span class="line"><span class="hljs-comment"># 1  A1  B1  k1</span></span><br><span class="line"><span class="hljs-comment"># 2  A2  B2  k2</span></span><br><span class="line"><span class="hljs-comment"># 3  A3  B3  k3</span></span><br><span class="line"></span><br><span class="line">right = pd.DataFrame(&#123;</span><br><span class="line">  <span class="hljs-string">'key'</span>: [<span class="hljs-string">'k0'</span>, <span class="hljs-string">'k1'</span>, <span class="hljs-string">'k2'</span>, <span class="hljs-string">'k3'</span>],</span><br><span class="line">  <span class="hljs-string">'C'</span>: [<span class="hljs-string">'C0'</span>, <span class="hljs-string">'C1'</span>, <span class="hljs-string">'C2'</span>, <span class="hljs-string">'C3'</span>],</span><br><span class="line">  <span class="hljs-string">'D'</span>: [<span class="hljs-string">'D0'</span>, <span class="hljs-string">'D1'</span>, <span class="hljs-string">'D2'</span>, <span class="hljs-string">'D3'</span>]</span><br><span class="line">&#125;)</span><br><span class="line"><span class="hljs-comment">#     C   D key</span></span><br><span class="line"><span class="hljs-comment"># 0  C0  D0  k0</span></span><br><span class="line"><span class="hljs-comment"># 1  C1  D1  k1</span></span><br><span class="line"><span class="hljs-comment"># 2  C2  D2  k2</span></span><br><span class="line"><span class="hljs-comment"># 3  C3  D3  k3</span></span><br><span class="line"></span><br><span class="line">pd.merge(left, right, on=<span class="hljs-string">'key'</span>)</span><br><span class="line"><span class="hljs-comment">#     A   B key   C   D</span></span><br><span class="line"><span class="hljs-comment"># 0  A0  B0  k0  C0  D0</span></span><br><span class="line"><span class="hljs-comment"># 1  A1  B1  k1  C1  D1</span></span><br><span class="line"><span class="hljs-comment"># 2  A2  B2  k2  C2  D2</span></span><br><span class="line"><span class="hljs-comment"># 3  A3  B3  k3  C3  D3</span></span><br></pre></td></tr></table></figure>
+<figure class="highlight python hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br></pre></td><td class="code"><pre><span class="line">left = pd.DataFrame(&#123;</span><br><span class="line">  <span class="hljs-string">'key1'</span>: [<span class="hljs-string">'k0'</span>, <span class="hljs-string">'k0'</span>, <span class="hljs-string">'k1'</span>, <span class="hljs-string">'k2'</span>],</span><br><span class="line">  <span class="hljs-string">'key2'</span>: [<span class="hljs-string">'k0'</span>, <span class="hljs-string">'k1'</span>, <span class="hljs-string">'k0'</span>, <span class="hljs-string">'k1'</span>],</span><br><span class="line">  <span class="hljs-string">'A'</span>: [<span class="hljs-string">'A0'</span>, <span class="hljs-string">'A1'</span>, <span class="hljs-string">'A2'</span>, <span class="hljs-string">'A3'</span>],</span><br><span class="line">  <span class="hljs-string">'B'</span>: [<span class="hljs-string">'B0'</span>, <span class="hljs-string">'B1'</span>, <span class="hljs-string">'B2'</span>, <span class="hljs-string">'B3'</span>]</span><br><span class="line">&#125;)</span><br><span class="line"><span class="hljs-comment">#     A   B key1 key2</span></span><br><span class="line"><span class="hljs-comment"># 0  A0  B0   k0   k0</span></span><br><span class="line"><span class="hljs-comment"># 1  A1  B1   k0   k1</span></span><br><span class="line"><span class="hljs-comment"># 2  A2  B2   k1   k0</span></span><br><span class="line"><span class="hljs-comment"># 3  A3  B3   k2   k1</span></span><br><span class="line"></span><br><span class="line">right = pd.DataFrame(&#123;</span><br><span class="line">  <span class="hljs-string">'key1'</span>: [<span class="hljs-string">'k0'</span>, <span class="hljs-string">'k1'</span>, <span class="hljs-string">'k1'</span>, <span class="hljs-string">'k2'</span>],</span><br><span class="line">  <span class="hljs-string">'key2'</span>: [<span class="hljs-string">'k0'</span>, <span class="hljs-string">'k0'</span>, <span class="hljs-string">'k0'</span>, <span class="hljs-string">'k0'</span>],</span><br><span class="line">  <span class="hljs-string">'C'</span>: [<span class="hljs-string">'C0'</span>, <span class="hljs-string">'C1'</span>, <span class="hljs-string">'C2'</span>, <span class="hljs-string">'C3'</span>],</span><br><span class="line">  <span class="hljs-string">'D'</span>: [<span class="hljs-string">'D0'</span>, <span class="hljs-string">'D1'</span>, <span class="hljs-string">'D2'</span>, <span class="hljs-string">'D3'</span>]</span><br><span class="line">&#125;)</span><br><span class="line"><span class="hljs-comment">#     C   D key1 key2</span></span><br><span class="line"><span class="hljs-comment"># 0  C0  D0   k0   k0</span></span><br><span class="line"><span class="hljs-comment"># 1  C1  D1   k1   k0</span></span><br><span class="line"><span class="hljs-comment"># 2  C2  D2   k1   k0</span></span><br><span class="line"><span class="hljs-comment"># 3  C3  D3   k2   k0</span></span><br><span class="line"></span><br><span class="line">pd.merge(left, right, on=[<span class="hljs-string">'key1'</span>, <span class="hljs-string">'key2'</span>], how=<span class="hljs-string">'inner'</span>)</span><br><span class="line"><span class="hljs-comment"># how默认是inner</span></span><br><span class="line"><span class="hljs-comment">#     A   B key1 key2   C   D</span></span><br><span class="line"><span class="hljs-comment"># 0  A0  B0   k0   k0  C0  D0</span></span><br><span class="line"><span class="hljs-comment"># 1  A2  B2   k1   k0  C1  D1</span></span><br><span class="line"><span class="hljs-comment"># 2  A2  B2   k1   k0  C2  D2</span></span><br><span class="line"></span><br><span class="line">pd.merge(left, right, on=[<span class="hljs-string">'key1'</span>, <span class="hljs-string">'key2'</span>], how=<span class="hljs-string">'outer'</span>)</span><br><span class="line"><span class="hljs-comment">#      A    B key1 key2    C    D</span></span><br><span class="line"><span class="hljs-comment"># 0   A0   B0   k0   k0   C0   D0</span></span><br><span class="line"><span class="hljs-comment"># 1   A1   B1   k0   k1  NaN  NaN</span></span><br><span class="line"><span class="hljs-comment"># 2   A2   B2   k1   k0   C1   D1</span></span><br><span class="line"><span class="hljs-comment"># 3   A2   B2   k1   k0   C2   D2</span></span><br><span class="line"><span class="hljs-comment"># 4   A3   B3   k2   k1  NaN  NaN</span></span><br><span class="line"><span class="hljs-comment"># 5  NaN  NaN   k2   k0   C3   D3</span></span><br><span class="line"></span><br><span class="line">pd.merge(left, right, on=[<span class="hljs-string">'key1'</span>, <span class="hljs-string">'key2'</span>]. how=<span class="hljs-string">'right'</span>)</span><br><span class="line"><span class="hljs-comment">#      A    B key1 key2   C   D </span></span><br><span class="line"><span class="hljs-comment"># 0   A0   B0   k0   k0  C0  D0 </span></span><br><span class="line"><span class="hljs-comment"># 1   A2   B2   k1   k0  C1  D1 </span></span><br><span class="line"><span class="hljs-comment"># 2   A2   B2   k1   k0  C2  D2 </span></span><br><span class="line"><span class="hljs-comment"># 3  NaN  NaN   k2   k0  C3  D3</span></span><br><span class="line"></span><br><span class="line">pd.merge(left, right, on=[<span class="hljs-string">'key1'</span>, <span class="hljs-string">'key2'</span>], how=<span class="hljs-string">'left'</span>)</span><br><span class="line"><span class="hljs-comment">#     A   B key1 key2    C    D</span></span><br><span class="line"><span class="hljs-comment"># 0  A0  B0   k0   k0   C0   D0</span></span><br><span class="line"><span class="hljs-comment"># 1  A1  B1   k0   k1  NaN  NaN</span></span><br><span class="line"><span class="hljs-comment"># 2  A2  B2   k1   k0   C1   D1</span></span><br><span class="line"><span class="hljs-comment"># 3  A2  B2   k1   k0   C2   D2</span></span><br><span class="line"><span class="hljs-comment"># 4  A3  B3   k2   k1  NaN  NaN</span></span><br></pre></td></tr></table></figure>
+<hr>
+<h2 id="matplotilb"><a href="#matplotilb" class="headerlink" title="matplotilb"></a>matplotilb</h2><h3 id="导入-2"><a href="#导入-2" class="headerlink" title="导入"></a>导入</h3><p><code>import matplotlib.pyplot as plt</code></p>
+<h3 id="API-2"><a href="#API-2" class="headerlink" title="API"></a>API</h3><h4 id="plot"><a href="#plot" class="headerlink" title="plot"></a>plot</h4><figure class="highlight python hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">data = pd.Series(np.random.randn(<span class="hljs-number">1000</span>)) <span class="hljs-comment"># 随机1000个数</span></span><br><span class="line">data = data.cumsum() <span class="hljs-comment"># 累加</span></span><br><span class="line"><span class="hljs-comment"># 因为pandas本来就是一个数据，所以可以直接plot,</span></span><br><span class="line"><span class="hljs-comment"># 还有两种写法: plt.plot(x= , y = ) 或者 plt.plot([xxx, xxx], [yyy, yyy])</span></span><br><span class="line">data.plot()</span><br><span class="line">plt.rcParams[<span class="hljs-string">'font.sans-serif'</span>]=[<span class="hljs-string">'SimHei'</span>] <span class="hljs-comment"># 用来正常显示中文标签</span></span><br><span class="line">plt.rcParams[<span class="hljs-string">'axes.unicode_minus'</span>]=<span class="hljs-keyword">False</span> <span class="hljs-comment"># 用来正常显示负号</span></span><br><span class="line"><span class="hljs-comment"># linewidth线条的宽度</span></span><br><span class="line"><span class="hljs-comment"># linestyle线条风格(-实线 --破折线 -.点划线 :虚线 None说明都不画)</span></span><br><span class="line">plt.plot([<span class="hljs-number">1</span>,<span class="hljs-number">50</span>,<span class="hljs-number">100</span>],[<span class="hljs-number">1</span>,<span class="hljs-number">4</span>,<span class="hljs-number">9</span>], linewidth=<span class="hljs-number">2.5</span>, linestyle=<span class="hljs-string">'--'</span>, label=<span class="hljs-string">'lalala'</span>)</span><br><span class="line">plt.legend(loc=<span class="hljs-string">'upper left'</span>) <span class="hljs-comment"># 没有这句, 上面的label将不会显示</span></span><br><span class="line">plt.plot([<span class="hljs-number">1</span>,<span class="hljs-number">100</span>,<span class="hljs-number">200</span>],[<span class="hljs-number">1</span>,<span class="hljs-number">7</span>,<span class="hljs-number">9</span>]) <span class="hljs-comment"># 第三个数据</span></span><br><span class="line">plt.title(<span class="hljs-string">'Demo'</span>) <span class="hljs-comment"># 标题</span></span><br><span class="line">plt.xlabel(<span class="hljs-string">'xxx'</span>) <span class="hljs-comment"># x轴名称</span></span><br><span class="line">plt.ylabel(<span class="hljs-string">'yyy'</span>) <span class="hljs-comment"># y轴名称</span></span><br><span class="line">plt.text(<span class="hljs-number">60</span>, <span class="hljs-number">10</span>, <span class="hljs-string">u'说明文字'</span>) <span class="hljs-comment"># 说明文字</span></span><br><span class="line">plt.show()  <span class="hljs-comment"># 显示</span></span><br></pre></td></tr></table></figure>
+<p><img src="http://on7r0tqgu.bkt.clouddn.com/FsJ_DYXc73SJRqiiuuDJfW_prGB7.png" alt=""></p>
+<figure class="highlight python hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="hljs-comment">#  随机1000行4列的数字, 行数从0到999, 列表为A B C D</span></span><br><span class="line">data = pd.DataFrame(np.random.randn(<span class="hljs-number">1000</span>, <span class="hljs-number">4</span>),</span><br><span class="line">          index=np.arange(<span class="hljs-number">1000</span>),</span><br><span class="line">          columns=list(<span class="hljs-string">'ABCD'</span>))</span><br><span class="line">data = data.cumsum()  <span class="hljs-comment"># 累加</span></span><br><span class="line">data.plot()</span><br><span class="line">plt.show()</span><br></pre></td></tr></table></figure>
+<p><img src="http://on7r0tqgu.bkt.clouddn.com/Fp-jimPylCiXfqYpO4pw8ZDal_14.png" alt=""></p>
+<h4 id="其他图"><a href="#其他图" class="headerlink" title="其他图"></a>其他图</h4><h5 id="柱状图"><a href="#柱状图" class="headerlink" title="柱状图"></a>柱状图</h5><figure class="highlight python hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">plt.bar(left, height, width=<span class="hljs-number">0.8</span>)</span><br></pre></td></tr></table></figure>
+<h5 id="散点图"><a href="#散点图" class="headerlink" title="散点图"></a>散点图</h5><figure class="highlight python hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">plt.scatter(x,y)</span><br></pre></td></tr></table></figure>
+<h5 id="饼状图"><a href="#饼状图" class="headerlink" title="饼状图"></a>饼状图</h5><p><img src="http://on7r0tqgu.bkt.clouddn.com/FrXBC3oqO9Jv-K-2SFlTy3EKAv7z.png" alt=""></p>
+
+        </div>
+        
+        <div class="level is-size-7 is-uppercase">
+            <div class="level-start">
+                <div class="level-item">
+                    <span class="is-size-6 has-text-grey has-mr-7">#</span>
+                    <a class="has-link-grey -link" href="/tags/Python/">Python</a>
+                </div>
+            </div>
+        </div>
+        
+        
+        
+        
+<div class="sharethis-inline-share-buttons"></div>
+<script type="text/javascript" src="//platform-api.sharethis.com/js/sharethis.js#property=5c2a1d4fd02b6e0010eca6e3&amp;product=sticky-share-buttons" async="async"></script>
+
+        
+    </div>
+</div>
+
+
+
+<div class="card">
+    <div class="card-content">
+        <h3 class="menu-label has-text-centered">喜欢这篇文章？打赏一下作者吧</h3>
+        <div class="buttons is-centered">
+            
+                
+<a class="button is-info donate">
+    <span class="icon is-small">
+        <i class="fab fa-alipay"></i>
+    </span>
+    <span>支付宝</span>
+    <div class="qrcode"><img src="/images/alipay.jpg" alt="支付宝"></div>
+</a>
+
+                
+                
+<a class="button is-success donate">
+    <span class="icon is-small">
+        <i class="fab fa-weixin"></i>
+    </span>
+    <span>微信</span>
+    <div class="qrcode"><img src="/images/wechat.jpg" alt="微信"></div>
+</a>
+
+                
+                <!-- Visit https://www.paypal.com/donate/buttons/ to get your donate button -->
+
+<a class="button is-warning donate" onclick="document.getElementById(&#39;paypal-donate-form&#39;).submit()">
+    <span class="icon is-small">
+        <i class="fab fa-paypal"></i>
+    </span>
+    <span>Paypal</span>
+</a>
+<form action="https://www.paypal.com/cgi-bin/webscr" method="post" target="_blank" id="paypal-donate-form">
+    <input type="hidden" name="cmd" value="_donations">
+    <input type="hidden" name="business" value="158blackhole@gmail.com">
+    <input type="hidden" name="currency_code" value="USD">
+</form>
+
+                
+        </div>
+    </div>
+</div>
+
+
+
+<div class="card card-transparent">
+    <div class="level post-navigation is-flex-wrap is-mobile">
+        
+        <div class="level-start">
+            <a class="level level-item has-link-grey  article-nav-prev" href="/2018/01/06/add-unified-operation-extensions-to-promise/">
+                <i class="level-item fas fa-chevron-left"></i>
+                <span class="level-item">对Promise增加统一操作扩展</span>
+            </a>
+        </div>
+        
+        
+        <div class="level-end">
+            <a class="level level-item has-link-grey  article-nav-next" href="/2017/11/07/Koa-pm2-configuration/">
+                <span class="level-item">基于Vue+Koa的pm2配置</span>
+                <i class="level-item fas fa-chevron-right"></i>
+            </a>
+        </div>
+        
+    </div>
+</div>
+
+
+
+<div class="card">
+    <div class="card-content">
+        <h3 class="title is-5 has-text-weight-normal">评论</h3>
+        
+<script>
+    var disqus_config = function () {
+        this.page.url = 'http://bugs.cc/2017/11/12/numpy-pandas-mateplotilb-some-api/';
+        this.page.identifier = '2017/11/12/numpy-pandas-mateplotilb-some-api/';
+    };
+    (function() {
+        var d = document, s = d.createElement('script');  
+        s.src = '//' + 'blackhole-1' + '.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+    })();
+</script>
+
+<div id="disqus_thread">
+    
+    <noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+    </div>
+</div>
+</div>
+                
+
+
+
+
+<div class="column is-4-tablet is-4-desktop is-3-widescreen  has-order-1 column-left ">
+    
+        
+<div class="card widget">
+    <div class="card-content">
+        <nav class="level">
+            <div class="level-item has-text-centered">
+                <div>
+                    <img class="image is-128x128 has-mb-6" style="border-radius: 290486px;" src="/images/avatar.png" alt="Black-Hole">
+                    
+                    <p class="is-size-4 is-block">
+                        Black-Hole
+                    </p>
+                    
+                    
+                    <p class="is-size-6 is-block">
+                        一只已经结束异地恋的前端恋爱狗
+                    </p>
+                    
+                    
+                    <p class="is-size-6 is-flex is-flex-center has-text-grey">
+                        <i class="fas fa-map-marker-alt has-mr-7"></i>
+                        <span>ShangHai</span>
+                    </p>
+                    
+                </div>
+            </div>
+        </nav>
+        <nav class="level is-mobile">
+            <div class="level-item has-text-centered is-marginless">
+                <div>
+                    <p class="heading">
+                        文章
+                    </p>
+                    <p class="title has-text-weight-normal">
+                        17
+                    </p>
+                </div>
+            </div>
+            <div class="level-item has-text-centered is-marginless">
+                <div>
+                    <p class="heading">
+                        分类
+                    </p>
+                    <p class="title has-text-weight-normal">
+                        8
+                    </p>
+                </div>
+            </div>
+            <div class="level-item has-text-centered is-marginless">
+                <div>
+                    <p class="heading">
+                        标签
+                    </p>
+                    <p class="title has-text-weight-normal">
+                        21
+                    </p>
+                </div>
+            </div>
+        </nav>
+        <div class="level">
+            <a class="level-item button is-link is-rounded" href="https://github.com/BlackHole1">
+                关注我</a>
+        </div>
+        
+        
+        <div class="level is-mobile">
+            
+            <a class="level-item button is-white is-marginless" target="_blank" title="Github" href="https://github.com/BlackHole1">
+                
+                <i class="fab fa-github"></i>
+                
+            </a>
+            
+            <a class="level-item button is-white is-marginless" target="_blank" title="Weibo" href="http://weibo.com/comelove">
+                
+                <i class="fab fa-weibo"></i>
+                
+            </a>
+            
+            <a class="level-item button is-white is-marginless" target="_blank" title="Twitter" href="https://twitter.com/Free_BlackHole">
+                
+                <i class="fab fa-twitter"></i>
+                
+            </a>
+            
+            <a class="level-item button is-white is-marginless" target="_blank" title="Npm" href="https://www.npmjs.com/~black_hole">
+                
+                <i class="fab fa-npm"></i>
+                
+            </a>
+            
+        </div>
+        
+    </div>
+</div>
+    
+        
+    
+        
+
+<div class="card widget">
+    <div class="card-content">
+        <div class="menu">
+        <h3 class="menu-label">
+            链接
+        </h3>
+        <ul class="menu-list">
+        
+            <li>
+                <a class="level is-mobile" href="https://github.com/alo7" target="_blank">
+                    <span class="level-left">
+                        <span class="level-item">Alo7 Inc</span>
+                    </span>
+                    <span class="level-right">
+                        <span class="level-item tag">github.com</span>
+                    </span>
+                </a>
+            </li>
+        
+            <li>
+                <a class="level is-mobile" href="https://github.com/Web-Security-Automation" target="_blank">
+                    <span class="level-left">
+                        <span class="level-item">Web Security Automation</span>
+                    </span>
+                    <span class="level-right">
+                        <span class="level-item tag">github.com</span>
+                    </span>
+                </a>
+            </li>
+        
+            <li>
+                <a class="level is-mobile" href="https://github.com/Calibre-Node" target="_blank">
+                    <span class="level-left">
+                        <span class="level-item">Calibre Node</span>
+                    </span>
+                    <span class="level-right">
+                        <span class="level-item tag">github.com</span>
+                    </span>
+                </a>
+            </li>
+        
+            <li>
+                <a class="level is-mobile" href="https://github.com/proxyee-down-org" target="_blank">
+                    <span class="level-left">
+                        <span class="level-item">Proxyee Down Org</span>
+                    </span>
+                    <span class="level-right">
+                        <span class="level-item tag">github.com</span>
+                    </span>
+                </a>
+            </li>
+        
+            <li>
+                <a class="level is-mobile" href="https://github.com/deepwn" target="_blank">
+                    <span class="level-left">
+                        <span class="level-item">Deepwn</span>
+                    </span>
+                    <span class="level-right">
+                        <span class="level-item tag">github.com</span>
+                    </span>
+                </a>
+            </li>
+        
+        </ul>
+        </div>
+    </div>
+</div>
+
+
+    
+        
+<div class="card widget">
+    <div class="card-content">
+        <div class="menu">
+            <h3 class="menu-label">
+                分类
+            </h3>
+            <ul class="menu-list">
+            <li>
+        <a class="level is-marginless" href="/categories/Elasticsearch/">
+            <span class="level-start">
+                <span class="level-item">Elasticsearch</span>
+            </span>
+            <span class="level-end">
+                <span class="level-item tag">1</span>
+            </span>
+        </a></li><li>
+        <a class="level is-marginless" href="/categories/JavaScript/">
+            <span class="level-start">
+                <span class="level-item">JavaScript</span>
+            </span>
+            <span class="level-end">
+                <span class="level-item tag">4</span>
+            </span>
+        </a></li><li>
+        <a class="level is-marginless" href="/categories/Linux/">
+            <span class="level-start">
+                <span class="level-item">Linux</span>
+            </span>
+            <span class="level-end">
+                <span class="level-item tag">1</span>
+            </span>
+        </a></li><li>
+        <a class="level is-marginless" href="/categories/NodeJs/">
+            <span class="level-start">
+                <span class="level-item">NodeJs</span>
+            </span>
+            <span class="level-end">
+                <span class="level-item tag">1</span>
+            </span>
+        </a></li><li>
+        <a class="level is-marginless" href="/categories/Python/">
+            <span class="level-start">
+                <span class="level-item">Python</span>
+            </span>
+            <span class="level-end">
+                <span class="level-item tag">1</span>
+            </span>
+        </a></li><li>
+        <a class="level is-marginless" href="/categories/Virtualization/">
+            <span class="level-start">
+                <span class="level-item">Virtualization</span>
+            </span>
+            <span class="level-end">
+                <span class="level-item tag">1</span>
+            </span>
+        </a></li><li>
+        <a class="level is-marginless" href="/categories/Web-Security/">
+            <span class="level-start">
+                <span class="level-item">Web Security</span>
+            </span>
+            <span class="level-end">
+                <span class="level-item tag">7</span>
+            </span>
+        </a></li><li>
+        <a class="level is-marginless" href="/categories/Wireless-Security/">
+            <span class="level-start">
+                <span class="level-item">Wireless Security</span>
+            </span>
+            <span class="level-end">
+                <span class="level-item tag">1</span>
+            </span>
+        </a></li>
+            </ul>
+        </div>
+    </div>
+</div>
+    
+        
+<div class="card widget">
+    <div class="card-content">
+        <h3 class="menu-label">
+            标签云
+        </h3>
+        <a href="/tags/Axios/" style="font-size: 10px;">Axios</a> <a href="/tags/Browser-Plugin/" style="font-size: 10px;">Browser Plugin</a> <a href="/tags/CSRF/" style="font-size: 13.33px;">CSRF</a> <a href="/tags/DSL/" style="font-size: 10px;">DSL</a> <a href="/tags/Elasticsearch/" style="font-size: 10px;">Elasticsearch</a> <a href="/tags/Electron/" style="font-size: 10px;">Electron</a> <a href="/tags/JavaScript/" style="font-size: 16.67px;">JavaScript</a> <a href="/tags/Kibana/" style="font-size: 10px;">Kibana</a> <a href="/tags/Koa/" style="font-size: 10px;">Koa</a> <a href="/tags/Linux/" style="font-size: 10px;">Linux</a> <a href="/tags/Markdown/" style="font-size: 10px;">Markdown</a> <a href="/tags/NodeJs/" style="font-size: 10px;">NodeJs</a> <a href="/tags/Promise/" style="font-size: 10px;">Promise</a> <a href="/tags/Python/" style="font-size: 10px;">Python</a> <a href="/tags/React/" style="font-size: 10px;">React</a> <a href="/tags/Virtualization/" style="font-size: 10px;">Virtualization</a> <a href="/tags/Vue/" style="font-size: 13.33px;">Vue</a> <a href="/tags/WAF/" style="font-size: 10px;">WAF</a> <a href="/tags/Web-Security/" style="font-size: 20px;">Web Security</a> <a href="/tags/Wireless-Security/" style="font-size: 10px;">Wireless Security</a> <a href="/tags/XSS/" style="font-size: 13.33px;">XSS</a>
+    </div>
+</div>
+
+    
+    
+        <div class="column-right-shadow is-hidden-widescreen ">
+        
+            
+<div class="card widget">
+    <div class="card-content">
+        <h3 class="menu-label">
+            最新文章
+        </h3>
+        
+        <article class="media">
+            
+            <a href="/2018/12/30/reading-notes-from-lucene-to-elasticsearch-full-text-search/" class="media-left">
+                <p class="image is-64x64">
+                    <img class="thumbnail" src="/images/thumbnail/globalworming_43986209_2220823381486696_8628271851625393205_n.jpg" alt="读书笔记：从Lucene到Elasticsearch:全文检索实战">
+                </p>
+            </a>
+            
+            <div class="media-content">
+                <div class="content">
+                    <div><time class="has-text-grey is-size-7 is-uppercase" datetime="2018-12-30T14:52:05.000Z">2018-12-30</time></div>
+                    <a href="/2018/12/30/reading-notes-from-lucene-to-elasticsearch-full-text-search/" class="has-link-black-ter is-size-6">读书笔记：从Lucene到Elasticsearch:全文检索实战</a>
+                    <p class="is-size-7 is-uppercase">
+                        <a class="has-link-grey -link" href="/categories/Elasticsearch/">Elasticsearch</a>
+                    </p>
+                </div>
+            </div>
+        </article>
+        
+        <article class="media">
+            
+            <a href="/2018/08/24/javaScript-integration-sentry/" class="media-left">
+                <p class="image is-64x64">
+                    <img class="thumbnail" src="/images/thumbnail/portrait-of-deer-in-forest-at-sunset.jpg" alt="JavaScript集成Sentry">
+                </p>
+            </a>
+            
+            <div class="media-content">
+                <div class="content">
+                    <div><time class="has-text-grey is-size-7 is-uppercase" datetime="2018-08-24T01:16:33.000Z">2018-08-24</time></div>
+                    <a href="/2018/08/24/javaScript-integration-sentry/" class="has-link-black-ter is-size-6">JavaScript集成Sentry</a>
+                    <p class="is-size-7 is-uppercase">
+                        <a class="has-link-grey -link" href="/categories/JavaScript/">JavaScript</a>
+                    </p>
+                </div>
+            </div>
+        </article>
+        
+        <article class="media">
+            
+            <a href="/2018/04/14/analyz-the-axios-source-to-find-out-why-you-cant-use-all-and-spread-methods/" class="media-left">
+                <p class="image is-64x64">
+                    <img class="thumbnail" src="/images/thumbnail/parisexplorer_43915379_1186317334867380_3406866474572309396_n.jpg" alt="分析axios源码来找出无法使用all和spread等方法的原因">
+                </p>
+            </a>
+            
+            <div class="media-content">
+                <div class="content">
+                    <div><time class="has-text-grey is-size-7 is-uppercase" datetime="2018-04-14T05:37:29.000Z">2018-04-14</time></div>
+                    <a href="/2018/04/14/analyz-the-axios-source-to-find-out-why-you-cant-use-all-and-spread-methods/" class="has-link-black-ter is-size-6">分析axios源码来找出无法使用all和spread等方法的原因</a>
+                    <p class="is-size-7 is-uppercase">
+                        <a class="has-link-grey -link" href="/categories/JavaScript/">JavaScript</a>
+                    </p>
+                </div>
+            </div>
+        </article>
+        
+        <article class="media">
+            
+            <a href="/2018/04/12/simplemde-realizes-some-thoughts-on-drag-and-drop-and-paste-function/" class="media-left">
+                <p class="image is-64x64">
+                    <img class="thumbnail" src="/images/thumbnail/punkodelish_43018283_328080891311441_4977042715385938518_n.jpg" alt="基于vue-simplemde实现图片拖拽、粘贴功能的一些思考">
+                </p>
+            </a>
+            
+            <div class="media-content">
+                <div class="content">
+                    <div><time class="has-text-grey is-size-7 is-uppercase" datetime="2018-04-12T03:00:12.000Z">2018-04-12</time></div>
+                    <a href="/2018/04/12/simplemde-realizes-some-thoughts-on-drag-and-drop-and-paste-function/" class="has-link-black-ter is-size-6">基于vue-simplemde实现图片拖拽、粘贴功能的一些思考</a>
+                    <p class="is-size-7 is-uppercase">
+                        <a class="has-link-grey -link" href="/categories/JavaScript/">JavaScript</a>
+                    </p>
+                </div>
+            </div>
+        </article>
+        
+        <article class="media">
+            
+            <a href="/2018/01/23/run-qcow2-image-in-vmware/" class="media-left">
+                <p class="image is-64x64">
+                    <img class="thumbnail" src="/images/thumbnail/pexels-photo-1183434.jpeg" alt="在vmware里运行qcow2镜像">
+                </p>
+            </a>
+            
+            <div class="media-content">
+                <div class="content">
+                    <div><time class="has-text-grey is-size-7 is-uppercase" datetime="2018-01-23T01:12:31.000Z">2018-01-23</time></div>
+                    <a href="/2018/01/23/run-qcow2-image-in-vmware/" class="has-link-black-ter is-size-6">在vmware里运行qcow2镜像</a>
+                    <p class="is-size-7 is-uppercase">
+                        <a class="has-link-grey -link" href="/categories/Virtualization/">Virtualization</a>
+                    </p>
+                </div>
+            </div>
+        </article>
+        
+    </div>
+</div>
+
+        
+            <div class="card widget">
+    <div class="card-content">
+        <div class="menu">
+        <h3 class="menu-label">
+            归档
+        </h3>
+        <ul class="menu-list">
+        
+        <li>
+            <a class="level is-marginless" href="/archives/2018/12/">
+                <span class="level-start">
+                    <span class="level-item">十二月 2018</span>
+                </span>
+                <span class="level-end">
+                    <span class="level-item tag">1</span>
+                </span>
+            </a>
+        </li>
+        
+        <li>
+            <a class="level is-marginless" href="/archives/2018/08/">
+                <span class="level-start">
+                    <span class="level-item">八月 2018</span>
+                </span>
+                <span class="level-end">
+                    <span class="level-item tag">1</span>
+                </span>
+            </a>
+        </li>
+        
+        <li>
+            <a class="level is-marginless" href="/archives/2018/04/">
+                <span class="level-start">
+                    <span class="level-item">四月 2018</span>
+                </span>
+                <span class="level-end">
+                    <span class="level-item tag">2</span>
+                </span>
+            </a>
+        </li>
+        
+        <li>
+            <a class="level is-marginless" href="/archives/2018/01/">
+                <span class="level-start">
+                    <span class="level-item">一月 2018</span>
+                </span>
+                <span class="level-end">
+                    <span class="level-item tag">2</span>
+                </span>
+            </a>
+        </li>
+        
+        <li>
+            <a class="level is-marginless" href="/archives/2017/11/">
+                <span class="level-start">
+                    <span class="level-item">十一月 2017</span>
+                </span>
+                <span class="level-end">
+                    <span class="level-item tag">2</span>
+                </span>
+            </a>
+        </li>
+        
+        <li>
+            <a class="level is-marginless" href="/archives/2017/03/">
+                <span class="level-start">
+                    <span class="level-item">三月 2017</span>
+                </span>
+                <span class="level-end">
+                    <span class="level-item tag">1</span>
+                </span>
+            </a>
+        </li>
+        
+        <li>
+            <a class="level is-marginless" href="/archives/2016/12/">
+                <span class="level-start">
+                    <span class="level-item">十二月 2016</span>
+                </span>
+                <span class="level-end">
+                    <span class="level-item tag">2</span>
+                </span>
+            </a>
+        </li>
+        
+        <li>
+            <a class="level is-marginless" href="/archives/2016/10/">
+                <span class="level-start">
+                    <span class="level-item">十月 2016</span>
+                </span>
+                <span class="level-end">
+                    <span class="level-item tag">1</span>
+                </span>
+            </a>
+        </li>
+        
+        <li>
+            <a class="level is-marginless" href="/archives/2016/08/">
+                <span class="level-start">
+                    <span class="level-item">八月 2016</span>
+                </span>
+                <span class="level-end">
+                    <span class="level-item tag">2</span>
+                </span>
+            </a>
+        </li>
+        
+        <li>
+            <a class="level is-marginless" href="/archives/2016/06/">
+                <span class="level-start">
+                    <span class="level-item">六月 2016</span>
+                </span>
+                <span class="level-end">
+                    <span class="level-item tag">2</span>
+                </span>
+            </a>
+        </li>
+        
+        <li>
+            <a class="level is-marginless" href="/archives/2016/05/">
+                <span class="level-start">
+                    <span class="level-item">五月 2016</span>
+                </span>
+                <span class="level-end">
+                    <span class="level-item tag">1</span>
+                </span>
+            </a>
+        </li>
+        
+        </ul>
+        </div>
+    </div>
+</div>
+        
+            <div class="card widget">
+    <div class="card-content">
+        <div class="menu">
+            <h3 class="menu-label">
+                标签
+            </h3>
+            <ul class="menu-list">
+                
+                <li>
+                    <a class="level is-marginless" href="/tags/Axios/">
+                        <span class="level-start">
+                            <span class="level-item">Axios</span>
+                        </span>
+                        <span class="level-end">
+                            <span class="level-item tag">1</span>
+                        </span>
+                    </a>
+                </li>
+                
+                <li>
+                    <a class="level is-marginless" href="/tags/Browser-Plugin/">
+                        <span class="level-start">
+                            <span class="level-item">Browser Plugin</span>
+                        </span>
+                        <span class="level-end">
+                            <span class="level-item tag">1</span>
+                        </span>
+                    </a>
+                </li>
+                
+                <li>
+                    <a class="level is-marginless" href="/tags/CSRF/">
+                        <span class="level-start">
+                            <span class="level-item">CSRF</span>
+                        </span>
+                        <span class="level-end">
+                            <span class="level-item tag">2</span>
+                        </span>
+                    </a>
+                </li>
+                
+                <li>
+                    <a class="level is-marginless" href="/tags/DSL/">
+                        <span class="level-start">
+                            <span class="level-item">DSL</span>
+                        </span>
+                        <span class="level-end">
+                            <span class="level-item tag">1</span>
+                        </span>
+                    </a>
+                </li>
+                
+                <li>
+                    <a class="level is-marginless" href="/tags/Elasticsearch/">
+                        <span class="level-start">
+                            <span class="level-item">Elasticsearch</span>
+                        </span>
+                        <span class="level-end">
+                            <span class="level-item tag">1</span>
+                        </span>
+                    </a>
+                </li>
+                
+                <li>
+                    <a class="level is-marginless" href="/tags/Electron/">
+                        <span class="level-start">
+                            <span class="level-item">Electron</span>
+                        </span>
+                        <span class="level-end">
+                            <span class="level-item tag">1</span>
+                        </span>
+                    </a>
+                </li>
+                
+                <li>
+                    <a class="level is-marginless" href="/tags/JavaScript/">
+                        <span class="level-start">
+                            <span class="level-item">JavaScript</span>
+                        </span>
+                        <span class="level-end">
+                            <span class="level-item tag">5</span>
+                        </span>
+                    </a>
+                </li>
+                
+                <li>
+                    <a class="level is-marginless" href="/tags/Kibana/">
+                        <span class="level-start">
+                            <span class="level-item">Kibana</span>
+                        </span>
+                        <span class="level-end">
+                            <span class="level-item tag">1</span>
+                        </span>
+                    </a>
+                </li>
+                
+                <li>
+                    <a class="level is-marginless" href="/tags/Koa/">
+                        <span class="level-start">
+                            <span class="level-item">Koa</span>
+                        </span>
+                        <span class="level-end">
+                            <span class="level-item tag">1</span>
+                        </span>
+                    </a>
+                </li>
+                
+                <li>
+                    <a class="level is-marginless" href="/tags/Linux/">
+                        <span class="level-start">
+                            <span class="level-item">Linux</span>
+                        </span>
+                        <span class="level-end">
+                            <span class="level-item tag">1</span>
+                        </span>
+                    </a>
+                </li>
+                
+                <li>
+                    <a class="level is-marginless" href="/tags/Markdown/">
+                        <span class="level-start">
+                            <span class="level-item">Markdown</span>
+                        </span>
+                        <span class="level-end">
+                            <span class="level-item tag">1</span>
+                        </span>
+                    </a>
+                </li>
+                
+                <li>
+                    <a class="level is-marginless" href="/tags/NodeJs/">
+                        <span class="level-start">
+                            <span class="level-item">NodeJs</span>
+                        </span>
+                        <span class="level-end">
+                            <span class="level-item tag">1</span>
+                        </span>
+                    </a>
+                </li>
+                
+                <li>
+                    <a class="level is-marginless" href="/tags/Promise/">
+                        <span class="level-start">
+                            <span class="level-item">Promise</span>
+                        </span>
+                        <span class="level-end">
+                            <span class="level-item tag">1</span>
+                        </span>
+                    </a>
+                </li>
+                
+                <li>
+                    <a class="level is-marginless" href="/tags/Python/">
+                        <span class="level-start">
+                            <span class="level-item">Python</span>
+                        </span>
+                        <span class="level-end">
+                            <span class="level-item tag">1</span>
+                        </span>
+                    </a>
+                </li>
+                
+                <li>
+                    <a class="level is-marginless" href="/tags/React/">
+                        <span class="level-start">
+                            <span class="level-item">React</span>
+                        </span>
+                        <span class="level-end">
+                            <span class="level-item tag">1</span>
+                        </span>
+                    </a>
+                </li>
+                
+                <li>
+                    <a class="level is-marginless" href="/tags/Virtualization/">
+                        <span class="level-start">
+                            <span class="level-item">Virtualization</span>
+                        </span>
+                        <span class="level-end">
+                            <span class="level-item tag">1</span>
+                        </span>
+                    </a>
+                </li>
+                
+                <li>
+                    <a class="level is-marginless" href="/tags/Vue/">
+                        <span class="level-start">
+                            <span class="level-item">Vue</span>
+                        </span>
+                        <span class="level-end">
+                            <span class="level-item tag">2</span>
+                        </span>
+                    </a>
+                </li>
+                
+                <li>
+                    <a class="level is-marginless" href="/tags/WAF/">
+                        <span class="level-start">
+                            <span class="level-item">WAF</span>
+                        </span>
+                        <span class="level-end">
+                            <span class="level-item tag">1</span>
+                        </span>
+                    </a>
+                </li>
+                
+                <li>
+                    <a class="level is-marginless" href="/tags/Web-Security/">
+                        <span class="level-start">
+                            <span class="level-item">Web Security</span>
+                        </span>
+                        <span class="level-end">
+                            <span class="level-item tag">7</span>
+                        </span>
+                    </a>
+                </li>
+                
+                <li>
+                    <a class="level is-marginless" href="/tags/Wireless-Security/">
+                        <span class="level-start">
+                            <span class="level-item">Wireless Security</span>
+                        </span>
+                        <span class="level-end">
+                            <span class="level-item tag">1</span>
+                        </span>
+                    </a>
+                </li>
+                
+                <li>
+                    <a class="level is-marginless" href="/tags/XSS/">
+                        <span class="level-start">
+                            <span class="level-item">XSS</span>
+                        </span>
+                        <span class="level-end">
+                            <span class="level-item tag">2</span>
+                        </span>
+                    </a>
+                </li>
+                
+            </ul>
+        </div>
+    </div>
+</div>
+        
+        </div>
+    
+</div>
+
+                
+
+
+
+
+<div class="column is-4-tablet is-4-desktop is-3-widescreen is-hidden-touch is-hidden-desktop-only has-order-3 column-right ">
+    
+        
+<div class="card widget">
+    <div class="card-content">
+        <h3 class="menu-label">
+            最新文章
+        </h3>
+        
+        <article class="media">
+            
+            <a href="/2018/12/30/reading-notes-from-lucene-to-elasticsearch-full-text-search/" class="media-left">
+                <p class="image is-64x64">
+                    <img class="thumbnail" src="/images/thumbnail/globalworming_43986209_2220823381486696_8628271851625393205_n.jpg" alt="读书笔记：从Lucene到Elasticsearch:全文检索实战">
+                </p>
+            </a>
+            
+            <div class="media-content">
+                <div class="content">
+                    <div><time class="has-text-grey is-size-7 is-uppercase" datetime="2018-12-30T14:52:05.000Z">2018-12-30</time></div>
+                    <a href="/2018/12/30/reading-notes-from-lucene-to-elasticsearch-full-text-search/" class="has-link-black-ter is-size-6">读书笔记：从Lucene到Elasticsearch:全文检索实战</a>
+                    <p class="is-size-7 is-uppercase">
+                        <a class="has-link-grey -link" href="/categories/Elasticsearch/">Elasticsearch</a>
+                    </p>
+                </div>
+            </div>
+        </article>
+        
+        <article class="media">
+            
+            <a href="/2018/08/24/javaScript-integration-sentry/" class="media-left">
+                <p class="image is-64x64">
+                    <img class="thumbnail" src="/images/thumbnail/portrait-of-deer-in-forest-at-sunset.jpg" alt="JavaScript集成Sentry">
+                </p>
+            </a>
+            
+            <div class="media-content">
+                <div class="content">
+                    <div><time class="has-text-grey is-size-7 is-uppercase" datetime="2018-08-24T01:16:33.000Z">2018-08-24</time></div>
+                    <a href="/2018/08/24/javaScript-integration-sentry/" class="has-link-black-ter is-size-6">JavaScript集成Sentry</a>
+                    <p class="is-size-7 is-uppercase">
+                        <a class="has-link-grey -link" href="/categories/JavaScript/">JavaScript</a>
+                    </p>
+                </div>
+            </div>
+        </article>
+        
+        <article class="media">
+            
+            <a href="/2018/04/14/analyz-the-axios-source-to-find-out-why-you-cant-use-all-and-spread-methods/" class="media-left">
+                <p class="image is-64x64">
+                    <img class="thumbnail" src="/images/thumbnail/parisexplorer_43915379_1186317334867380_3406866474572309396_n.jpg" alt="分析axios源码来找出无法使用all和spread等方法的原因">
+                </p>
+            </a>
+            
+            <div class="media-content">
+                <div class="content">
+                    <div><time class="has-text-grey is-size-7 is-uppercase" datetime="2018-04-14T05:37:29.000Z">2018-04-14</time></div>
+                    <a href="/2018/04/14/analyz-the-axios-source-to-find-out-why-you-cant-use-all-and-spread-methods/" class="has-link-black-ter is-size-6">分析axios源码来找出无法使用all和spread等方法的原因</a>
+                    <p class="is-size-7 is-uppercase">
+                        <a class="has-link-grey -link" href="/categories/JavaScript/">JavaScript</a>
+                    </p>
+                </div>
+            </div>
+        </article>
+        
+        <article class="media">
+            
+            <a href="/2018/04/12/simplemde-realizes-some-thoughts-on-drag-and-drop-and-paste-function/" class="media-left">
+                <p class="image is-64x64">
+                    <img class="thumbnail" src="/images/thumbnail/punkodelish_43018283_328080891311441_4977042715385938518_n.jpg" alt="基于vue-simplemde实现图片拖拽、粘贴功能的一些思考">
+                </p>
+            </a>
+            
+            <div class="media-content">
+                <div class="content">
+                    <div><time class="has-text-grey is-size-7 is-uppercase" datetime="2018-04-12T03:00:12.000Z">2018-04-12</time></div>
+                    <a href="/2018/04/12/simplemde-realizes-some-thoughts-on-drag-and-drop-and-paste-function/" class="has-link-black-ter is-size-6">基于vue-simplemde实现图片拖拽、粘贴功能的一些思考</a>
+                    <p class="is-size-7 is-uppercase">
+                        <a class="has-link-grey -link" href="/categories/JavaScript/">JavaScript</a>
+                    </p>
+                </div>
+            </div>
+        </article>
+        
+        <article class="media">
+            
+            <a href="/2018/01/23/run-qcow2-image-in-vmware/" class="media-left">
+                <p class="image is-64x64">
+                    <img class="thumbnail" src="/images/thumbnail/pexels-photo-1183434.jpeg" alt="在vmware里运行qcow2镜像">
+                </p>
+            </a>
+            
+            <div class="media-content">
+                <div class="content">
+                    <div><time class="has-text-grey is-size-7 is-uppercase" datetime="2018-01-23T01:12:31.000Z">2018-01-23</time></div>
+                    <a href="/2018/01/23/run-qcow2-image-in-vmware/" class="has-link-black-ter is-size-6">在vmware里运行qcow2镜像</a>
+                    <p class="is-size-7 is-uppercase">
+                        <a class="has-link-grey -link" href="/categories/Virtualization/">Virtualization</a>
+                    </p>
+                </div>
+            </div>
+        </article>
+        
+    </div>
+</div>
+
+    
+        <div class="card widget">
+    <div class="card-content">
+        <div class="menu">
+        <h3 class="menu-label">
+            归档
+        </h3>
+        <ul class="menu-list">
+        
+        <li>
+            <a class="level is-marginless" href="/archives/2018/12/">
+                <span class="level-start">
+                    <span class="level-item">十二月 2018</span>
+                </span>
+                <span class="level-end">
+                    <span class="level-item tag">1</span>
+                </span>
+            </a>
+        </li>
+        
+        <li>
+            <a class="level is-marginless" href="/archives/2018/08/">
+                <span class="level-start">
+                    <span class="level-item">八月 2018</span>
+                </span>
+                <span class="level-end">
+                    <span class="level-item tag">1</span>
+                </span>
+            </a>
+        </li>
+        
+        <li>
+            <a class="level is-marginless" href="/archives/2018/04/">
+                <span class="level-start">
+                    <span class="level-item">四月 2018</span>
+                </span>
+                <span class="level-end">
+                    <span class="level-item tag">2</span>
+                </span>
+            </a>
+        </li>
+        
+        <li>
+            <a class="level is-marginless" href="/archives/2018/01/">
+                <span class="level-start">
+                    <span class="level-item">一月 2018</span>
+                </span>
+                <span class="level-end">
+                    <span class="level-item tag">2</span>
+                </span>
+            </a>
+        </li>
+        
+        <li>
+            <a class="level is-marginless" href="/archives/2017/11/">
+                <span class="level-start">
+                    <span class="level-item">十一月 2017</span>
+                </span>
+                <span class="level-end">
+                    <span class="level-item tag">2</span>
+                </span>
+            </a>
+        </li>
+        
+        <li>
+            <a class="level is-marginless" href="/archives/2017/03/">
+                <span class="level-start">
+                    <span class="level-item">三月 2017</span>
+                </span>
+                <span class="level-end">
+                    <span class="level-item tag">1</span>
+                </span>
+            </a>
+        </li>
+        
+        <li>
+            <a class="level is-marginless" href="/archives/2016/12/">
+                <span class="level-start">
+                    <span class="level-item">十二月 2016</span>
+                </span>
+                <span class="level-end">
+                    <span class="level-item tag">2</span>
+                </span>
+            </a>
+        </li>
+        
+        <li>
+            <a class="level is-marginless" href="/archives/2016/10/">
+                <span class="level-start">
+                    <span class="level-item">十月 2016</span>
+                </span>
+                <span class="level-end">
+                    <span class="level-item tag">1</span>
+                </span>
+            </a>
+        </li>
+        
+        <li>
+            <a class="level is-marginless" href="/archives/2016/08/">
+                <span class="level-start">
+                    <span class="level-item">八月 2016</span>
+                </span>
+                <span class="level-end">
+                    <span class="level-item tag">2</span>
+                </span>
+            </a>
+        </li>
+        
+        <li>
+            <a class="level is-marginless" href="/archives/2016/06/">
+                <span class="level-start">
+                    <span class="level-item">六月 2016</span>
+                </span>
+                <span class="level-end">
+                    <span class="level-item tag">2</span>
+                </span>
+            </a>
+        </li>
+        
+        <li>
+            <a class="level is-marginless" href="/archives/2016/05/">
+                <span class="level-start">
+                    <span class="level-item">五月 2016</span>
+                </span>
+                <span class="level-end">
+                    <span class="level-item tag">1</span>
+                </span>
+            </a>
+        </li>
+        
+        </ul>
+        </div>
+    </div>
+</div>
+    
+        <div class="card widget">
+    <div class="card-content">
+        <div class="menu">
+            <h3 class="menu-label">
+                标签
+            </h3>
+            <ul class="menu-list">
+                
+                <li>
+                    <a class="level is-marginless" href="/tags/Axios/">
+                        <span class="level-start">
+                            <span class="level-item">Axios</span>
+                        </span>
+                        <span class="level-end">
+                            <span class="level-item tag">1</span>
+                        </span>
+                    </a>
+                </li>
+                
+                <li>
+                    <a class="level is-marginless" href="/tags/Browser-Plugin/">
+                        <span class="level-start">
+                            <span class="level-item">Browser Plugin</span>
+                        </span>
+                        <span class="level-end">
+                            <span class="level-item tag">1</span>
+                        </span>
+                    </a>
+                </li>
+                
+                <li>
+                    <a class="level is-marginless" href="/tags/CSRF/">
+                        <span class="level-start">
+                            <span class="level-item">CSRF</span>
+                        </span>
+                        <span class="level-end">
+                            <span class="level-item tag">2</span>
+                        </span>
+                    </a>
+                </li>
+                
+                <li>
+                    <a class="level is-marginless" href="/tags/DSL/">
+                        <span class="level-start">
+                            <span class="level-item">DSL</span>
+                        </span>
+                        <span class="level-end">
+                            <span class="level-item tag">1</span>
+                        </span>
+                    </a>
+                </li>
+                
+                <li>
+                    <a class="level is-marginless" href="/tags/Elasticsearch/">
+                        <span class="level-start">
+                            <span class="level-item">Elasticsearch</span>
+                        </span>
+                        <span class="level-end">
+                            <span class="level-item tag">1</span>
+                        </span>
+                    </a>
+                </li>
+                
+                <li>
+                    <a class="level is-marginless" href="/tags/Electron/">
+                        <span class="level-start">
+                            <span class="level-item">Electron</span>
+                        </span>
+                        <span class="level-end">
+                            <span class="level-item tag">1</span>
+                        </span>
+                    </a>
+                </li>
+                
+                <li>
+                    <a class="level is-marginless" href="/tags/JavaScript/">
+                        <span class="level-start">
+                            <span class="level-item">JavaScript</span>
+                        </span>
+                        <span class="level-end">
+                            <span class="level-item tag">5</span>
+                        </span>
+                    </a>
+                </li>
+                
+                <li>
+                    <a class="level is-marginless" href="/tags/Kibana/">
+                        <span class="level-start">
+                            <span class="level-item">Kibana</span>
+                        </span>
+                        <span class="level-end">
+                            <span class="level-item tag">1</span>
+                        </span>
+                    </a>
+                </li>
+                
+                <li>
+                    <a class="level is-marginless" href="/tags/Koa/">
+                        <span class="level-start">
+                            <span class="level-item">Koa</span>
+                        </span>
+                        <span class="level-end">
+                            <span class="level-item tag">1</span>
+                        </span>
+                    </a>
+                </li>
+                
+                <li>
+                    <a class="level is-marginless" href="/tags/Linux/">
+                        <span class="level-start">
+                            <span class="level-item">Linux</span>
+                        </span>
+                        <span class="level-end">
+                            <span class="level-item tag">1</span>
+                        </span>
+                    </a>
+                </li>
+                
+                <li>
+                    <a class="level is-marginless" href="/tags/Markdown/">
+                        <span class="level-start">
+                            <span class="level-item">Markdown</span>
+                        </span>
+                        <span class="level-end">
+                            <span class="level-item tag">1</span>
+                        </span>
+                    </a>
+                </li>
+                
+                <li>
+                    <a class="level is-marginless" href="/tags/NodeJs/">
+                        <span class="level-start">
+                            <span class="level-item">NodeJs</span>
+                        </span>
+                        <span class="level-end">
+                            <span class="level-item tag">1</span>
+                        </span>
+                    </a>
+                </li>
+                
+                <li>
+                    <a class="level is-marginless" href="/tags/Promise/">
+                        <span class="level-start">
+                            <span class="level-item">Promise</span>
+                        </span>
+                        <span class="level-end">
+                            <span class="level-item tag">1</span>
+                        </span>
+                    </a>
+                </li>
+                
+                <li>
+                    <a class="level is-marginless" href="/tags/Python/">
+                        <span class="level-start">
+                            <span class="level-item">Python</span>
+                        </span>
+                        <span class="level-end">
+                            <span class="level-item tag">1</span>
+                        </span>
+                    </a>
+                </li>
+                
+                <li>
+                    <a class="level is-marginless" href="/tags/React/">
+                        <span class="level-start">
+                            <span class="level-item">React</span>
+                        </span>
+                        <span class="level-end">
+                            <span class="level-item tag">1</span>
+                        </span>
+                    </a>
+                </li>
+                
+                <li>
+                    <a class="level is-marginless" href="/tags/Virtualization/">
+                        <span class="level-start">
+                            <span class="level-item">Virtualization</span>
+                        </span>
+                        <span class="level-end">
+                            <span class="level-item tag">1</span>
+                        </span>
+                    </a>
+                </li>
+                
+                <li>
+                    <a class="level is-marginless" href="/tags/Vue/">
+                        <span class="level-start">
+                            <span class="level-item">Vue</span>
+                        </span>
+                        <span class="level-end">
+                            <span class="level-item tag">2</span>
+                        </span>
+                    </a>
+                </li>
+                
+                <li>
+                    <a class="level is-marginless" href="/tags/WAF/">
+                        <span class="level-start">
+                            <span class="level-item">WAF</span>
+                        </span>
+                        <span class="level-end">
+                            <span class="level-item tag">1</span>
+                        </span>
+                    </a>
+                </li>
+                
+                <li>
+                    <a class="level is-marginless" href="/tags/Web-Security/">
+                        <span class="level-start">
+                            <span class="level-item">Web Security</span>
+                        </span>
+                        <span class="level-end">
+                            <span class="level-item tag">7</span>
+                        </span>
+                    </a>
+                </li>
+                
+                <li>
+                    <a class="level is-marginless" href="/tags/Wireless-Security/">
+                        <span class="level-start">
+                            <span class="level-item">Wireless Security</span>
+                        </span>
+                        <span class="level-end">
+                            <span class="level-item tag">1</span>
+                        </span>
+                    </a>
+                </li>
+                
+                <li>
+                    <a class="level is-marginless" href="/tags/XSS/">
+                        <span class="level-start">
+                            <span class="level-item">XSS</span>
+                        </span>
+                        <span class="level-end">
+                            <span class="level-item tag">2</span>
+                        </span>
+                    </a>
+                </li>
+                
+            </ul>
+        </div>
+    </div>
+</div>
+    
+    
+</div>
+
+            </div>
+        </div>
+    </section>
+    <footer class="footer">
+    <div class="container">
+        <div class="level">
+            <div class="level-start has-text-centered-mobile">
+                <a class="footer-logo is-block has-mb-6" href="/">
+                
+                    <img src="/images/logo.png" alt="Numpy &amp; Pandas &amp; Matplotilb部分API操作" height="28">
+                
+                </a>
+                <p class="is-size-7">
+                &copy; 2019 Black-Hole&nbsp;
+                Powered by <a href="http://hexo.io/" target="_blank">Hexo</a> & <a href="http://github.com/ppoffice/hexo-theme-icarus">Icarus</a>
+                </p>
+            </div>
+            <div class="level-end">
+            
+            </div>
+        </div>
+    </div>
+</footer>
+    <script src="https://cdn.jsdelivr.net/npm/jquery@3.3.1/dist/jquery.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/moment@2.22.2/min/moment-with-locales.min.js"></script>
+<script>moment.locale("zh-CN");</script>
+
+
+    
+    
+    
+    <script src="/js/animation.js"></script>
+    
+
+    
+    
+    
+    <script src="https://cdn.jsdelivr.net/npm/lightgallery@1.6.8/dist/js/lightgallery.min.js" defer></script>
+    <script src="https://cdn.jsdelivr.net/npm/justifiedGallery@3.7.0/dist/js/jquery.justifiedGallery.min.js" defer></script>
+    <script src="/js/gallery.js" defer></script>
+    
+
+    
+    
+
+<div id="outdated">
+    <h6>Your browser is out-of-date!</h6>
+    <p>Update your browser to view this website correctly. <a id="btnUpdateBrowser" href="http://outdatedbrowser.com/">Update
+            my browser now </a></p>
+    <p class="last"><a href="#" id="btnCloseUpdateBrowser" title="Close">&times;</a></p>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/outdatedbrowser@1.1.5/outdatedbrowser/outdatedbrowser.min.js" defer></script>
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        outdatedBrowser({
+            bgColor: '#f25648',
+            color: '#ffffff',
+            lowerThan: 'flex'
+        });
+    });
+</script>
+
+
+    
+    
+<script src="https://cdn.jsdelivr.net/npm/mathjax@2.7.5/unpacked/MathJax.js?config=TeX-MML-AM_CHTML" defer></script>
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    MathJax.Hub.Config({
+        'HTML-CSS': {matchFontHeight: false},
+        SVG: {matchFontHeight: false},
+        CommonHTML: {matchFontHeight: false}
+    });
+});
+</script>
+
+    
+    
+
+<a id="back-to-top" title="回到顶端" href="javascript:;">
+    <i class="fas fa-chevron-up"></i>
+</a>
+<script src="/js/back-to-top.js" defer></script>
+
+
+    
+    
+
+    
+    
+    
+    
+
+    
+    
+    
+    
+    
+    <script src="https://cdn.jsdelivr.net/npm/clipboard@2.0.4/dist/clipboard.min.js" defer></script>
+    <script src="/js/clipboard.js" defer></script>
+    
+
+    
+
+
+<script src="/js/main.js" defer></script>
+
+    
+    <div class="searchbox ins-search">
+    <div class="searchbox-container ins-search-container">
+        <div class="searchbox-input-wrapper">
+            <input type="text" class="searchbox-input ins-search-input" placeholder="想要查找什么...">
+            <span class="searchbox-close ins-close ins-selectable"><i class="fa fa-times-circle"></i></span>
+        </div>
+        <div class="searchbox-result-wrapper ins-section-wrapper">
+            <div class="ins-section-container"></div>
+        </div>
+    </div>
+</div>
+<script>
+    (function (window) {
+        var INSIGHT_CONFIG = {
+            TRANSLATION: {
+                POSTS: '文章',
+                PAGES: '页面',
+                CATEGORIES: '分类',
+                TAGS: '标签',
+                UNTITLED: '(无标题)',
+            },
+            CONTENT_URL: '/content.json',
+        };
+        window.INSIGHT_CONFIG = INSIGHT_CONFIG;
+    })(window);
+</script>
+<script src="/js/insight.js" defer></script>
+<link rel="stylesheet" href="/css/search.css">
+<link rel="stylesheet" href="/css/insight.css">
+    
+</body>
+</html>

@@ -1,0 +1,1809 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head><meta name="generator" content="Hexo 3.8.0">
+    <meta charset="utf-8">
+<title>自动化检测CSRF(第二篇) - Black-Hole&#39;s Blog</title>
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+
+
+    <meta name="description" content="0x00 前言： 上一篇只是大致说明整个思路和流程。本篇就详细说说如何检测CSRF。为什么不在上一篇中放出插件呢。是因为误报率确实是比较多，而且无法检测Referer。而本章，重点就说明“如何检测对方是否开启了Referer检测机制”。在我的认知范围内，这是首款检测Referer的工具(不知廉耻的笑了)。今天发现腾讯在2013年就做了类似的产品 (这就尴尬了..)，不过还好。而且思路和实现方法有所">
+<meta name="keywords" content="Web Security,CSRF">
+<meta property="og:type" content="article">
+<meta property="og:title" content="自动化检测CSRF(第二篇)">
+<meta property="og:url" content="http://bugs.cc/2016/06/23/automated-detection-of-CSRF-second-part/index.html">
+<meta property="og:site_name" content="Black-Hole&#39;s Blog">
+<meta property="og:description" content="0x00 前言： 上一篇只是大致说明整个思路和流程。本篇就详细说说如何检测CSRF。为什么不在上一篇中放出插件呢。是因为误报率确实是比较多，而且无法检测Referer。而本章，重点就说明“如何检测对方是否开启了Referer检测机制”。在我的认知范围内，这是首款检测Referer的工具(不知廉耻的笑了)。今天发现腾讯在2013年就做了类似的产品 (这就尴尬了..)，不过还好。而且思路和实现方法有所">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:image" content="http://7xppwd.com1.z0.glb.clouddn.com/CSRF2/img/1.png">
+<meta property="og:image" content="http://7xppwd.com1.z0.glb.clouddn.com/CSRF2/img/5.png">
+<meta property="og:image" content="http://7xppwd.com1.z0.glb.clouddn.com/CSRF2/img/3.png">
+<meta property="og:image" content="http://7xppwd.com1.z0.glb.clouddn.com/CSRF2/img/4.png">
+<meta property="og:image" content="http://7xppwd.com1.z0.glb.clouddn.com/CSRF2/img/6.png">
+<meta property="og:image" content="http://7xppwd.com1.z0.glb.clouddn.com/CSRF2/img/7.png">
+<meta property="og:image" content="http://7xppwd.com1.z0.glb.clouddn.com/CSRF2/img/8.png">
+<meta property="og:updated_time" content="2018-12-31T15:12:04.120Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="自动化检测CSRF(第二篇)">
+<meta name="twitter:description" content="0x00 前言： 上一篇只是大致说明整个思路和流程。本篇就详细说说如何检测CSRF。为什么不在上一篇中放出插件呢。是因为误报率确实是比较多，而且无法检测Referer。而本章，重点就说明“如何检测对方是否开启了Referer检测机制”。在我的认知范围内，这是首款检测Referer的工具(不知廉耻的笑了)。今天发现腾讯在2013年就做了类似的产品 (这就尴尬了..)，不过还好。而且思路和实现方法有所">
+<meta name="twitter:image" content="http://7xppwd.com1.z0.glb.clouddn.com/CSRF2/img/1.png">
+<meta name="twitter:creator" content="@Free_BlackHole">
+<meta name="twitter:site" content="https://twitter.com/Free_BlackHole">
+
+
+
+<link rel="alternative" href="/atom.xml" title="自动化检测CSRF(第二篇)" type="application/atom+xml">
+
+
+
+<link rel="icon" href="/images/favicon.ico">
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.7.2/css/bulma.css">
+<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.4.1/css/all.css">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Ubuntu:400,600|Source+Code+Pro">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/highlight.js@9.12.0/styles/atom-one-light.css">
+
+
+    
+    
+    
+    <style>body>.footer,body>.navbar,body>.section{opacity:0}</style>
+    
+
+    
+    
+    
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/lightgallery@1.6.8/dist/css/lightgallery.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/justifiedGallery@3.7.0/dist/css/justifiedGallery.min.css">
+    
+
+    
+    
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/outdatedbrowser@1.1.5/outdatedbrowser/outdatedbrowser.min.css">
+
+
+    
+    
+    
+    
+
+<link rel="stylesheet" href="/css/back-to-top.css">
+
+
+    
+    
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-90340553-1"></script>
+<script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+
+    gtag('config', 'UA-90340553-1');
+</script>
+
+
+    
+    
+    
+    
+
+    
+    
+<link rel="stylesheet" href="/css/progressbar.css">
+<script src="https://cdn.jsdelivr.net/npm/pace-js@1.0.2/pace.min.js"></script>
+
+    
+    
+    
+
+    
+
+
+<link rel="stylesheet" href="/css/style.css">
+</head>
+<body class="is-3-column">
+    <nav class="navbar navbar-main">
+    <div class="container">
+        <div class="navbar-brand is-flex-center">
+            <a class="navbar-item navbar-logo" href="/">
+            
+                <img src="/images/logo.png" alt="自动化检测CSRF(第二篇)" height="28">
+            
+            </a>
+        </div>
+        <div class="navbar-menu">
+            
+            <div class="navbar-start">
+                
+                <a class="navbar-item" href="/">Home</a>
+                
+                <a class="navbar-item" href="/archives">Archives</a>
+                
+                <a class="navbar-item" href="/categories">Categories</a>
+                
+                <a class="navbar-item" href="/tags">Tags</a>
+                
+                <a class="navbar-item" href="/friends">Friends</a>
+                
+                <a class="navbar-item" href="/todo">Todo</a>
+                
+                <a class="navbar-item" href="/about">About</a>
+                
+            </div>
+            
+            <div class="navbar-end">
+                
+                    
+                    
+                    <a class="navbar-item" target="_blank" title="GitHub" href="https://github.com/BlackHole1">
+                        
+                        <i class="fab fa-github"></i>
+                        
+                    </a>
+                    
+                
+                
+                
+                <a class="navbar-item search" title="搜索" href="javascript:;">
+                    <i class="fas fa-search"></i>
+                </a>
+                
+            </div>
+        </div>
+    </div>
+</nav>
+    
+    <section class="section">
+        <div class="container">
+            <div class="columns">
+                <div class="column is-8-tablet is-8-desktop is-6-widescreen has-order-2 column-main"><div class="card">
+    
+    <div class="card-image">
+        <span class="image is-7by1">
+            <img class="thumbnail" src="/images/thumbnail/globalworming_44513593_246457079368095_6574697324633366709_n.jpg" alt="自动化检测CSRF(第二篇)">
+        </span>
+    </div>
+    
+    <div class="card-content article ">
+        
+        <div class="level article-meta is-size-7 is-uppercase is-mobile is-overflow-x-auto">
+            <div class="level-left">
+                <time class="level-item has-text-grey" datetime="2016-06-23T15:49:34.000Z">2016-06-23</time>
+                
+                <div class="level-item">
+                <a class="has-link-grey -link" href="/categories/Web-Security/">Web Security</a>
+                </div>
+                
+                
+                <span class="level-item has-text-grey">
+                    
+                    
+                    20 分钟 读完 (大约 2952 个字)
+                </span>
+                
+            </div>
+        </div>
+        
+        <h1 class="title is-size-3 is-size-4-mobile has-text-weight-normal">
+            
+                自动化检测CSRF(第二篇)
+            
+        </h1>
+        <div class="content">
+            <h4 id="0x00-前言："><a href="#0x00-前言：" class="headerlink" title="0x00 前言："></a>0x00 前言：</h4><hr>
+<p>上一篇只是大致说明整个思路和流程。本篇就详细说说如何检测CSRF。为什么不在上一篇中放出插件呢。是因为误报率确实是比较多，而且无法检测Referer。而本章，重点就说明“如何检测对方是否开启了Referer检测机制”。在我的认知范围内，这是首款检测Referer的工具(不知廉耻的笑了)。今天发现腾讯在2013年就做了类似的<a href="https://security.tencent.com/index.php/blog/msg/24" target="_blank" rel="noopener">产品</a> (这就尴尬了..)，不过还好。而且思路和实现方法有所区别。本章说检测Referer，第三章说检测token机制的强化,让检测token的成功率达到80~90%以上(其实就是写第二篇的时候，忘记写了。推到第三章了….)。而且这些是腾讯产品所没有的撒。<br><a id="more"></a></p>
+<h4 id="0x01一些小的变化："><a href="#0x01一些小的变化：" class="headerlink" title="0x01一些小的变化："></a>0x01一些小的变化：</h4><hr>
+<p>之前的黑白名单列表<br><figure class="highlight javascript hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="hljs-keyword">var</span> placeholderFilterKeyword = [<span class="hljs-string">'跳'</span>,<span class="hljs-string">'搜'</span>,<span class="hljs-string">'查'</span>,<span class="hljs-string">'找'</span>,<span class="hljs-string">'登陆'</span>,<span class="hljs-string">'注册'</span>,<span class="hljs-string">'search'</span>];  <span class="hljs-comment">//无用表单黑名单，用于验证这个form表单有没有用（针对input验证）</span></span><br><span class="line"><span class="hljs-keyword">var</span> actionFilterKeyword = [<span class="hljs-string">'search'</span>,<span class="hljs-string">'find'</span>,<span class="hljs-string">'login'</span>,<span class="hljs-string">'reg'</span>];   <span class="hljs-comment">//无用表单黑名单，用于验证这个form表单有没有用（针对form表单验证）</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>现在的黑白名单列表：<br><figure class="highlight javascript hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="hljs-keyword">var</span> placeholderFilterKeyword = [<span class="hljs-string">'跳'</span>,<span class="hljs-string">'搜'</span>,<span class="hljs-string">'查'</span>,<span class="hljs-string">'找'</span>,<span class="hljs-string">'登陆'</span>,<span class="hljs-string">'注册'</span>,<span class="hljs-string">'search'</span>];</span><br><span class="line"><span class="hljs-keyword">var</span> actionFilterKeyword = [<span class="hljs-string">'search'</span>,<span class="hljs-string">'find'</span>,<span class="hljs-string">'login'</span>,<span class="hljs-string">'reg'</span>,<span class="hljs-string">"baidu.com"</span>,<span class="hljs-string">"google.com"</span>,<span class="hljs-string">"so.com"</span>,<span class="hljs-string">"bing.com"</span>,<span class="hljs-string">"soso.com"</span>,<span class="hljs-string">"sogou.com"</span>];</span><br></pre></td></tr></table></figure></p>
+<p>此处的代码，决定了整体插件检测时的误报率大体走向。你也可以自己修改来达到自我感觉不错的地步。</p>
+<p>现在的初始化变量：<br><figure class="highlight javascript hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="hljs-keyword">var</span> actionCache,actionPath;</span><br><span class="line"><span class="hljs-keyword">var</span> actionvParameter = <span class="hljs-string">""</span>;</span><br><span class="line"><span class="hljs-keyword">var</span> ajaxParameter = <span class="hljs-string">""</span>;</span><br></pre></td></tr></table></figure></p>
+<h4 id="0x02：插件的整体框架"><a href="#0x02：插件的整体框架" class="headerlink" title="0x02：插件的整体框架"></a>0x02：插件的整体框架</h4><hr>
+<p>因为Maxthon浏览器的API实在是太少，没有这些API我无法进行Referer检测，于是，检测CSRF插件，就不写Maxthon的插件了，下面是Chrome插件的框架：</p>
+<p><img src="http://7xppwd.com1.z0.glb.clouddn.com/CSRF2/img/1.png" alt=""></p>
+<blockquote>
+<p>icons 是存放插件图标的地方，我比较懒，直接使用AutoFindXSS插件的图标。</p>
+</blockquote>
+<blockquote>
+<p>background.html 是为了让我们修改插件的作用域，让我们可控，可以在Chrome的API中使用<code>jquery插件</code></p>
+</blockquote>
+<blockquote>
+<p>background.js 这里我们把它理解为后端程序，类似于服务端的存在。用于处理<code>base.js</code>文件的数据</p>
+</blockquote>
+<blockquote>
+<p>base.js 会在网站加载完成后调用。在<code>检测Referer</code>的时候，把数据传给<code>background.js</code>文件</p>
+</blockquote>
+<blockquote>
+<p>manifest.json Chrome插件的核心文件，用于配置插件参数。</p>
+</blockquote>
+<p>这里我先给大家看一下manifest.json文件的内容：<br><figure class="highlight json hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">  <span class="hljs-attr">"background"</span>: &#123;</span><br><span class="line">    <span class="hljs-attr">"page"</span>: <span class="hljs-string">"background.html"</span>,</span><br><span class="line">    <span class="hljs-attr">"persistent"</span>: <span class="hljs-literal">true</span></span><br><span class="line">  &#125;,</span><br><span class="line">  <span class="hljs-attr">"name"</span>: <span class="hljs-string">"AutoFindCSRF"</span>,</span><br><span class="line">  <span class="hljs-attr">"version"</span>: <span class="hljs-string">"1.0.0"</span>,</span><br><span class="line">  <span class="hljs-attr">"manifest_version"</span>: <span class="hljs-number">2</span>,</span><br><span class="line">  <span class="hljs-attr">"description"</span>: <span class="hljs-string">"CSRF[by:Black-Hole&amp;158099591@qq.com]"</span>,</span><br><span class="line">  <span class="hljs-attr">"content_security_policy"</span>: <span class="hljs-string">"script-src 'self' 'unsafe-eval'; object-src 'self'"</span>,</span><br><span class="line">  <span class="hljs-attr">"permissions"</span>: [     </span><br><span class="line">    <span class="hljs-string">"&lt;all_urls&gt;"</span>,<span class="hljs-string">"tabs"</span></span><br><span class="line">  ],</span><br><span class="line">  <span class="hljs-attr">"icons"</span>:&#123;<span class="hljs-attr">"16"</span>: <span class="hljs-string">"icons/icon_16.png"</span>,<span class="hljs-attr">"48"</span>: <span class="hljs-string">"icons/icon_48.png"</span>,<span class="hljs-attr">"128"</span>: <span class="hljs-string">"icons/icon_128.png"</span>&#125;,</span><br><span class="line">  <span class="hljs-attr">"content_scripts"</span>: [&#123;</span><br><span class="line">    <span class="hljs-attr">"matches"</span>: [<span class="hljs-string">"*://*/*"</span>],</span><br><span class="line">    <span class="hljs-attr">"js"</span>: [<span class="hljs-string">"jquery.js"</span>,<span class="hljs-string">"base.js"</span>],</span><br><span class="line">    <span class="hljs-attr">"run_at"</span>: <span class="hljs-string">"document_end"</span></span><br><span class="line">  &#125;]</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<blockquote>
+<p>content_security_policy 简称CSP，用户限制插件的安全性</p>
+</blockquote>
+<blockquote>
+<p>permissions 是插件向Chrome申请的权限。</p>
+</blockquote>
+<blockquote>
+<p>content_scripts 意思是，在任何协议下，当网站加载完成后，都会运行jquery.js和base.js文件。JavaScript this指向的是当前网页</p>
+</blockquote>
+<blockquote>
+<p>background JavaScript this指向的是插件，用户处理base.js和background.js通信的存在</p>
+</blockquote>
+<p>而<a href="http://www.freebuf.com/articles/web/107207.html" target="_blank" rel="noopener">上一篇文章</a>的JavaScript代码，都存放在base.js里，待会说“检测Referer机制”时，也是写在这个文件里。</p>
+<h4 id="0x03：检测对方是否开启了Referer检测机制"><a href="#0x03：检测对方是否开启了Referer检测机制" class="headerlink" title="0x03：检测对方是否开启了Referer检测机制"></a>0x03：检测对方是否开启了Referer检测机制</h4><hr>
+<p>首先为了下面程序的简洁，先把当前表单的action地址赋值给一个变量：<br><code>actionCache = formDom.attr(&quot;action&quot;);</code></p>
+<p>然后匹配action地址。为什么要匹配action地址呢，因为action分为以下几种情况：</p>
+<blockquote>
+<p>#test</p>
+</blockquote>
+<blockquote>
+<p>./test.php &amp;&amp; ./test(处理方式一样)</p>
+</blockquote>
+<blockquote>
+<p>/test.php?a=11</p>
+</blockquote>
+<blockquote>
+<p>test.php</p>
+</blockquote>
+<blockquote>
+<p><a href="http://baidu.com/?s=" target="_blank" rel="noopener">http://baidu.com/?s=</a></p>
+</blockquote>
+<p>这里我们使用switch来实现匹配，代码如下：<br><figure class="highlight javascript hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line"><span class="hljs-keyword">switch</span>(actionCache[<span class="hljs-number">0</span>])&#123;</span><br><span class="line">    <span class="hljs-keyword">case</span> <span class="hljs-string">"#"</span>:</span><br><span class="line">        actionPath = location.href + actionCache;</span><br><span class="line">        <span class="hljs-keyword">break</span>;</span><br><span class="line">    <span class="hljs-keyword">case</span> <span class="hljs-string">"/"</span>:</span><br><span class="line">        actionPath = location.origin + actionCache;</span><br><span class="line">        <span class="hljs-keyword">break</span>;</span><br><span class="line">    <span class="hljs-keyword">case</span> <span class="hljs-string">"."</span>:</span><br><span class="line">        <span class="hljs-keyword">if</span>(actionCache.indexOf(<span class="hljs-string">"?"</span>) != <span class="hljs-string">"-1"</span>)&#123;</span><br><span class="line">            actionvParameter = <span class="hljs-string">"?"</span> + actionCache.split(<span class="hljs-string">"?"</span>)[<span class="hljs-number">1</span>];</span><br><span class="line">            actionCache = actionCache.slice(<span class="hljs-number">0</span>,actionCache.indexOf(<span class="hljs-string">"?"</span>));</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="hljs-keyword">if</span>(location.href.split(<span class="hljs-string">"/"</span>).pop().split(<span class="hljs-string">"."</span>).length == <span class="hljs-number">1</span>)&#123;</span><br><span class="line">            actionPath = location.href + actionCache.substr(<span class="hljs-number">1</span>,actionCache.length<span class="hljs-number">-1</span>) + actionvParameter;</span><br><span class="line">        &#125;<span class="hljs-keyword">else</span>&#123;</span><br><span class="line">            actionPath = location.href.substr(location.href,location.href.lastIndexOf(location.href.split(<span class="hljs-string">"/"</span>).pop())) + actionCache.substring(<span class="hljs-number">1</span>,actionCache.length) + actionvParameter;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="hljs-keyword">break</span>;</span><br><span class="line">    <span class="hljs-keyword">default</span>:</span><br><span class="line">        <span class="hljs-keyword">if</span>(location.protocol == <span class="hljs-string">"http:"</span> || location.protocol == <span class="hljs-string">"https:"</span>)&#123;</span><br><span class="line">            actionPath = location.href;</span><br><span class="line">            <span class="hljs-keyword">break</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="hljs-keyword">if</span>(location.href.split(<span class="hljs-string">"/"</span>).pop().split(<span class="hljs-string">"."</span>).length == <span class="hljs-number">1</span>)&#123;</span><br><span class="line">            actionPath = location.href + <span class="hljs-string">"/"</span> + actionCache;</span><br><span class="line">        &#125;<span class="hljs-keyword">else</span>&#123;</span><br><span class="line">            actionPath = location.href.substr(location.href,location.href.lastIndexOf(location.href.split(<span class="hljs-string">"/"</span>).pop())) + actionCache;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="hljs-keyword">break</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>当action地址的第一个值是<code>#</code>时，直接使用<code>location.href + actionCache;</code>拼接。</p>
+<p>当action地址的第一个值是<code>/</code>时，使用<code>location.origin + actionCache;</code>来进行拼接</p>
+<p>当action地址的第一个值是<code>.</code>时：<br>先使用indexOf函数来把参数赋值给一个变量并去除，<br><figure class="highlight javascript hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="hljs-keyword">if</span>(actionCache.indexOf(<span class="hljs-string">"?"</span>) != <span class="hljs-string">"-1"</span>)&#123;</span><br><span class="line">    actionvParameter = <span class="hljs-string">"?"</span> + actionCache.split(<span class="hljs-string">"?"</span>)[<span class="hljs-number">1</span>];</span><br><span class="line">    actionCache = actionCache.slice(<span class="hljs-number">0</span>,actionCache.indexOf(<span class="hljs-string">"?"</span>));</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>详细的情况如下：</p>
+<p><img src="http://7xppwd.com1.z0.glb.clouddn.com/CSRF2/img/5.png" alt=""></p>
+<p>然后根据有无后缀进行匹配：<br><figure class="highlight javascript hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="hljs-keyword">if</span>(location.href.split(<span class="hljs-string">"/"</span>).pop().split(<span class="hljs-string">"."</span>).length == <span class="hljs-number">1</span>)&#123;</span><br><span class="line">    actionPath = location.href + actionCache.substr(<span class="hljs-number">1</span>,actionCache.length<span class="hljs-number">-1</span>) + actionvParameter;</span><br><span class="line">&#125;<span class="hljs-keyword">else</span>&#123;</span><br><span class="line">    actionPath = location.href.substr(location.href,location.href.lastIndexOf(location.href.split(<span class="hljs-string">"/"</span>).pop())) + actionCache.substring(<span class="hljs-number">1</span>,actionCache.length) + actionvParameter;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p><code>location.href.split(&quot;/&quot;).pop().split(&quot;.&quot;).length</code>是检测<code>当前url</code>有无后缀，如果有那么长度是为2.如果没有后缀长度是1。如果没有参数，将不会加任何字符串，因为在初始变量的时候就已经设为空了。详情如下：</p>
+<p><img src="http://7xppwd.com1.z0.glb.clouddn.com/CSRF2/img/3.png" alt=""></p>
+<p><img src="http://7xppwd.com1.z0.glb.clouddn.com/CSRF2/img/4.png" alt=""></p>
+<p>除去这些之外，还有直接是文件名或者直接是url，这里呢，我直接写到switch的default分之上去了，因为无法使用<code>actionCache[0]</code>来匹配，代码如下：<br><figure class="highlight javascript hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="hljs-keyword">default</span>:</span><br><span class="line">    <span class="hljs-keyword">if</span>(location.protocol == <span class="hljs-string">"http:"</span> || location.protocol == <span class="hljs-string">"https:"</span>)&#123;</span><br><span class="line">        actionPath = location.href;</span><br><span class="line">        <span class="hljs-keyword">break</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="hljs-keyword">if</span>(location.href.split(<span class="hljs-string">"/"</span>).pop().split(<span class="hljs-string">"."</span>).length == <span class="hljs-number">1</span>)&#123;</span><br><span class="line">        actionPath = location.href + <span class="hljs-string">"/"</span> + actionCache;</span><br><span class="line">    &#125;<span class="hljs-keyword">else</span>&#123;</span><br><span class="line">        actionPath = location.href.substr(location.href,location.href.lastIndexOf(location.href.split(<span class="hljs-string">"/"</span>).pop())) + actionCache;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="hljs-keyword">break</span>;</span><br></pre></td></tr></table></figure></p>
+<p>首先是判断<code>location.protocol</code>是否为http或https协议。如果是的话，直接使用<code>location.href;</code>。当不为http://或者https://的时候，跳过此if判断。接下来就是判断url的后缀存在。如果存在将运行：<code>actionPath = location.href + &quot;/&quot; + actionCache;</code>，反馈如图：</p>
+<p><img src="http://7xppwd.com1.z0.glb.clouddn.com/CSRF2/img/6.png" alt=""></p>
+<p>当存在后缀时，运行：<code>actionPath = location.href.substr(location.href,location.href.lastIndexOf(location.href.split(&quot;/&quot;).pop())) + actionCache;</code>。反馈如图：</p>
+<p><img src="http://7xppwd.com1.z0.glb.clouddn.com/CSRF2/img/7.png" alt=""></p>
+<h4 id="0x04：模拟form的参数"><a href="#0x04：模拟form的参数" class="headerlink" title="0x04：模拟form的参数"></a>0x04：模拟form的参数</h4><hr>
+<p>代码如下：<br><figure class="highlight javascript hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="hljs-keyword">for</span>(<span class="hljs-keyword">var</span> v = <span class="hljs-number">0</span>;v &lt; formDom.find(<span class="hljs-string">":text"</span>).length;v++)&#123;</span><br><span class="line">    <span class="hljs-keyword">var</span> input = formDom.find(<span class="hljs-string">":text"</span>).eq(v);</span><br><span class="line">    <span class="hljs-keyword">if</span>(input.attr(<span class="hljs-string">"name"</span>) != <span class="hljs-string">""</span>)&#123;</span><br><span class="line">        <span class="hljs-keyword">if</span>(input.val() == <span class="hljs-string">""</span>)&#123;</span><br><span class="line">            ajaxParameter += input.attr(<span class="hljs-string">"name"</span>) + <span class="hljs-string">"="</span> + <span class="hljs-string">"15874583485&amp;"</span>;</span><br><span class="line">        &#125;<span class="hljs-keyword">else</span>&#123;</span><br><span class="line">            ajaxParameter += input.attr(<span class="hljs-string">"name"</span>) + <span class="hljs-string">"="</span> + input.val() + <span class="hljs-string">"&amp;"</span>;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;<span class="hljs-keyword">else</span>&#123;</span><br><span class="line">        <span class="hljs-keyword">continue</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line">ajaxParameter = ajaxParameter.substring(<span class="hljs-number">0</span>,ajaxParameter.length<span class="hljs-number">-1</span>);</span><br></pre></td></tr></table></figure></p>
+<p>使用for循环对当前form表单下属性为text的input标签，然后使用<code>var input = formDom.find(&quot;:text&quot;).eq(v);</code>来进行赋值，把当前的input赋值给input变量。</p>
+<p>再使用if判断，当前的input标签是否存在name属性，如果没有，则使用<code>continue;</code>跳出初始化表达式变量为v的本次循环。如果存在，再判断当前的input的value属性里是否有值，如果有值则直接赋值给ajaxParameter。代码：<code>ajaxParameter += input.attr(&quot;name&quot;) + &quot;=&quot; + input.val() + &quot;&amp;&quot;;</code>，如果不存在则把<code>15874583485</code>赋值给ajaxParameter变量，为什么要使用类似于手机号码的呢，因为容错率挺高的。可以看到我在每次赋值的时候，都会在后面加上&amp;字符。因为方便下面发送ajax。当然需要去掉最后一个&amp;。于是乎，有了下面的代码：<code>ajaxParameter = ajaxParameter.substring(0,ajaxParameter.length-1);</code>。</p>
+<h4 id="0x04：与插件的background-js进行通信"><a href="#0x04：与插件的background-js进行通信" class="headerlink" title="0x04：与插件的background.js进行通信"></a>0x04：与插件的background.js进行通信</h4><hr>
+<p>这里呢，我先说说“检测Referer的思路”，在当前网站发送一次ajax请求，Referer的地址肯定是当前的URL，是正常的，和普通提交form表单是一样的，这里呢，把action地址和method值及参数传给插件，在插件里再发送一次AJAX请求，chrome插件发送AJAX时，Refere是为空的。两次提交，如果存在Referer检测，那么返回的结果长度肯定是不一样的，如果不存在Referer检测，长度是一样的（当然可能存在个别的差异，因为可能要显示时间等，结果长度不一样，但是是不存在“Referer检测”的，下面会增加容错率）</p>
+<p>Chrome对插件通信提供了发送<code>chrome.runtime.sendMessage</code>和接受<code>chrome.runtime.onMessage.addListener</code>的API。<br>首先让我们来看看base.js文件里的发送<code>chrome.runtime.sendMessage</code>API代码:<br><figure class="highlight javascript hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">$.ajax(&#123;</span><br><span class="line">    url: actionPath,</span><br><span class="line">    type: (formDom.attr(<span class="hljs-string">"method"</span>) == <span class="hljs-literal">undefined</span>) || (formDom.attr(<span class="hljs-string">"method"</span>) == <span class="hljs-string">'get'</span>)?<span class="hljs-string">'get'</span>:<span class="hljs-string">'post'</span>,</span><br><span class="line">    dataType: <span class="hljs-string">'html'</span>,</span><br><span class="line">    data: (formDom.attr(<span class="hljs-string">"method"</span>) == <span class="hljs-literal">undefined</span>) || (formDom.attr(<span class="hljs-string">"method"</span>) == <span class="hljs-string">'get'</span>)?<span class="hljs-string">''</span>:ajaxParameter,</span><br><span class="line">    <span class="hljs-keyword">async</span>: <span class="hljs-literal">false</span>,</span><br><span class="line">&#125;)</span><br><span class="line">.done(<span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">data</span>)</span>&#123;</span><br><span class="line">    <span class="hljs-keyword">var</span> firstAjax = data.length;</span><br><span class="line">    <span class="hljs-keyword">var</span> formCache = formDom;</span><br><span class="line">    chrome.runtime.sendMessage(&#123;<span class="hljs-attr">action</span>: actionPath, <span class="hljs-attr">parameter</span>: (formDom.attr(<span class="hljs-string">"method"</span>) == <span class="hljs-literal">undefined</span>) || (formDom.attr(<span class="hljs-string">"method"</span>) == <span class="hljs-string">'get'</span>)?<span class="hljs-string">''</span>:ajaxParameter&#125;,<span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">response</span>) </span>&#123;</span><br><span class="line">        <span class="hljs-keyword">if</span>(<span class="hljs-built_in">Math</span>.abs(firstAjax - response.status) &lt; <span class="hljs-number">10</span>)&#123;</span><br><span class="line">            formCache.attr(<span class="hljs-string">"style"</span>,<span class="hljs-string">"border: 1px red solid;"</span>)</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;);</span><br><span class="line">&#125;)</span><br></pre></td></tr></table></figure></p>
+<p>因为form的method属性的值是不确定的。所以就需要对ajax的参数type进行设置：<code>(formDom.attr(&quot;method&quot;) == undefined) || (formDom.attr(&quot;method&quot;) == &#39;get&#39;)?&#39;get&#39;:&#39;post&#39;</code>，这里使用了三目运算符。当method的值不存在、为get的时候，type为get。当存在的时候，则为post。</p>
+<p>下面的data参数同理。只不过没有了get、post选项。改为<code>&#39;&#39;:ajaxParameter</code>。因为method值为get时，参数是附在actionPath变量里的。当为post的时候，将把之前拼接的参数传给data参数。这里计算一下返回页面的长度<code>var firstAjax = data.length;</code>，至于下面的为什么要给变量再赋值一次呢，我也不知道，可能下面的Chrome API的作用域不同，导致在下面使用API的时候，使用formDom变量，结果不对。只能重新赋值给formCache变量，这个时候API才算正常。</p>
+<p>下面就是Chrome的API了：<br><figure class="highlight javascript hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">chrome.runtime.sendMessage(&#123;<span class="hljs-attr">action</span>: actionPath, <span class="hljs-attr">parameter</span>: (formDom.attr(<span class="hljs-string">"method"</span>) == <span class="hljs-literal">undefined</span>) || (formDom.attr(<span class="hljs-string">"method"</span>) == <span class="hljs-string">'get'</span>)?<span class="hljs-string">''</span>:ajaxParameter&#125;,<span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">response</span>) </span>&#123;</span><br><span class="line">        <span class="hljs-keyword">if</span>(<span class="hljs-built_in">Math</span>.abs(firstAjax - response.status) &lt; <span class="hljs-number">10</span>)&#123;</span><br><span class="line">            formCache.attr(<span class="hljs-string">"style"</span>,<span class="hljs-string">"border: 1px red solid;"</span>)</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;);</span><br></pre></td></tr></table></figure></p>
+<p>这里的action和parameter是发送的参数及值。至于代码<code>(formDom.attr(&quot;method&quot;) == undefined) || (formDom.attr(&quot;method&quot;) == &#39;get&#39;)?&#39;&#39;:ajaxParameter</code>和上面同理，当为get的时候，不给parameter值，当为post的时候，值为ajaxParameter。<code>response</code>为回调函数，类似ajax的done函数，返回background.js的处理结果。</p>
+<p>那background.js是如何处理的呢：<br><figure class="highlight javascript hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">chrome.runtime.onMessage.addListener(<span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">message,sender,sendResponse</span>)</span>&#123;</span><br><span class="line">    $.ajax(&#123;</span><br><span class="line">        url: message.action,</span><br><span class="line">        type: (message.parameter == <span class="hljs-string">""</span>)?<span class="hljs-string">'get'</span>:<span class="hljs-string">'post'</span>,</span><br><span class="line">        dataType: <span class="hljs-string">'html'</span>,</span><br><span class="line">        data: (message.parameter == <span class="hljs-string">""</span>)?<span class="hljs-string">''</span>:message.parameter,</span><br><span class="line">        <span class="hljs-keyword">async</span>: <span class="hljs-literal">false</span>,</span><br><span class="line">    &#125;)</span><br><span class="line">    .done(<span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">data</span>) </span>&#123;</span><br><span class="line">        sendResponse(&#123;<span class="hljs-attr">status</span>: data.length&#125;)</span><br><span class="line">    &#125;)</span><br><span class="line">&#125;)</span><br></pre></td></tr></table></figure></p>
+<p><code>chrome.runtime.onMessage.addListener</code>是接受函数，然后就是AJAX了，在done函数里，有一个API是<code>sendResponse({status: data.length})</code>返回插件发送AJAX时的长度。这个时候前端base.js将会受到background.js文件的返回结果。代码就返回上面的处理方式了：<br><figure class="highlight javascript hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="hljs-keyword">if</span>(<span class="hljs-built_in">Math</span>.abs(firstAjax - response.status) &lt; <span class="hljs-number">10</span>)&#123;</span><br><span class="line">    formCache.attr(<span class="hljs-string">"style"</span>,<span class="hljs-string">"border: 1px red solid;"</span>)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>这里的Math.abs是求绝对值的，当两次ajax返回的长度差值小于10的时候，说明不存在“Referer检测”，当大于10时，就说明存在“检测Referer的机制”了。这里的10就是<code>容错值</code>。</p>
+<p>当存在CSRF漏洞的时候，会在form表单的外部包含一个红色的框，如图：</p>
+<p><img src="http://7xppwd.com1.z0.glb.clouddn.com/CSRF2/img/8.png" alt=""></p>
+<h4 id="0x05：结尾"><a href="#0x05：结尾" class="headerlink" title="0x05：结尾"></a>0x05：结尾</h4><hr>
+<p>这里的token验证机制还是不完整，我会在下一版中解决的。以及JSON Hijacking。<br>有可能存在第四章。</p>
+<p>文章非常感谢：北风(2660668090)提供的思路及技术支持。</p>
+<p>插件下载地址：<a href="http://pan.baidu.com/s/1geMUl7l" target="_blank" rel="noopener">http://pan.baidu.com/s/1geMUl7l</a></p>
+<hr>
+<h4 id="作者信息："><a href="#作者信息：" class="headerlink" title="作者信息："></a><code>作者信息：</code></h4><blockquote>
+<p>Author:Black-Hole</p>
+</blockquote>
+<blockquote>
+<p>Blog:<a href="http://bugs.cc/">http://bugs.cc/</a></p>
+</blockquote>
+<blockquote>
+<p>github:<a href="https://github.com/BlackHole1/" target="_blank" rel="noopener">https://github.com/BlackHole1/</a></p>
+</blockquote>
+<blockquote>
+<p>Twitter:<a href="https://twitter.com/Free_BlackHole" target="_blank" rel="noopener">https://twitter.com/Free_BlackHole</a></p>
+</blockquote>
+<blockquote>
+<p>Email:<a href="mailto:158blackhole@gmail.com" target="_blank" rel="noopener">158blackhole@gmail.com</a></p>
+</blockquote>
+
+        </div>
+        
+        <div class="level is-size-7 is-uppercase">
+            <div class="level-start">
+                <div class="level-item">
+                    <span class="is-size-6 has-text-grey has-mr-7">#</span>
+                    <a class="has-link-grey -link" href="/tags/CSRF/">CSRF</a>, <a class="has-link-grey -link" href="/tags/Web-Security/">Web Security</a>
+                </div>
+            </div>
+        </div>
+        
+        
+        
+        
+<div class="sharethis-inline-share-buttons"></div>
+<script type="text/javascript" src="//platform-api.sharethis.com/js/sharethis.js#property=5c2a1d4fd02b6e0010eca6e3&amp;product=sticky-share-buttons" async="async"></script>
+
+        
+    </div>
+</div>
+
+
+
+<div class="card">
+    <div class="card-content">
+        <h3 class="menu-label has-text-centered">喜欢这篇文章？打赏一下作者吧</h3>
+        <div class="buttons is-centered">
+            
+                
+<a class="button is-info donate">
+    <span class="icon is-small">
+        <i class="fab fa-alipay"></i>
+    </span>
+    <span>支付宝</span>
+    <div class="qrcode"><img src="/images/alipay.jpg" alt="支付宝"></div>
+</a>
+
+                
+                
+<a class="button is-success donate">
+    <span class="icon is-small">
+        <i class="fab fa-weixin"></i>
+    </span>
+    <span>微信</span>
+    <div class="qrcode"><img src="/images/wechat.jpg" alt="微信"></div>
+</a>
+
+                
+                <!-- Visit https://www.paypal.com/donate/buttons/ to get your donate button -->
+
+<a class="button is-warning donate" onclick="document.getElementById(&#39;paypal-donate-form&#39;).submit()">
+    <span class="icon is-small">
+        <i class="fab fa-paypal"></i>
+    </span>
+    <span>Paypal</span>
+</a>
+<form action="https://www.paypal.com/cgi-bin/webscr" method="post" target="_blank" id="paypal-donate-form">
+    <input type="hidden" name="cmd" value="_donations">
+    <input type="hidden" name="business" value="158blackhole@gmail.com">
+    <input type="hidden" name="currency_code" value="USD">
+</form>
+
+                
+        </div>
+    </div>
+</div>
+
+
+
+<div class="card card-transparent">
+    <div class="level post-navigation is-flex-wrap is-mobile">
+        
+        <div class="level-start">
+            <a class="level level-item has-link-grey  article-nav-prev" href="/2016/08/20/talk-about-how-to-bypass-WAF/">
+                <i class="level-item fas fa-chevron-left"></i>
+                <span class="level-item">杂谈如何绕过WAF（Web应用防火墙）</span>
+            </a>
+        </div>
+        
+        
+        <div class="level-end">
+            <a class="level level-item has-link-grey  article-nav-next" href="/2016/06/15/automated-detection-of-CSRF/">
+                <span class="level-item">自动化检测CSRF</span>
+                <i class="level-item fas fa-chevron-right"></i>
+            </a>
+        </div>
+        
+    </div>
+</div>
+
+
+
+<div class="card">
+    <div class="card-content">
+        <h3 class="title is-5 has-text-weight-normal">评论</h3>
+        
+<script>
+    var disqus_config = function () {
+        this.page.url = 'http://bugs.cc/2016/06/23/automated-detection-of-CSRF-second-part/';
+        this.page.identifier = '2016/06/23/automated-detection-of-CSRF-second-part/';
+    };
+    (function() {
+        var d = document, s = d.createElement('script');  
+        s.src = '//' + 'blackhole-1' + '.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+    })();
+</script>
+
+<div id="disqus_thread">
+    
+    <noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+    </div>
+</div>
+</div>
+                
+
+
+
+
+<div class="column is-4-tablet is-4-desktop is-3-widescreen  has-order-1 column-left ">
+    
+        
+<div class="card widget">
+    <div class="card-content">
+        <nav class="level">
+            <div class="level-item has-text-centered">
+                <div>
+                    <img class="image is-128x128 has-mb-6" style="border-radius: 290486px;" src="/images/avatar.png" alt="Black-Hole">
+                    
+                    <p class="is-size-4 is-block">
+                        Black-Hole
+                    </p>
+                    
+                    
+                    <p class="is-size-6 is-block">
+                        一只已经结束异地恋的前端恋爱狗
+                    </p>
+                    
+                    
+                    <p class="is-size-6 is-flex is-flex-center has-text-grey">
+                        <i class="fas fa-map-marker-alt has-mr-7"></i>
+                        <span>ShangHai</span>
+                    </p>
+                    
+                </div>
+            </div>
+        </nav>
+        <nav class="level is-mobile">
+            <div class="level-item has-text-centered is-marginless">
+                <div>
+                    <p class="heading">
+                        文章
+                    </p>
+                    <p class="title has-text-weight-normal">
+                        17
+                    </p>
+                </div>
+            </div>
+            <div class="level-item has-text-centered is-marginless">
+                <div>
+                    <p class="heading">
+                        分类
+                    </p>
+                    <p class="title has-text-weight-normal">
+                        8
+                    </p>
+                </div>
+            </div>
+            <div class="level-item has-text-centered is-marginless">
+                <div>
+                    <p class="heading">
+                        标签
+                    </p>
+                    <p class="title has-text-weight-normal">
+                        21
+                    </p>
+                </div>
+            </div>
+        </nav>
+        <div class="level">
+            <a class="level-item button is-link is-rounded" href="https://github.com/BlackHole1">
+                关注我</a>
+        </div>
+        
+        
+        <div class="level is-mobile">
+            
+            <a class="level-item button is-white is-marginless" target="_blank" title="Github" href="https://github.com/BlackHole1">
+                
+                <i class="fab fa-github"></i>
+                
+            </a>
+            
+            <a class="level-item button is-white is-marginless" target="_blank" title="Weibo" href="http://weibo.com/comelove">
+                
+                <i class="fab fa-weibo"></i>
+                
+            </a>
+            
+            <a class="level-item button is-white is-marginless" target="_blank" title="Twitter" href="https://twitter.com/Free_BlackHole">
+                
+                <i class="fab fa-twitter"></i>
+                
+            </a>
+            
+            <a class="level-item button is-white is-marginless" target="_blank" title="Npm" href="https://www.npmjs.com/~black_hole">
+                
+                <i class="fab fa-npm"></i>
+                
+            </a>
+            
+        </div>
+        
+    </div>
+</div>
+    
+        
+    
+        
+
+<div class="card widget">
+    <div class="card-content">
+        <div class="menu">
+        <h3 class="menu-label">
+            链接
+        </h3>
+        <ul class="menu-list">
+        
+            <li>
+                <a class="level is-mobile" href="https://github.com/alo7" target="_blank">
+                    <span class="level-left">
+                        <span class="level-item">Alo7 Inc</span>
+                    </span>
+                    <span class="level-right">
+                        <span class="level-item tag">github.com</span>
+                    </span>
+                </a>
+            </li>
+        
+            <li>
+                <a class="level is-mobile" href="https://github.com/Web-Security-Automation" target="_blank">
+                    <span class="level-left">
+                        <span class="level-item">Web Security Automation</span>
+                    </span>
+                    <span class="level-right">
+                        <span class="level-item tag">github.com</span>
+                    </span>
+                </a>
+            </li>
+        
+            <li>
+                <a class="level is-mobile" href="https://github.com/Calibre-Node" target="_blank">
+                    <span class="level-left">
+                        <span class="level-item">Calibre Node</span>
+                    </span>
+                    <span class="level-right">
+                        <span class="level-item tag">github.com</span>
+                    </span>
+                </a>
+            </li>
+        
+            <li>
+                <a class="level is-mobile" href="https://github.com/proxyee-down-org" target="_blank">
+                    <span class="level-left">
+                        <span class="level-item">Proxyee Down Org</span>
+                    </span>
+                    <span class="level-right">
+                        <span class="level-item tag">github.com</span>
+                    </span>
+                </a>
+            </li>
+        
+            <li>
+                <a class="level is-mobile" href="https://github.com/deepwn" target="_blank">
+                    <span class="level-left">
+                        <span class="level-item">Deepwn</span>
+                    </span>
+                    <span class="level-right">
+                        <span class="level-item tag">github.com</span>
+                    </span>
+                </a>
+            </li>
+        
+        </ul>
+        </div>
+    </div>
+</div>
+
+
+    
+        
+<div class="card widget">
+    <div class="card-content">
+        <div class="menu">
+            <h3 class="menu-label">
+                分类
+            </h3>
+            <ul class="menu-list">
+            <li>
+        <a class="level is-marginless" href="/categories/Elasticsearch/">
+            <span class="level-start">
+                <span class="level-item">Elasticsearch</span>
+            </span>
+            <span class="level-end">
+                <span class="level-item tag">1</span>
+            </span>
+        </a></li><li>
+        <a class="level is-marginless" href="/categories/JavaScript/">
+            <span class="level-start">
+                <span class="level-item">JavaScript</span>
+            </span>
+            <span class="level-end">
+                <span class="level-item tag">4</span>
+            </span>
+        </a></li><li>
+        <a class="level is-marginless" href="/categories/Linux/">
+            <span class="level-start">
+                <span class="level-item">Linux</span>
+            </span>
+            <span class="level-end">
+                <span class="level-item tag">1</span>
+            </span>
+        </a></li><li>
+        <a class="level is-marginless" href="/categories/NodeJs/">
+            <span class="level-start">
+                <span class="level-item">NodeJs</span>
+            </span>
+            <span class="level-end">
+                <span class="level-item tag">1</span>
+            </span>
+        </a></li><li>
+        <a class="level is-marginless" href="/categories/Python/">
+            <span class="level-start">
+                <span class="level-item">Python</span>
+            </span>
+            <span class="level-end">
+                <span class="level-item tag">1</span>
+            </span>
+        </a></li><li>
+        <a class="level is-marginless" href="/categories/Virtualization/">
+            <span class="level-start">
+                <span class="level-item">Virtualization</span>
+            </span>
+            <span class="level-end">
+                <span class="level-item tag">1</span>
+            </span>
+        </a></li><li>
+        <a class="level is-marginless" href="/categories/Web-Security/">
+            <span class="level-start">
+                <span class="level-item">Web Security</span>
+            </span>
+            <span class="level-end">
+                <span class="level-item tag">7</span>
+            </span>
+        </a></li><li>
+        <a class="level is-marginless" href="/categories/Wireless-Security/">
+            <span class="level-start">
+                <span class="level-item">Wireless Security</span>
+            </span>
+            <span class="level-end">
+                <span class="level-item tag">1</span>
+            </span>
+        </a></li>
+            </ul>
+        </div>
+    </div>
+</div>
+    
+        
+<div class="card widget">
+    <div class="card-content">
+        <h3 class="menu-label">
+            标签云
+        </h3>
+        <a href="/tags/Axios/" style="font-size: 10px;">Axios</a> <a href="/tags/Browser-Plugin/" style="font-size: 10px;">Browser Plugin</a> <a href="/tags/CSRF/" style="font-size: 13.33px;">CSRF</a> <a href="/tags/DSL/" style="font-size: 10px;">DSL</a> <a href="/tags/Elasticsearch/" style="font-size: 10px;">Elasticsearch</a> <a href="/tags/Electron/" style="font-size: 10px;">Electron</a> <a href="/tags/JavaScript/" style="font-size: 16.67px;">JavaScript</a> <a href="/tags/Kibana/" style="font-size: 10px;">Kibana</a> <a href="/tags/Koa/" style="font-size: 10px;">Koa</a> <a href="/tags/Linux/" style="font-size: 10px;">Linux</a> <a href="/tags/Markdown/" style="font-size: 10px;">Markdown</a> <a href="/tags/NodeJs/" style="font-size: 10px;">NodeJs</a> <a href="/tags/Promise/" style="font-size: 10px;">Promise</a> <a href="/tags/Python/" style="font-size: 10px;">Python</a> <a href="/tags/React/" style="font-size: 10px;">React</a> <a href="/tags/Virtualization/" style="font-size: 10px;">Virtualization</a> <a href="/tags/Vue/" style="font-size: 13.33px;">Vue</a> <a href="/tags/WAF/" style="font-size: 10px;">WAF</a> <a href="/tags/Web-Security/" style="font-size: 20px;">Web Security</a> <a href="/tags/Wireless-Security/" style="font-size: 10px;">Wireless Security</a> <a href="/tags/XSS/" style="font-size: 13.33px;">XSS</a>
+    </div>
+</div>
+
+    
+    
+        <div class="column-right-shadow is-hidden-widescreen ">
+        
+            
+<div class="card widget">
+    <div class="card-content">
+        <h3 class="menu-label">
+            最新文章
+        </h3>
+        
+        <article class="media">
+            
+            <a href="/2018/12/30/reading-notes-from-lucene-to-elasticsearch-full-text-search/" class="media-left">
+                <p class="image is-64x64">
+                    <img class="thumbnail" src="/images/thumbnail/globalworming_43986209_2220823381486696_8628271851625393205_n.jpg" alt="读书笔记：从Lucene到Elasticsearch:全文检索实战">
+                </p>
+            </a>
+            
+            <div class="media-content">
+                <div class="content">
+                    <div><time class="has-text-grey is-size-7 is-uppercase" datetime="2018-12-30T14:52:05.000Z">2018-12-30</time></div>
+                    <a href="/2018/12/30/reading-notes-from-lucene-to-elasticsearch-full-text-search/" class="has-link-black-ter is-size-6">读书笔记：从Lucene到Elasticsearch:全文检索实战</a>
+                    <p class="is-size-7 is-uppercase">
+                        <a class="has-link-grey -link" href="/categories/Elasticsearch/">Elasticsearch</a>
+                    </p>
+                </div>
+            </div>
+        </article>
+        
+        <article class="media">
+            
+            <a href="/2018/08/24/javaScript-integration-sentry/" class="media-left">
+                <p class="image is-64x64">
+                    <img class="thumbnail" src="/images/thumbnail/portrait-of-deer-in-forest-at-sunset.jpg" alt="JavaScript集成Sentry">
+                </p>
+            </a>
+            
+            <div class="media-content">
+                <div class="content">
+                    <div><time class="has-text-grey is-size-7 is-uppercase" datetime="2018-08-24T01:16:33.000Z">2018-08-24</time></div>
+                    <a href="/2018/08/24/javaScript-integration-sentry/" class="has-link-black-ter is-size-6">JavaScript集成Sentry</a>
+                    <p class="is-size-7 is-uppercase">
+                        <a class="has-link-grey -link" href="/categories/JavaScript/">JavaScript</a>
+                    </p>
+                </div>
+            </div>
+        </article>
+        
+        <article class="media">
+            
+            <a href="/2018/04/14/analyz-the-axios-source-to-find-out-why-you-cant-use-all-and-spread-methods/" class="media-left">
+                <p class="image is-64x64">
+                    <img class="thumbnail" src="/images/thumbnail/parisexplorer_43915379_1186317334867380_3406866474572309396_n.jpg" alt="分析axios源码来找出无法使用all和spread等方法的原因">
+                </p>
+            </a>
+            
+            <div class="media-content">
+                <div class="content">
+                    <div><time class="has-text-grey is-size-7 is-uppercase" datetime="2018-04-14T05:37:29.000Z">2018-04-14</time></div>
+                    <a href="/2018/04/14/analyz-the-axios-source-to-find-out-why-you-cant-use-all-and-spread-methods/" class="has-link-black-ter is-size-6">分析axios源码来找出无法使用all和spread等方法的原因</a>
+                    <p class="is-size-7 is-uppercase">
+                        <a class="has-link-grey -link" href="/categories/JavaScript/">JavaScript</a>
+                    </p>
+                </div>
+            </div>
+        </article>
+        
+        <article class="media">
+            
+            <a href="/2018/04/12/simplemde-realizes-some-thoughts-on-drag-and-drop-and-paste-function/" class="media-left">
+                <p class="image is-64x64">
+                    <img class="thumbnail" src="/images/thumbnail/punkodelish_43018283_328080891311441_4977042715385938518_n.jpg" alt="基于vue-simplemde实现图片拖拽、粘贴功能的一些思考">
+                </p>
+            </a>
+            
+            <div class="media-content">
+                <div class="content">
+                    <div><time class="has-text-grey is-size-7 is-uppercase" datetime="2018-04-12T03:00:12.000Z">2018-04-12</time></div>
+                    <a href="/2018/04/12/simplemde-realizes-some-thoughts-on-drag-and-drop-and-paste-function/" class="has-link-black-ter is-size-6">基于vue-simplemde实现图片拖拽、粘贴功能的一些思考</a>
+                    <p class="is-size-7 is-uppercase">
+                        <a class="has-link-grey -link" href="/categories/JavaScript/">JavaScript</a>
+                    </p>
+                </div>
+            </div>
+        </article>
+        
+        <article class="media">
+            
+            <a href="/2018/01/23/run-qcow2-image-in-vmware/" class="media-left">
+                <p class="image is-64x64">
+                    <img class="thumbnail" src="/images/thumbnail/pexels-photo-1183434.jpeg" alt="在vmware里运行qcow2镜像">
+                </p>
+            </a>
+            
+            <div class="media-content">
+                <div class="content">
+                    <div><time class="has-text-grey is-size-7 is-uppercase" datetime="2018-01-23T01:12:31.000Z">2018-01-23</time></div>
+                    <a href="/2018/01/23/run-qcow2-image-in-vmware/" class="has-link-black-ter is-size-6">在vmware里运行qcow2镜像</a>
+                    <p class="is-size-7 is-uppercase">
+                        <a class="has-link-grey -link" href="/categories/Virtualization/">Virtualization</a>
+                    </p>
+                </div>
+            </div>
+        </article>
+        
+    </div>
+</div>
+
+        
+            <div class="card widget">
+    <div class="card-content">
+        <div class="menu">
+        <h3 class="menu-label">
+            归档
+        </h3>
+        <ul class="menu-list">
+        
+        <li>
+            <a class="level is-marginless" href="/archives/2018/12/">
+                <span class="level-start">
+                    <span class="level-item">十二月 2018</span>
+                </span>
+                <span class="level-end">
+                    <span class="level-item tag">1</span>
+                </span>
+            </a>
+        </li>
+        
+        <li>
+            <a class="level is-marginless" href="/archives/2018/08/">
+                <span class="level-start">
+                    <span class="level-item">八月 2018</span>
+                </span>
+                <span class="level-end">
+                    <span class="level-item tag">1</span>
+                </span>
+            </a>
+        </li>
+        
+        <li>
+            <a class="level is-marginless" href="/archives/2018/04/">
+                <span class="level-start">
+                    <span class="level-item">四月 2018</span>
+                </span>
+                <span class="level-end">
+                    <span class="level-item tag">2</span>
+                </span>
+            </a>
+        </li>
+        
+        <li>
+            <a class="level is-marginless" href="/archives/2018/01/">
+                <span class="level-start">
+                    <span class="level-item">一月 2018</span>
+                </span>
+                <span class="level-end">
+                    <span class="level-item tag">2</span>
+                </span>
+            </a>
+        </li>
+        
+        <li>
+            <a class="level is-marginless" href="/archives/2017/11/">
+                <span class="level-start">
+                    <span class="level-item">十一月 2017</span>
+                </span>
+                <span class="level-end">
+                    <span class="level-item tag">2</span>
+                </span>
+            </a>
+        </li>
+        
+        <li>
+            <a class="level is-marginless" href="/archives/2017/03/">
+                <span class="level-start">
+                    <span class="level-item">三月 2017</span>
+                </span>
+                <span class="level-end">
+                    <span class="level-item tag">1</span>
+                </span>
+            </a>
+        </li>
+        
+        <li>
+            <a class="level is-marginless" href="/archives/2016/12/">
+                <span class="level-start">
+                    <span class="level-item">十二月 2016</span>
+                </span>
+                <span class="level-end">
+                    <span class="level-item tag">2</span>
+                </span>
+            </a>
+        </li>
+        
+        <li>
+            <a class="level is-marginless" href="/archives/2016/10/">
+                <span class="level-start">
+                    <span class="level-item">十月 2016</span>
+                </span>
+                <span class="level-end">
+                    <span class="level-item tag">1</span>
+                </span>
+            </a>
+        </li>
+        
+        <li>
+            <a class="level is-marginless" href="/archives/2016/08/">
+                <span class="level-start">
+                    <span class="level-item">八月 2016</span>
+                </span>
+                <span class="level-end">
+                    <span class="level-item tag">2</span>
+                </span>
+            </a>
+        </li>
+        
+        <li>
+            <a class="level is-marginless" href="/archives/2016/06/">
+                <span class="level-start">
+                    <span class="level-item">六月 2016</span>
+                </span>
+                <span class="level-end">
+                    <span class="level-item tag">2</span>
+                </span>
+            </a>
+        </li>
+        
+        <li>
+            <a class="level is-marginless" href="/archives/2016/05/">
+                <span class="level-start">
+                    <span class="level-item">五月 2016</span>
+                </span>
+                <span class="level-end">
+                    <span class="level-item tag">1</span>
+                </span>
+            </a>
+        </li>
+        
+        </ul>
+        </div>
+    </div>
+</div>
+        
+            <div class="card widget">
+    <div class="card-content">
+        <div class="menu">
+            <h3 class="menu-label">
+                标签
+            </h3>
+            <ul class="menu-list">
+                
+                <li>
+                    <a class="level is-marginless" href="/tags/Axios/">
+                        <span class="level-start">
+                            <span class="level-item">Axios</span>
+                        </span>
+                        <span class="level-end">
+                            <span class="level-item tag">1</span>
+                        </span>
+                    </a>
+                </li>
+                
+                <li>
+                    <a class="level is-marginless" href="/tags/Browser-Plugin/">
+                        <span class="level-start">
+                            <span class="level-item">Browser Plugin</span>
+                        </span>
+                        <span class="level-end">
+                            <span class="level-item tag">1</span>
+                        </span>
+                    </a>
+                </li>
+                
+                <li>
+                    <a class="level is-marginless" href="/tags/CSRF/">
+                        <span class="level-start">
+                            <span class="level-item">CSRF</span>
+                        </span>
+                        <span class="level-end">
+                            <span class="level-item tag">2</span>
+                        </span>
+                    </a>
+                </li>
+                
+                <li>
+                    <a class="level is-marginless" href="/tags/DSL/">
+                        <span class="level-start">
+                            <span class="level-item">DSL</span>
+                        </span>
+                        <span class="level-end">
+                            <span class="level-item tag">1</span>
+                        </span>
+                    </a>
+                </li>
+                
+                <li>
+                    <a class="level is-marginless" href="/tags/Elasticsearch/">
+                        <span class="level-start">
+                            <span class="level-item">Elasticsearch</span>
+                        </span>
+                        <span class="level-end">
+                            <span class="level-item tag">1</span>
+                        </span>
+                    </a>
+                </li>
+                
+                <li>
+                    <a class="level is-marginless" href="/tags/Electron/">
+                        <span class="level-start">
+                            <span class="level-item">Electron</span>
+                        </span>
+                        <span class="level-end">
+                            <span class="level-item tag">1</span>
+                        </span>
+                    </a>
+                </li>
+                
+                <li>
+                    <a class="level is-marginless" href="/tags/JavaScript/">
+                        <span class="level-start">
+                            <span class="level-item">JavaScript</span>
+                        </span>
+                        <span class="level-end">
+                            <span class="level-item tag">5</span>
+                        </span>
+                    </a>
+                </li>
+                
+                <li>
+                    <a class="level is-marginless" href="/tags/Kibana/">
+                        <span class="level-start">
+                            <span class="level-item">Kibana</span>
+                        </span>
+                        <span class="level-end">
+                            <span class="level-item tag">1</span>
+                        </span>
+                    </a>
+                </li>
+                
+                <li>
+                    <a class="level is-marginless" href="/tags/Koa/">
+                        <span class="level-start">
+                            <span class="level-item">Koa</span>
+                        </span>
+                        <span class="level-end">
+                            <span class="level-item tag">1</span>
+                        </span>
+                    </a>
+                </li>
+                
+                <li>
+                    <a class="level is-marginless" href="/tags/Linux/">
+                        <span class="level-start">
+                            <span class="level-item">Linux</span>
+                        </span>
+                        <span class="level-end">
+                            <span class="level-item tag">1</span>
+                        </span>
+                    </a>
+                </li>
+                
+                <li>
+                    <a class="level is-marginless" href="/tags/Markdown/">
+                        <span class="level-start">
+                            <span class="level-item">Markdown</span>
+                        </span>
+                        <span class="level-end">
+                            <span class="level-item tag">1</span>
+                        </span>
+                    </a>
+                </li>
+                
+                <li>
+                    <a class="level is-marginless" href="/tags/NodeJs/">
+                        <span class="level-start">
+                            <span class="level-item">NodeJs</span>
+                        </span>
+                        <span class="level-end">
+                            <span class="level-item tag">1</span>
+                        </span>
+                    </a>
+                </li>
+                
+                <li>
+                    <a class="level is-marginless" href="/tags/Promise/">
+                        <span class="level-start">
+                            <span class="level-item">Promise</span>
+                        </span>
+                        <span class="level-end">
+                            <span class="level-item tag">1</span>
+                        </span>
+                    </a>
+                </li>
+                
+                <li>
+                    <a class="level is-marginless" href="/tags/Python/">
+                        <span class="level-start">
+                            <span class="level-item">Python</span>
+                        </span>
+                        <span class="level-end">
+                            <span class="level-item tag">1</span>
+                        </span>
+                    </a>
+                </li>
+                
+                <li>
+                    <a class="level is-marginless" href="/tags/React/">
+                        <span class="level-start">
+                            <span class="level-item">React</span>
+                        </span>
+                        <span class="level-end">
+                            <span class="level-item tag">1</span>
+                        </span>
+                    </a>
+                </li>
+                
+                <li>
+                    <a class="level is-marginless" href="/tags/Virtualization/">
+                        <span class="level-start">
+                            <span class="level-item">Virtualization</span>
+                        </span>
+                        <span class="level-end">
+                            <span class="level-item tag">1</span>
+                        </span>
+                    </a>
+                </li>
+                
+                <li>
+                    <a class="level is-marginless" href="/tags/Vue/">
+                        <span class="level-start">
+                            <span class="level-item">Vue</span>
+                        </span>
+                        <span class="level-end">
+                            <span class="level-item tag">2</span>
+                        </span>
+                    </a>
+                </li>
+                
+                <li>
+                    <a class="level is-marginless" href="/tags/WAF/">
+                        <span class="level-start">
+                            <span class="level-item">WAF</span>
+                        </span>
+                        <span class="level-end">
+                            <span class="level-item tag">1</span>
+                        </span>
+                    </a>
+                </li>
+                
+                <li>
+                    <a class="level is-marginless" href="/tags/Web-Security/">
+                        <span class="level-start">
+                            <span class="level-item">Web Security</span>
+                        </span>
+                        <span class="level-end">
+                            <span class="level-item tag">7</span>
+                        </span>
+                    </a>
+                </li>
+                
+                <li>
+                    <a class="level is-marginless" href="/tags/Wireless-Security/">
+                        <span class="level-start">
+                            <span class="level-item">Wireless Security</span>
+                        </span>
+                        <span class="level-end">
+                            <span class="level-item tag">1</span>
+                        </span>
+                    </a>
+                </li>
+                
+                <li>
+                    <a class="level is-marginless" href="/tags/XSS/">
+                        <span class="level-start">
+                            <span class="level-item">XSS</span>
+                        </span>
+                        <span class="level-end">
+                            <span class="level-item tag">2</span>
+                        </span>
+                    </a>
+                </li>
+                
+            </ul>
+        </div>
+    </div>
+</div>
+        
+        </div>
+    
+</div>
+
+                
+
+
+
+
+<div class="column is-4-tablet is-4-desktop is-3-widescreen is-hidden-touch is-hidden-desktop-only has-order-3 column-right ">
+    
+        
+<div class="card widget">
+    <div class="card-content">
+        <h3 class="menu-label">
+            最新文章
+        </h3>
+        
+        <article class="media">
+            
+            <a href="/2018/12/30/reading-notes-from-lucene-to-elasticsearch-full-text-search/" class="media-left">
+                <p class="image is-64x64">
+                    <img class="thumbnail" src="/images/thumbnail/globalworming_43986209_2220823381486696_8628271851625393205_n.jpg" alt="读书笔记：从Lucene到Elasticsearch:全文检索实战">
+                </p>
+            </a>
+            
+            <div class="media-content">
+                <div class="content">
+                    <div><time class="has-text-grey is-size-7 is-uppercase" datetime="2018-12-30T14:52:05.000Z">2018-12-30</time></div>
+                    <a href="/2018/12/30/reading-notes-from-lucene-to-elasticsearch-full-text-search/" class="has-link-black-ter is-size-6">读书笔记：从Lucene到Elasticsearch:全文检索实战</a>
+                    <p class="is-size-7 is-uppercase">
+                        <a class="has-link-grey -link" href="/categories/Elasticsearch/">Elasticsearch</a>
+                    </p>
+                </div>
+            </div>
+        </article>
+        
+        <article class="media">
+            
+            <a href="/2018/08/24/javaScript-integration-sentry/" class="media-left">
+                <p class="image is-64x64">
+                    <img class="thumbnail" src="/images/thumbnail/portrait-of-deer-in-forest-at-sunset.jpg" alt="JavaScript集成Sentry">
+                </p>
+            </a>
+            
+            <div class="media-content">
+                <div class="content">
+                    <div><time class="has-text-grey is-size-7 is-uppercase" datetime="2018-08-24T01:16:33.000Z">2018-08-24</time></div>
+                    <a href="/2018/08/24/javaScript-integration-sentry/" class="has-link-black-ter is-size-6">JavaScript集成Sentry</a>
+                    <p class="is-size-7 is-uppercase">
+                        <a class="has-link-grey -link" href="/categories/JavaScript/">JavaScript</a>
+                    </p>
+                </div>
+            </div>
+        </article>
+        
+        <article class="media">
+            
+            <a href="/2018/04/14/analyz-the-axios-source-to-find-out-why-you-cant-use-all-and-spread-methods/" class="media-left">
+                <p class="image is-64x64">
+                    <img class="thumbnail" src="/images/thumbnail/parisexplorer_43915379_1186317334867380_3406866474572309396_n.jpg" alt="分析axios源码来找出无法使用all和spread等方法的原因">
+                </p>
+            </a>
+            
+            <div class="media-content">
+                <div class="content">
+                    <div><time class="has-text-grey is-size-7 is-uppercase" datetime="2018-04-14T05:37:29.000Z">2018-04-14</time></div>
+                    <a href="/2018/04/14/analyz-the-axios-source-to-find-out-why-you-cant-use-all-and-spread-methods/" class="has-link-black-ter is-size-6">分析axios源码来找出无法使用all和spread等方法的原因</a>
+                    <p class="is-size-7 is-uppercase">
+                        <a class="has-link-grey -link" href="/categories/JavaScript/">JavaScript</a>
+                    </p>
+                </div>
+            </div>
+        </article>
+        
+        <article class="media">
+            
+            <a href="/2018/04/12/simplemde-realizes-some-thoughts-on-drag-and-drop-and-paste-function/" class="media-left">
+                <p class="image is-64x64">
+                    <img class="thumbnail" src="/images/thumbnail/punkodelish_43018283_328080891311441_4977042715385938518_n.jpg" alt="基于vue-simplemde实现图片拖拽、粘贴功能的一些思考">
+                </p>
+            </a>
+            
+            <div class="media-content">
+                <div class="content">
+                    <div><time class="has-text-grey is-size-7 is-uppercase" datetime="2018-04-12T03:00:12.000Z">2018-04-12</time></div>
+                    <a href="/2018/04/12/simplemde-realizes-some-thoughts-on-drag-and-drop-and-paste-function/" class="has-link-black-ter is-size-6">基于vue-simplemde实现图片拖拽、粘贴功能的一些思考</a>
+                    <p class="is-size-7 is-uppercase">
+                        <a class="has-link-grey -link" href="/categories/JavaScript/">JavaScript</a>
+                    </p>
+                </div>
+            </div>
+        </article>
+        
+        <article class="media">
+            
+            <a href="/2018/01/23/run-qcow2-image-in-vmware/" class="media-left">
+                <p class="image is-64x64">
+                    <img class="thumbnail" src="/images/thumbnail/pexels-photo-1183434.jpeg" alt="在vmware里运行qcow2镜像">
+                </p>
+            </a>
+            
+            <div class="media-content">
+                <div class="content">
+                    <div><time class="has-text-grey is-size-7 is-uppercase" datetime="2018-01-23T01:12:31.000Z">2018-01-23</time></div>
+                    <a href="/2018/01/23/run-qcow2-image-in-vmware/" class="has-link-black-ter is-size-6">在vmware里运行qcow2镜像</a>
+                    <p class="is-size-7 is-uppercase">
+                        <a class="has-link-grey -link" href="/categories/Virtualization/">Virtualization</a>
+                    </p>
+                </div>
+            </div>
+        </article>
+        
+    </div>
+</div>
+
+    
+        <div class="card widget">
+    <div class="card-content">
+        <div class="menu">
+        <h3 class="menu-label">
+            归档
+        </h3>
+        <ul class="menu-list">
+        
+        <li>
+            <a class="level is-marginless" href="/archives/2018/12/">
+                <span class="level-start">
+                    <span class="level-item">十二月 2018</span>
+                </span>
+                <span class="level-end">
+                    <span class="level-item tag">1</span>
+                </span>
+            </a>
+        </li>
+        
+        <li>
+            <a class="level is-marginless" href="/archives/2018/08/">
+                <span class="level-start">
+                    <span class="level-item">八月 2018</span>
+                </span>
+                <span class="level-end">
+                    <span class="level-item tag">1</span>
+                </span>
+            </a>
+        </li>
+        
+        <li>
+            <a class="level is-marginless" href="/archives/2018/04/">
+                <span class="level-start">
+                    <span class="level-item">四月 2018</span>
+                </span>
+                <span class="level-end">
+                    <span class="level-item tag">2</span>
+                </span>
+            </a>
+        </li>
+        
+        <li>
+            <a class="level is-marginless" href="/archives/2018/01/">
+                <span class="level-start">
+                    <span class="level-item">一月 2018</span>
+                </span>
+                <span class="level-end">
+                    <span class="level-item tag">2</span>
+                </span>
+            </a>
+        </li>
+        
+        <li>
+            <a class="level is-marginless" href="/archives/2017/11/">
+                <span class="level-start">
+                    <span class="level-item">十一月 2017</span>
+                </span>
+                <span class="level-end">
+                    <span class="level-item tag">2</span>
+                </span>
+            </a>
+        </li>
+        
+        <li>
+            <a class="level is-marginless" href="/archives/2017/03/">
+                <span class="level-start">
+                    <span class="level-item">三月 2017</span>
+                </span>
+                <span class="level-end">
+                    <span class="level-item tag">1</span>
+                </span>
+            </a>
+        </li>
+        
+        <li>
+            <a class="level is-marginless" href="/archives/2016/12/">
+                <span class="level-start">
+                    <span class="level-item">十二月 2016</span>
+                </span>
+                <span class="level-end">
+                    <span class="level-item tag">2</span>
+                </span>
+            </a>
+        </li>
+        
+        <li>
+            <a class="level is-marginless" href="/archives/2016/10/">
+                <span class="level-start">
+                    <span class="level-item">十月 2016</span>
+                </span>
+                <span class="level-end">
+                    <span class="level-item tag">1</span>
+                </span>
+            </a>
+        </li>
+        
+        <li>
+            <a class="level is-marginless" href="/archives/2016/08/">
+                <span class="level-start">
+                    <span class="level-item">八月 2016</span>
+                </span>
+                <span class="level-end">
+                    <span class="level-item tag">2</span>
+                </span>
+            </a>
+        </li>
+        
+        <li>
+            <a class="level is-marginless" href="/archives/2016/06/">
+                <span class="level-start">
+                    <span class="level-item">六月 2016</span>
+                </span>
+                <span class="level-end">
+                    <span class="level-item tag">2</span>
+                </span>
+            </a>
+        </li>
+        
+        <li>
+            <a class="level is-marginless" href="/archives/2016/05/">
+                <span class="level-start">
+                    <span class="level-item">五月 2016</span>
+                </span>
+                <span class="level-end">
+                    <span class="level-item tag">1</span>
+                </span>
+            </a>
+        </li>
+        
+        </ul>
+        </div>
+    </div>
+</div>
+    
+        <div class="card widget">
+    <div class="card-content">
+        <div class="menu">
+            <h3 class="menu-label">
+                标签
+            </h3>
+            <ul class="menu-list">
+                
+                <li>
+                    <a class="level is-marginless" href="/tags/Axios/">
+                        <span class="level-start">
+                            <span class="level-item">Axios</span>
+                        </span>
+                        <span class="level-end">
+                            <span class="level-item tag">1</span>
+                        </span>
+                    </a>
+                </li>
+                
+                <li>
+                    <a class="level is-marginless" href="/tags/Browser-Plugin/">
+                        <span class="level-start">
+                            <span class="level-item">Browser Plugin</span>
+                        </span>
+                        <span class="level-end">
+                            <span class="level-item tag">1</span>
+                        </span>
+                    </a>
+                </li>
+                
+                <li>
+                    <a class="level is-marginless" href="/tags/CSRF/">
+                        <span class="level-start">
+                            <span class="level-item">CSRF</span>
+                        </span>
+                        <span class="level-end">
+                            <span class="level-item tag">2</span>
+                        </span>
+                    </a>
+                </li>
+                
+                <li>
+                    <a class="level is-marginless" href="/tags/DSL/">
+                        <span class="level-start">
+                            <span class="level-item">DSL</span>
+                        </span>
+                        <span class="level-end">
+                            <span class="level-item tag">1</span>
+                        </span>
+                    </a>
+                </li>
+                
+                <li>
+                    <a class="level is-marginless" href="/tags/Elasticsearch/">
+                        <span class="level-start">
+                            <span class="level-item">Elasticsearch</span>
+                        </span>
+                        <span class="level-end">
+                            <span class="level-item tag">1</span>
+                        </span>
+                    </a>
+                </li>
+                
+                <li>
+                    <a class="level is-marginless" href="/tags/Electron/">
+                        <span class="level-start">
+                            <span class="level-item">Electron</span>
+                        </span>
+                        <span class="level-end">
+                            <span class="level-item tag">1</span>
+                        </span>
+                    </a>
+                </li>
+                
+                <li>
+                    <a class="level is-marginless" href="/tags/JavaScript/">
+                        <span class="level-start">
+                            <span class="level-item">JavaScript</span>
+                        </span>
+                        <span class="level-end">
+                            <span class="level-item tag">5</span>
+                        </span>
+                    </a>
+                </li>
+                
+                <li>
+                    <a class="level is-marginless" href="/tags/Kibana/">
+                        <span class="level-start">
+                            <span class="level-item">Kibana</span>
+                        </span>
+                        <span class="level-end">
+                            <span class="level-item tag">1</span>
+                        </span>
+                    </a>
+                </li>
+                
+                <li>
+                    <a class="level is-marginless" href="/tags/Koa/">
+                        <span class="level-start">
+                            <span class="level-item">Koa</span>
+                        </span>
+                        <span class="level-end">
+                            <span class="level-item tag">1</span>
+                        </span>
+                    </a>
+                </li>
+                
+                <li>
+                    <a class="level is-marginless" href="/tags/Linux/">
+                        <span class="level-start">
+                            <span class="level-item">Linux</span>
+                        </span>
+                        <span class="level-end">
+                            <span class="level-item tag">1</span>
+                        </span>
+                    </a>
+                </li>
+                
+                <li>
+                    <a class="level is-marginless" href="/tags/Markdown/">
+                        <span class="level-start">
+                            <span class="level-item">Markdown</span>
+                        </span>
+                        <span class="level-end">
+                            <span class="level-item tag">1</span>
+                        </span>
+                    </a>
+                </li>
+                
+                <li>
+                    <a class="level is-marginless" href="/tags/NodeJs/">
+                        <span class="level-start">
+                            <span class="level-item">NodeJs</span>
+                        </span>
+                        <span class="level-end">
+                            <span class="level-item tag">1</span>
+                        </span>
+                    </a>
+                </li>
+                
+                <li>
+                    <a class="level is-marginless" href="/tags/Promise/">
+                        <span class="level-start">
+                            <span class="level-item">Promise</span>
+                        </span>
+                        <span class="level-end">
+                            <span class="level-item tag">1</span>
+                        </span>
+                    </a>
+                </li>
+                
+                <li>
+                    <a class="level is-marginless" href="/tags/Python/">
+                        <span class="level-start">
+                            <span class="level-item">Python</span>
+                        </span>
+                        <span class="level-end">
+                            <span class="level-item tag">1</span>
+                        </span>
+                    </a>
+                </li>
+                
+                <li>
+                    <a class="level is-marginless" href="/tags/React/">
+                        <span class="level-start">
+                            <span class="level-item">React</span>
+                        </span>
+                        <span class="level-end">
+                            <span class="level-item tag">1</span>
+                        </span>
+                    </a>
+                </li>
+                
+                <li>
+                    <a class="level is-marginless" href="/tags/Virtualization/">
+                        <span class="level-start">
+                            <span class="level-item">Virtualization</span>
+                        </span>
+                        <span class="level-end">
+                            <span class="level-item tag">1</span>
+                        </span>
+                    </a>
+                </li>
+                
+                <li>
+                    <a class="level is-marginless" href="/tags/Vue/">
+                        <span class="level-start">
+                            <span class="level-item">Vue</span>
+                        </span>
+                        <span class="level-end">
+                            <span class="level-item tag">2</span>
+                        </span>
+                    </a>
+                </li>
+                
+                <li>
+                    <a class="level is-marginless" href="/tags/WAF/">
+                        <span class="level-start">
+                            <span class="level-item">WAF</span>
+                        </span>
+                        <span class="level-end">
+                            <span class="level-item tag">1</span>
+                        </span>
+                    </a>
+                </li>
+                
+                <li>
+                    <a class="level is-marginless" href="/tags/Web-Security/">
+                        <span class="level-start">
+                            <span class="level-item">Web Security</span>
+                        </span>
+                        <span class="level-end">
+                            <span class="level-item tag">7</span>
+                        </span>
+                    </a>
+                </li>
+                
+                <li>
+                    <a class="level is-marginless" href="/tags/Wireless-Security/">
+                        <span class="level-start">
+                            <span class="level-item">Wireless Security</span>
+                        </span>
+                        <span class="level-end">
+                            <span class="level-item tag">1</span>
+                        </span>
+                    </a>
+                </li>
+                
+                <li>
+                    <a class="level is-marginless" href="/tags/XSS/">
+                        <span class="level-start">
+                            <span class="level-item">XSS</span>
+                        </span>
+                        <span class="level-end">
+                            <span class="level-item tag">2</span>
+                        </span>
+                    </a>
+                </li>
+                
+            </ul>
+        </div>
+    </div>
+</div>
+    
+    
+</div>
+
+            </div>
+        </div>
+    </section>
+    <footer class="footer">
+    <div class="container">
+        <div class="level">
+            <div class="level-start has-text-centered-mobile">
+                <a class="footer-logo is-block has-mb-6" href="/">
+                
+                    <img src="/images/logo.png" alt="自动化检测CSRF(第二篇)" height="28">
+                
+                </a>
+                <p class="is-size-7">
+                &copy; 2019 Black-Hole&nbsp;
+                Powered by <a href="http://hexo.io/" target="_blank">Hexo</a> & <a href="http://github.com/ppoffice/hexo-theme-icarus">Icarus</a>
+                </p>
+            </div>
+            <div class="level-end">
+            
+            </div>
+        </div>
+    </div>
+</footer>
+    <script src="https://cdn.jsdelivr.net/npm/jquery@3.3.1/dist/jquery.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/moment@2.22.2/min/moment-with-locales.min.js"></script>
+<script>moment.locale("zh-CN");</script>
+
+
+    
+    
+    
+    <script src="/js/animation.js"></script>
+    
+
+    
+    
+    
+    <script src="https://cdn.jsdelivr.net/npm/lightgallery@1.6.8/dist/js/lightgallery.min.js" defer></script>
+    <script src="https://cdn.jsdelivr.net/npm/justifiedGallery@3.7.0/dist/js/jquery.justifiedGallery.min.js" defer></script>
+    <script src="/js/gallery.js" defer></script>
+    
+
+    
+    
+
+<div id="outdated">
+    <h6>Your browser is out-of-date!</h6>
+    <p>Update your browser to view this website correctly. <a id="btnUpdateBrowser" href="http://outdatedbrowser.com/">Update
+            my browser now </a></p>
+    <p class="last"><a href="#" id="btnCloseUpdateBrowser" title="Close">&times;</a></p>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/outdatedbrowser@1.1.5/outdatedbrowser/outdatedbrowser.min.js" defer></script>
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        outdatedBrowser({
+            bgColor: '#f25648',
+            color: '#ffffff',
+            lowerThan: 'flex'
+        });
+    });
+</script>
+
+
+    
+    
+<script src="https://cdn.jsdelivr.net/npm/mathjax@2.7.5/unpacked/MathJax.js?config=TeX-MML-AM_CHTML" defer></script>
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    MathJax.Hub.Config({
+        'HTML-CSS': {matchFontHeight: false},
+        SVG: {matchFontHeight: false},
+        CommonHTML: {matchFontHeight: false}
+    });
+});
+</script>
+
+    
+    
+
+<a id="back-to-top" title="回到顶端" href="javascript:;">
+    <i class="fas fa-chevron-up"></i>
+</a>
+<script src="/js/back-to-top.js" defer></script>
+
+
+    
+    
+
+    
+    
+    
+    
+
+    
+    
+    
+    
+    
+    <script src="https://cdn.jsdelivr.net/npm/clipboard@2.0.4/dist/clipboard.min.js" defer></script>
+    <script src="/js/clipboard.js" defer></script>
+    
+
+    
+
+
+<script src="/js/main.js" defer></script>
+
+    
+    <div class="searchbox ins-search">
+    <div class="searchbox-container ins-search-container">
+        <div class="searchbox-input-wrapper">
+            <input type="text" class="searchbox-input ins-search-input" placeholder="想要查找什么...">
+            <span class="searchbox-close ins-close ins-selectable"><i class="fa fa-times-circle"></i></span>
+        </div>
+        <div class="searchbox-result-wrapper ins-section-wrapper">
+            <div class="ins-section-container"></div>
+        </div>
+    </div>
+</div>
+<script>
+    (function (window) {
+        var INSIGHT_CONFIG = {
+            TRANSLATION: {
+                POSTS: '文章',
+                PAGES: '页面',
+                CATEGORIES: '分类',
+                TAGS: '标签',
+                UNTITLED: '(无标题)',
+            },
+            CONTENT_URL: '/content.json',
+        };
+        window.INSIGHT_CONFIG = INSIGHT_CONFIG;
+    })(window);
+</script>
+<script src="/js/insight.js" defer></script>
+<link rel="stylesheet" href="/css/search.css">
+<link rel="stylesheet" href="/css/insight.css">
+    
+</body>
+</html>

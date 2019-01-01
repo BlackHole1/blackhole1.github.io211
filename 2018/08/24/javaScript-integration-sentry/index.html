@@ -1,0 +1,1932 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head><meta name="generator" content="Hexo 3.8.0">
+    <meta charset="utf-8">
+<title>JavaScript集成Sentry - Black-Hole&#39;s Blog</title>
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+
+
+    <meta name="description" content="Sentry-JavaScript Sentry是一套用于捕获产品错误的开源项目，其下支持很多语言、框架。 这里就只阐述在前端JavaScript方向的处理操作  在我们公司之前的应用场景里，很多项目都是使用kibana来做信息统计。但是我们无法清楚的知道应用的运行状态是怎么样的。当某个客户在使用我们开发产品时，如果报错、崩溃。用户只能向客服寻求帮助，再交接给我们的开发人员进行复现、修复。其中因为">
+<meta name="keywords" content="JavaScript,React,Electron">
+<meta property="og:type" content="article">
+<meta property="og:title" content="JavaScript集成Sentry">
+<meta property="og:url" content="http://bugs.cc/2018/08/24/javaScript-integration-sentry/index.html">
+<meta property="og:site_name" content="Black-Hole&#39;s Blog">
+<meta property="og:description" content="Sentry-JavaScript Sentry是一套用于捕获产品错误的开源项目，其下支持很多语言、框架。 这里就只阐述在前端JavaScript方向的处理操作  在我们公司之前的应用场景里，很多项目都是使用kibana来做信息统计。但是我们无法清楚的知道应用的运行状态是怎么样的。当某个客户在使用我们开发产品时，如果报错、崩溃。用户只能向客服寻求帮助，再交接给我们的开发人员进行复现、修复。其中因为">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:image" content="http://on7r0tqgu.bkt.clouddn.com/FvVZGmlwDH38c0cpp3pPuaYOxFvT.png">
+<meta property="og:image" content="http://on7r0tqgu.bkt.clouddn.com/FoPo_yW7Tv3G1hwDx9rGw77aISAr.png">
+<meta property="og:image" content="http://on7r0tqgu.bkt.clouddn.com/FkhLmgOjw2K48K3NdHlBsMFZLWRb.png">
+<meta property="og:updated_time" content="2019-01-01T06:36:04.927Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="JavaScript集成Sentry">
+<meta name="twitter:description" content="Sentry-JavaScript Sentry是一套用于捕获产品错误的开源项目，其下支持很多语言、框架。 这里就只阐述在前端JavaScript方向的处理操作  在我们公司之前的应用场景里，很多项目都是使用kibana来做信息统计。但是我们无法清楚的知道应用的运行状态是怎么样的。当某个客户在使用我们开发产品时，如果报错、崩溃。用户只能向客服寻求帮助，再交接给我们的开发人员进行复现、修复。其中因为">
+<meta name="twitter:image" content="http://on7r0tqgu.bkt.clouddn.com/FvVZGmlwDH38c0cpp3pPuaYOxFvT.png">
+<meta name="twitter:creator" content="@Free_BlackHole">
+<meta name="twitter:site" content="https://twitter.com/Free_BlackHole">
+
+
+
+<link rel="alternative" href="/atom.xml" title="JavaScript集成Sentry" type="application/atom+xml">
+
+
+
+<link rel="icon" href="/images/favicon.ico">
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.7.2/css/bulma.css">
+<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.4.1/css/all.css">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Ubuntu:400,600|Source+Code+Pro">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/highlight.js@9.12.0/styles/atom-one-light.css">
+
+
+    
+    
+    
+    <style>body>.footer,body>.navbar,body>.section{opacity:0}</style>
+    
+
+    
+    
+    
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/lightgallery@1.6.8/dist/css/lightgallery.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/justifiedGallery@3.7.0/dist/css/justifiedGallery.min.css">
+    
+
+    
+    
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/outdatedbrowser@1.1.5/outdatedbrowser/outdatedbrowser.min.css">
+
+
+    
+    
+    
+    
+
+<link rel="stylesheet" href="/css/back-to-top.css">
+
+
+    
+    
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-90340553-1"></script>
+<script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+
+    gtag('config', 'UA-90340553-1');
+</script>
+
+
+    
+    
+    
+    
+
+    
+    
+<link rel="stylesheet" href="/css/progressbar.css">
+<script src="https://cdn.jsdelivr.net/npm/pace-js@1.0.2/pace.min.js"></script>
+
+    
+    
+    
+
+    
+
+
+<link rel="stylesheet" href="/css/style.css">
+</head>
+<body class="is-3-column">
+    <nav class="navbar navbar-main">
+    <div class="container">
+        <div class="navbar-brand is-flex-center">
+            <a class="navbar-item navbar-logo" href="/">
+            
+                <img src="/images/logo.png" alt="JavaScript集成Sentry" height="28">
+            
+            </a>
+        </div>
+        <div class="navbar-menu">
+            
+            <div class="navbar-start">
+                
+                <a class="navbar-item" href="/">Home</a>
+                
+                <a class="navbar-item" href="/archives">Archives</a>
+                
+                <a class="navbar-item" href="/categories">Categories</a>
+                
+                <a class="navbar-item" href="/tags">Tags</a>
+                
+                <a class="navbar-item" href="/friends">Friends</a>
+                
+                <a class="navbar-item" href="/todo">Todo</a>
+                
+                <a class="navbar-item" href="/about">About</a>
+                
+            </div>
+            
+            <div class="navbar-end">
+                
+                    
+                    
+                    <a class="navbar-item" target="_blank" title="GitHub" href="https://github.com/BlackHole1">
+                        
+                        <i class="fab fa-github"></i>
+                        
+                    </a>
+                    
+                
+                
+                
+                <a class="navbar-item search" title="搜索" href="javascript:;">
+                    <i class="fas fa-search"></i>
+                </a>
+                
+            </div>
+        </div>
+    </div>
+</nav>
+    
+    <section class="section">
+        <div class="container">
+            <div class="columns">
+                <div class="column is-8-tablet is-8-desktop is-6-widescreen has-order-2 column-main"><div class="card">
+    
+    <div class="card-image">
+        <span class="image is-7by1">
+            <img class="thumbnail" src="/images/thumbnail/portrait-of-deer-in-forest-at-sunset.jpg" alt="JavaScript集成Sentry">
+        </span>
+    </div>
+    
+    <div class="card-content article ">
+        
+        <div class="level article-meta is-size-7 is-uppercase is-mobile is-overflow-x-auto">
+            <div class="level-left">
+                <time class="level-item has-text-grey" datetime="2018-08-24T01:16:33.000Z">2018-08-24</time>
+                
+                <div class="level-item">
+                <a class="has-link-grey -link" href="/categories/JavaScript/">JavaScript</a>
+                </div>
+                
+                
+                <span class="level-item has-text-grey">
+                    
+                    
+                    14 分钟 读完 (大约 2065 个字)
+                </span>
+                
+            </div>
+        </div>
+        
+        <h1 class="title is-size-3 is-size-4-mobile has-text-weight-normal">
+            
+                JavaScript集成Sentry
+            
+        </h1>
+        <div class="content">
+            <h1 id="Sentry-JavaScript"><a href="#Sentry-JavaScript" class="headerlink" title="Sentry-JavaScript"></a>Sentry-JavaScript</h1><blockquote>
+<p>Sentry是一套用于捕获产品错误的开源项目，其下支持很多语言、框架。</p>
+<p>这里就只阐述在前端JavaScript方向的处理操作</p>
+</blockquote>
+<p>在我们公司之前的应用场景里，很多项目都是使用<code>kibana</code>来做信息统计。但是我们无法清楚的知道应用的运行状态是怎么样的。当某个客户在使用我们开发产品时，如果报错、崩溃。用户只能向客服寻求帮助，再交接给我们的开发人员进行复现、修复。其中因为不清楚具体的数据，开发人员是在复现时会非常的耗时。</p>
+<p>而<code>Sentry</code>的用途就是解决这一痛点问题，让开发人员快速准确的定位到问题的根源所在，以达到快速修复，让开发人员更注重于开发新的功能上面。减少时间资源上的浪费。</p>
+<h2 id="JavaScript"><a href="#JavaScript" class="headerlink" title="JavaScript"></a>JavaScript</h2><h3 id="接入"><a href="#接入" class="headerlink" title="接入"></a>接入</h3><p>因为<code>Sentry</code>使用的是一种<code>Hook</code>错误函数的技术，来达到捕获错误的目的，所以我们基本可以无损耗的接入到现有的项目中去。</p>
+<p>下面是<code>React</code>与<code>Sentry</code>进行结合的一些基本步骤。<br><a id="more"></a><br>React:</p>
+<figure class="highlight javascript hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line">#SentryBoundary.js</span><br><span class="line"><span class="hljs-keyword">import</span> &#123; Component &#125; <span class="hljs-keyword">from</span> <span class="hljs-string">"react"</span>;</span><br><span class="line"><span class="hljs-keyword">import</span> Raven <span class="hljs-keyword">from</span> <span class="hljs-string">"raven-js"</span>;</span><br><span class="line"></span><br><span class="line"><span class="hljs-keyword">export</span> <span class="hljs-keyword">default</span> <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">SentryBoundary</span> <span class="hljs-keyword">extends</span> <span class="hljs-title">Component</span> </span>&#123;</span><br><span class="line">  <span class="hljs-keyword">constructor</span>(props) &#123;</span><br><span class="line">    <span class="hljs-keyword">super</span>(props);</span><br><span class="line">    <span class="hljs-keyword">this</span>.state = &#123; <span class="hljs-attr">error</span>: <span class="hljs-literal">null</span> &#125;;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  componentDidCatch(error, errorInfo) &#123;</span><br><span class="line">    <span class="hljs-keyword">this</span>.setState(&#123; error &#125;);</span><br><span class="line">    <span class="hljs-comment">// 发送错误信息</span></span><br><span class="line">    Raven.captureException(error, &#123; <span class="hljs-attr">extra</span>: errorInfo &#125;);</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  render() &#123;</span><br><span class="line">    <span class="hljs-keyword">if</span> (<span class="hljs-keyword">this</span>.state.error) &#123;</span><br><span class="line">      <span class="hljs-comment">// 此处可以写成组件，当组件崩溃后，可以替换崩溃的组件</span></span><br><span class="line">      <span class="hljs-built_in">console</span>.log(<span class="hljs-string">"React Error"</span>);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>.props.children;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight javascript hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">#index.js</span><br><span class="line">Raven.config(<span class="hljs-string">"DSN"</span>, &#123;</span><br><span class="line">  release: release,</span><br><span class="line">&#125;).install();</span><br><span class="line"></span><br><span class="line">ReactDOM.render(</span><br><span class="line">  &lt;div&gt;</span><br><span class="line">    &lt;SentryBoundary&gt;</span><br><span class="line">      &lt;App /&gt;</span><br><span class="line">    &lt;<span class="hljs-regexp">/SentryBoundary&gt;</span></span><br><span class="line"><span class="hljs-regexp">  &lt;/</span>div&gt;,</span><br><span class="line">  <span class="hljs-built_in">document</span>.getElementById(<span class="hljs-string">"root"</span>)</span><br><span class="line">);</span><br></pre></td></tr></table></figure>
+<h4 id="上传source-map"><a href="#上传source-map" class="headerlink" title="上传source-map"></a>上传source-map</h4><p>如果上面的代码已经配置好后，那么现在的应用是可以捕获到错误的，但是存在了一个问题，我们目前的项目大多都使用<code>webpack</code>进行打包，而打包后的代码是混淆加密的代码，无法让我们准确的知道抛出错误的位置在哪里。所以我们需要上传<code>source-map</code>和混淆后的文件一起上传到<code>Sentry</code>服务器上。方便我们快速查找到问题所在的位置。</p>
+<p>这个上传的配置及命令是比较繁琐的。也是项目结合<code>Sentry</code>的一个难点。</p>
+<p>上传<code>source-map</code>目前有两种方式：</p>
+<ul>
+<li>使用<code>Sentry</code>提供的<code>Webpack</code>插件进行配置，但是其灵活性不高。</li>
+<li>使用<code>sentry-cli</code>的，其灵活性比较高，可以针对不同项目进行单独的配置。</li>
+</ul>
+<p>其配置较为繁琐，这里就不在阐述。具体的React与Sentry结合的例子。可见我在github上的项目: <a href="https://github.com/BlackHole1/react-sentry-demo" target="_blank" rel="noopener">react-sentry-demo</a>。对每个配置都有详细的说明。其中的上传<code>source-map</code>，我使用的是第二种方法，并写了一个脚本，实现了:  <strong>打包、环境检测、认证检测、上传source-map、删除本地source-map的操作</strong>，完成自动化，可以把脚本直接迁移到现有的项目中去，改动也不会太大。</p>
+<p>其核心上传命令如下:</p>
+<figure class="highlight bash hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sentry-cli releases files v1.8 upload-sourcemaps &#123;js文件和js.map所在目录。如果没有找到，sentry会遍历其子目录&#125; --url-prefix <span class="hljs-string">'~/&#123;过滤规则&#125;'</span>`;</span><br></pre></td></tr></table></figure>
+<h3 id="浅入原理"><a href="#浅入原理" class="headerlink" title="浅入原理"></a>浅入原理</h3><p>在JavaScript中是有<code>window.onerror</code>这个方法的，而<code>Sentry</code>在前端的核心捕获原理，就是通过重写此方法，来对所有的错误进行捕获。其实现的代码大致如下:</p>
+<figure class="highlight javascript hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="hljs-keyword">let</span> _winError = <span class="hljs-built_in">window</span>.onerror;</span><br><span class="line"><span class="hljs-built_in">window</span>.onerror = <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">message, url, lineNo, colNo, errorObj</span>) </span>&#123;</span><br><span class="line">    <span class="hljs-built_in">console</span>.log(<span class="hljs-string">`</span></span><br><span class="line"><span class="hljs-string">	错误信息: <span class="hljs-subst">$&#123;message&#125;</span></span></span><br><span class="line"><span class="hljs-string">	错误文件地址: <span class="hljs-subst">$&#123;url&#125;</span></span></span><br><span class="line"><span class="hljs-string">	错误行号: <span class="hljs-subst">$&#123;lineNo&#125;</span></span></span><br><span class="line"><span class="hljs-string">	错误列号: <span class="hljs-subst">$&#123;colNo&#125;</span></span></span><br><span class="line"><span class="hljs-string">	错误的详细信息 <span class="hljs-subst">$&#123;errorObj&#125;</span>`</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>然后<code>Sentry</code>的工作就是获取非错误的数据，如: <code>user-agent</code>、<code>浏览器信息</code>、<code>系统信息</code>、<code>自定义信息</code>等信息，然后交给<code>Sentry</code>的生命周期函数，最后在把数据发送到<code>Sentry</code>服务端，进行错误信息展示。</p>
+<h3 id="兼容性"><a href="#兼容性" class="headerlink" title="兼容性"></a>兼容性</h3><p>这里所说的兼容性，其实也就是<code>window.onerror</code>的兼容性</p>
+<h4 id="运行环境兼容性"><a href="#运行环境兼容性" class="headerlink" title="运行环境兼容性"></a>运行环境兼容性</h4><table>
+<thead>
+<tr>
+<th>环境</th>
+<th style="text-align:center">message</th>
+<th style="text-align:center">url</th>
+<th style="text-align:center">lineNo</th>
+<th style="text-align:center">colNo</th>
+<th style="text-align:center">errorObj</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Firefox</td>
+<td style="text-align:center">✓</td>
+<td style="text-align:center">✓</td>
+<td style="text-align:center">✓</td>
+<td style="text-align:center">✓</td>
+<td style="text-align:center">✓</td>
+</tr>
+<tr>
+<td>Chrom</td>
+<td style="text-align:center">✓</td>
+<td style="text-align:center">✓</td>
+<td style="text-align:center">✓</td>
+<td style="text-align:center">✓</td>
+<td style="text-align:center">✓</td>
+</tr>
+<tr>
+<td>Edge</td>
+<td style="text-align:center">✓</td>
+<td style="text-align:center">✓</td>
+<td style="text-align:center">✓</td>
+<td style="text-align:center">✓</td>
+<td style="text-align:center">✓</td>
+</tr>
+<tr>
+<td>IE 11</td>
+<td style="text-align:center">✓</td>
+<td style="text-align:center">✓</td>
+<td style="text-align:center">✓</td>
+<td style="text-align:center">✓</td>
+<td style="text-align:center">✓</td>
+</tr>
+<tr>
+<td>IE 10</td>
+<td style="text-align:center">✓</td>
+<td style="text-align:center">✓</td>
+<td style="text-align:center">✓</td>
+<td style="text-align:center">✓</td>
+<td style="text-align:center"></td>
+</tr>
+<tr>
+<td>IE 9</td>
+<td style="text-align:center">✓</td>
+<td style="text-align:center">✓</td>
+<td style="text-align:center">✓</td>
+<td style="text-align:center">✓</td>
+<td style="text-align:center"></td>
+</tr>
+<tr>
+<td>IE 8</td>
+<td style="text-align:center">✓</td>
+<td style="text-align:center">✓</td>
+<td style="text-align:center">✓</td>
+<td style="text-align:center"></td>
+<td style="text-align:center"></td>
+</tr>
+<tr>
+<td>Safari 10 and up</td>
+<td style="text-align:center">✓</td>
+<td style="text-align:center">✓</td>
+<td style="text-align:center">✓</td>
+<td style="text-align:center">✓</td>
+<td style="text-align:center">✓</td>
+</tr>
+<tr>
+<td>Safari 9</td>
+<td style="text-align:center">✓</td>
+<td style="text-align:center">✓</td>
+<td style="text-align:center">✓</td>
+<td style="text-align:center">✓</td>
+<td style="text-align:center"></td>
+</tr>
+<tr>
+<td>Opera 15+</td>
+<td style="text-align:center">✓</td>
+<td style="text-align:center">✓</td>
+<td style="text-align:center">✓</td>
+<td style="text-align:center">✓</td>
+<td style="text-align:center">✓</td>
+</tr>
+<tr>
+<td>Android Browser 4.4</td>
+<td style="text-align:center">✓</td>
+<td style="text-align:center">✓</td>
+<td style="text-align:center">✓</td>
+<td style="text-align:center">✓</td>
+<td style="text-align:center"></td>
+</tr>
+<tr>
+<td>Android Browser 4 - 4.3</td>
+<td style="text-align:center">✓</td>
+<td style="text-align:center">✓</td>
+<td style="text-align:center"></td>
+<td style="text-align:center"></td>
+<td style="text-align:center"></td>
+</tr>
+<tr>
+<td>微信webview(安卓)</td>
+<td style="text-align:center">✓</td>
+<td style="text-align:center">✓</td>
+<td style="text-align:center">✓</td>
+<td style="text-align:center">✓</td>
+<td style="text-align:center"></td>
+</tr>
+<tr>
+<td>微信webview(IOS)</td>
+<td style="text-align:center">✓</td>
+<td style="text-align:center">✓</td>
+<td style="text-align:center">✓</td>
+<td style="text-align:center">✓</td>
+<td style="text-align:center">✓</td>
+</tr>
+<tr>
+<td>WKWebview</td>
+<td style="text-align:center">✓</td>
+<td style="text-align:center">✓</td>
+<td style="text-align:center">✓</td>
+<td style="text-align:center">✓</td>
+<td style="text-align:center">✓</td>
+</tr>
+<tr>
+<td>UIWebview</td>
+<td style="text-align:center">✓</td>
+<td style="text-align:center">✓</td>
+<td style="text-align:center">✓</td>
+<td style="text-align:center">✓</td>
+<td style="text-align:center">✓</td>
+</tr>
+</tbody>
+</table>
+<h4 id="标签兼容性"><a href="#标签兼容性" class="headerlink" title="标签兼容性"></a>标签兼容性</h4><table>
+<thead>
+<tr>
+<th>标签</th>
+<th>window.onerror是否能捕获</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>img</td>
+<td>可以</td>
+</tr>
+<tr>
+<td>script</td>
+<td>需要再script标签添加<code>crossorigin</code>属性，并在服务端允许跨域。如果不使用这个属性，错误信息只会显示<code>Script error.</code></td>
+</tr>
+<tr>
+<td>css</td>
+<td>不能</td>
+</tr>
+<tr>
+<td>iframe</td>
+<td>不能</td>
+</tr>
+</tbody>
+</table>
+<p>可以发现其浏览器都支持此方法。只是有些运行环境不支持<code>colNo</code>和<code>errorObj</code>，但是这块，<code>Sentry</code>已经帮你处理好了，所以不用担心。只是会在展示错误的时候，信息不太完整而已。</p>
+<h3 id="所能捕获的信息"><a href="#所能捕获的信息" class="headerlink" title="所能捕获的信息"></a>所能捕获的信息</h3><h4 id="错误信息"><a href="#错误信息" class="headerlink" title="错误信息"></a>错误信息</h4><p>从上面的浅入原理可以看到，其核心捕获是<code>window.onerror</code>。那么只要它可以捕获到的错误，都会发送到<code>Sentry</code>上。</p>
+<p>而<code>window.onerror</code>能捕获到的错误，除了<code>Promise</code>，基本上能在控制台出现的错误，都会捕获到。也就是运行时的错误，包括语法错误。</p>
+<p>关于捕获<code>Promise</code>错误的方案，可以使用:</p>
+<p><code>window.addEventListener(&#39;unhandledrejection&#39;, event =&gt; {})</code></p>
+<p>来进行捕获，但是此事件的兼容性不太好，目前只有<code>webkit内核</code>支持这个事件。</p>
+<p>如下代码，是此方法所能捕获到的:</p>
+<figure class="highlight javascript hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="hljs-keyword">const</span> p = <span class="hljs-keyword">new</span> <span class="hljs-built_in">Promise</span>(<span class="hljs-function">(<span class="hljs-params">reslove, reject</span>) =&gt;</span> reject(<span class="hljs-string">'Error'</span>))</span><br><span class="line">p.then(<span class="hljs-function"><span class="hljs-params">data</span> =&gt;</span> &#123;</span><br><span class="line">  <span class="hljs-built_in">console</span>.log(data)</span><br><span class="line">&#125;)</span><br><span class="line"><span class="hljs-comment">// Promise触发了reject回调函数，但是却没有相应到catch来应对。从而导致报错。</span></span><br></pre></td></tr></table></figure>
+<h4 id="面包屑信息"><a href="#面包屑信息" class="headerlink" title="面包屑信息"></a>面包屑信息</h4><ul>
+<li>Ajax请求</li>
+<li>URL地址的变化</li>
+<li>UI点击和按下的DOM事件</li>
+<li>控制台的console信息</li>
+<li>之前的错误</li>
+<li>自定义的面包屑信息</li>
+</ul>
+<h3 id="展示信息"><a href="#展示信息" class="headerlink" title="展示信息"></a>展示信息</h3><p><img src="http://on7r0tqgu.bkt.clouddn.com/FvVZGmlwDH38c0cpp3pPuaYOxFvT.png" alt="image"></p>
+<h2 id="Electron集成"><a href="#Electron集成" class="headerlink" title="Electron集成"></a>Electron集成</h2><p>这里的集成，也不是说捕获Electron应用的错误，而是崩溃。因为Electron只是一个容器，里面的内容还是JavaScript应用。</p>
+<h3 id="接入-1"><a href="#接入-1" class="headerlink" title="接入"></a>接入</h3><p>刚刚也说到这里的集成也只是去捕获Electron崩溃的信息。而当Electron崩溃时，会触发Electron的函数:<code>crashReporter.start</code>，那么我们在这个函数里去配置一下自己的<code>sentry</code>信息:</p>
+<figure class="highlight javascript hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="hljs-keyword">import</span> &#123; crashReporter &#125; <span class="hljs-keyword">from</span> <span class="hljs-string">'electron'</span></span><br><span class="line"></span><br><span class="line">crashReporter.start(&#123;</span><br><span class="line">  productName: <span class="hljs-string">'aoc-desktop'</span>,</span><br><span class="line">  companyName: <span class="hljs-string">'alo7'</span>,</span><br><span class="line">  submitURL:</span><br><span class="line">    <span class="hljs-string">'https://sentry.com/api/15376/minidump/?sentry_key=3e05fa101f035008e953ff56909b8eb'</span>,	<span class="hljs-comment">// sentry提供的minidump接口</span></span><br><span class="line">  extra: &#123;</span><br><span class="line">    <span class="hljs-comment">// 额外信息</span></span><br><span class="line">  &#125;</span><br><span class="line">&#125;)</span><br></pre></td></tr></table></figure>
+<p>配置好后，可以使用<code>process.crash()</code>来模拟崩溃，以便查看Sentry是否能收到崩溃信息。</p>
+<h4 id="上传Symbol-符号表"><a href="#上传Symbol-符号表" class="headerlink" title="上传Symbol(符号表)"></a>上传Symbol(符号表)</h4><p>在上面的应用说的是上传<code>source-map</code>，但是这里上传的是Symbol。可以把<code>Symbol</code>理解为另一种<code>source-map</code>。</p>
+<p>Symbol的格式(后缀)有很多，Mac下是<code>dSYM</code>，windows是<code>pdb</code>。而在Sentry里，暂时是不支持上传<code>pdb</code>的。需要使用<code>dump_syms.exe</code>来把<code>pdb</code>格式转化成<code>sym</code>格式。再上传到Sentry里。这样就可以在Sentry崩溃的时候，看到起崩溃的上下文了。如下图:</p>
+<p><img src="http://on7r0tqgu.bkt.clouddn.com/FoPo_yW7Tv3G1hwDx9rGw77aISAr.png" alt=""></p>
+<p>这样就可以准确的定位到是哪里出现了问题。</p>
+<h2 id="浅入上传检索的原理"><a href="#浅入上传检索的原理" class="headerlink" title="浅入上传检索的原理"></a>浅入上传检索的原理</h2><p>当Sentry服务端收到<code>source-map</code>时，是通过你上传时的<code>url-prefix</code>信息，与source-map文件以及运行时的js文件，产生对应。流程图如下:</p>
+<p><img src="http://on7r0tqgu.bkt.clouddn.com/FkhLmgOjw2K48K3NdHlBsMFZLWRb.png" alt=""></p>
+<hr>
+<h2 id="作者信息"><a href="#作者信息" class="headerlink" title="作者信息"></a>作者信息</h2><blockquote>
+<p>Author: Black-Hole</p>
+</blockquote>
+<blockquote>
+<p>Blog: <a href="http://bugs.cc/">http://bugs.cc/</a></p>
+</blockquote>
+<blockquote>
+<p>github: <a href="https://github.com/BlackHole1/" target="_blank" rel="noopener">https://github.com/BlackHole1/</a></p>
+</blockquote>
+<blockquote>
+<p>Twitter: <a href="https://twitter.com/Free_BlackHole" target="_blank" rel="noopener">https://twitter.com/Free_BlackHole</a></p>
+</blockquote>
+<blockquote>
+<p>Email: <a href="mailto:158blackhole@gmail.com" target="_blank" rel="noopener">158blackhole@gmail.com</a></p>
+</blockquote>
+
+        </div>
+        
+        <div class="level is-size-7 is-uppercase">
+            <div class="level-start">
+                <div class="level-item">
+                    <span class="is-size-6 has-text-grey has-mr-7">#</span>
+                    <a class="has-link-grey -link" href="/tags/Electron/">Electron</a>, <a class="has-link-grey -link" href="/tags/JavaScript/">JavaScript</a>, <a class="has-link-grey -link" href="/tags/React/">React</a>
+                </div>
+            </div>
+        </div>
+        
+        
+        
+        
+<div class="sharethis-inline-share-buttons"></div>
+<script type="text/javascript" src="//platform-api.sharethis.com/js/sharethis.js#property=5c2a1d4fd02b6e0010eca6e3&amp;product=sticky-share-buttons" async="async"></script>
+
+        
+    </div>
+</div>
+
+
+
+<div class="card">
+    <div class="card-content">
+        <h3 class="menu-label has-text-centered">喜欢这篇文章？打赏一下作者吧</h3>
+        <div class="buttons is-centered">
+            
+                
+<a class="button is-info donate">
+    <span class="icon is-small">
+        <i class="fab fa-alipay"></i>
+    </span>
+    <span>支付宝</span>
+    <div class="qrcode"><img src="/images/alipay.jpg" alt="支付宝"></div>
+</a>
+
+                
+                
+<a class="button is-success donate">
+    <span class="icon is-small">
+        <i class="fab fa-weixin"></i>
+    </span>
+    <span>微信</span>
+    <div class="qrcode"><img src="/images/wechat.jpg" alt="微信"></div>
+</a>
+
+                
+                <!-- Visit https://www.paypal.com/donate/buttons/ to get your donate button -->
+
+<a class="button is-warning donate" onclick="document.getElementById(&#39;paypal-donate-form&#39;).submit()">
+    <span class="icon is-small">
+        <i class="fab fa-paypal"></i>
+    </span>
+    <span>Paypal</span>
+</a>
+<form action="https://www.paypal.com/cgi-bin/webscr" method="post" target="_blank" id="paypal-donate-form">
+    <input type="hidden" name="cmd" value="_donations">
+    <input type="hidden" name="business" value="158blackhole@gmail.com">
+    <input type="hidden" name="currency_code" value="USD">
+</form>
+
+                
+        </div>
+    </div>
+</div>
+
+
+
+<div class="card card-transparent">
+    <div class="level post-navigation is-flex-wrap is-mobile">
+        
+        <div class="level-start">
+            <a class="level level-item has-link-grey  article-nav-prev" href="/2018/12/30/reading-notes-from-lucene-to-elasticsearch-full-text-search/">
+                <i class="level-item fas fa-chevron-left"></i>
+                <span class="level-item">读书笔记：从Lucene到Elasticsearch:全文检索实战</span>
+            </a>
+        </div>
+        
+        
+        <div class="level-end">
+            <a class="level level-item has-link-grey  article-nav-next" href="/2018/04/14/analyz-the-axios-source-to-find-out-why-you-cant-use-all-and-spread-methods/">
+                <span class="level-item">分析axios源码来找出无法使用all和spread等方法的原因</span>
+                <i class="level-item fas fa-chevron-right"></i>
+            </a>
+        </div>
+        
+    </div>
+</div>
+
+
+
+<div class="card">
+    <div class="card-content">
+        <h3 class="title is-5 has-text-weight-normal">评论</h3>
+        
+<script>
+    var disqus_config = function () {
+        this.page.url = 'http://bugs.cc/2018/08/24/javaScript-integration-sentry/';
+        this.page.identifier = '2018/08/24/javaScript-integration-sentry/';
+    };
+    (function() {
+        var d = document, s = d.createElement('script');  
+        s.src = '//' + 'blackhole-1' + '.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+    })();
+</script>
+
+<div id="disqus_thread">
+    
+    <noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+    </div>
+</div>
+</div>
+                
+
+
+
+
+<div class="column is-4-tablet is-4-desktop is-3-widescreen  has-order-1 column-left ">
+    
+        
+<div class="card widget">
+    <div class="card-content">
+        <nav class="level">
+            <div class="level-item has-text-centered">
+                <div>
+                    <img class="image is-128x128 has-mb-6" style="border-radius: 290486px;" src="/images/avatar.png" alt="Black-Hole">
+                    
+                    <p class="is-size-4 is-block">
+                        Black-Hole
+                    </p>
+                    
+                    
+                    <p class="is-size-6 is-block">
+                        一只已经结束异地恋的前端恋爱狗
+                    </p>
+                    
+                    
+                    <p class="is-size-6 is-flex is-flex-center has-text-grey">
+                        <i class="fas fa-map-marker-alt has-mr-7"></i>
+                        <span>ShangHai</span>
+                    </p>
+                    
+                </div>
+            </div>
+        </nav>
+        <nav class="level is-mobile">
+            <div class="level-item has-text-centered is-marginless">
+                <div>
+                    <p class="heading">
+                        文章
+                    </p>
+                    <p class="title has-text-weight-normal">
+                        17
+                    </p>
+                </div>
+            </div>
+            <div class="level-item has-text-centered is-marginless">
+                <div>
+                    <p class="heading">
+                        分类
+                    </p>
+                    <p class="title has-text-weight-normal">
+                        8
+                    </p>
+                </div>
+            </div>
+            <div class="level-item has-text-centered is-marginless">
+                <div>
+                    <p class="heading">
+                        标签
+                    </p>
+                    <p class="title has-text-weight-normal">
+                        21
+                    </p>
+                </div>
+            </div>
+        </nav>
+        <div class="level">
+            <a class="level-item button is-link is-rounded" href="https://github.com/BlackHole1">
+                关注我</a>
+        </div>
+        
+        
+        <div class="level is-mobile">
+            
+            <a class="level-item button is-white is-marginless" target="_blank" title="Github" href="https://github.com/BlackHole1">
+                
+                <i class="fab fa-github"></i>
+                
+            </a>
+            
+            <a class="level-item button is-white is-marginless" target="_blank" title="Weibo" href="http://weibo.com/comelove">
+                
+                <i class="fab fa-weibo"></i>
+                
+            </a>
+            
+            <a class="level-item button is-white is-marginless" target="_blank" title="Twitter" href="https://twitter.com/Free_BlackHole">
+                
+                <i class="fab fa-twitter"></i>
+                
+            </a>
+            
+            <a class="level-item button is-white is-marginless" target="_blank" title="Npm" href="https://www.npmjs.com/~black_hole">
+                
+                <i class="fab fa-npm"></i>
+                
+            </a>
+            
+        </div>
+        
+    </div>
+</div>
+    
+        
+    
+        
+
+<div class="card widget">
+    <div class="card-content">
+        <div class="menu">
+        <h3 class="menu-label">
+            链接
+        </h3>
+        <ul class="menu-list">
+        
+            <li>
+                <a class="level is-mobile" href="https://github.com/alo7" target="_blank">
+                    <span class="level-left">
+                        <span class="level-item">Alo7 Inc</span>
+                    </span>
+                    <span class="level-right">
+                        <span class="level-item tag">github.com</span>
+                    </span>
+                </a>
+            </li>
+        
+            <li>
+                <a class="level is-mobile" href="https://github.com/Web-Security-Automation" target="_blank">
+                    <span class="level-left">
+                        <span class="level-item">Web Security Automation</span>
+                    </span>
+                    <span class="level-right">
+                        <span class="level-item tag">github.com</span>
+                    </span>
+                </a>
+            </li>
+        
+            <li>
+                <a class="level is-mobile" href="https://github.com/Calibre-Node" target="_blank">
+                    <span class="level-left">
+                        <span class="level-item">Calibre Node</span>
+                    </span>
+                    <span class="level-right">
+                        <span class="level-item tag">github.com</span>
+                    </span>
+                </a>
+            </li>
+        
+            <li>
+                <a class="level is-mobile" href="https://github.com/proxyee-down-org" target="_blank">
+                    <span class="level-left">
+                        <span class="level-item">Proxyee Down Org</span>
+                    </span>
+                    <span class="level-right">
+                        <span class="level-item tag">github.com</span>
+                    </span>
+                </a>
+            </li>
+        
+            <li>
+                <a class="level is-mobile" href="https://github.com/deepwn" target="_blank">
+                    <span class="level-left">
+                        <span class="level-item">Deepwn</span>
+                    </span>
+                    <span class="level-right">
+                        <span class="level-item tag">github.com</span>
+                    </span>
+                </a>
+            </li>
+        
+        </ul>
+        </div>
+    </div>
+</div>
+
+
+    
+        
+<div class="card widget">
+    <div class="card-content">
+        <div class="menu">
+            <h3 class="menu-label">
+                分类
+            </h3>
+            <ul class="menu-list">
+            <li>
+        <a class="level is-marginless" href="/categories/Elasticsearch/">
+            <span class="level-start">
+                <span class="level-item">Elasticsearch</span>
+            </span>
+            <span class="level-end">
+                <span class="level-item tag">1</span>
+            </span>
+        </a></li><li>
+        <a class="level is-marginless" href="/categories/JavaScript/">
+            <span class="level-start">
+                <span class="level-item">JavaScript</span>
+            </span>
+            <span class="level-end">
+                <span class="level-item tag">4</span>
+            </span>
+        </a></li><li>
+        <a class="level is-marginless" href="/categories/Linux/">
+            <span class="level-start">
+                <span class="level-item">Linux</span>
+            </span>
+            <span class="level-end">
+                <span class="level-item tag">1</span>
+            </span>
+        </a></li><li>
+        <a class="level is-marginless" href="/categories/NodeJs/">
+            <span class="level-start">
+                <span class="level-item">NodeJs</span>
+            </span>
+            <span class="level-end">
+                <span class="level-item tag">1</span>
+            </span>
+        </a></li><li>
+        <a class="level is-marginless" href="/categories/Python/">
+            <span class="level-start">
+                <span class="level-item">Python</span>
+            </span>
+            <span class="level-end">
+                <span class="level-item tag">1</span>
+            </span>
+        </a></li><li>
+        <a class="level is-marginless" href="/categories/Virtualization/">
+            <span class="level-start">
+                <span class="level-item">Virtualization</span>
+            </span>
+            <span class="level-end">
+                <span class="level-item tag">1</span>
+            </span>
+        </a></li><li>
+        <a class="level is-marginless" href="/categories/Web-Security/">
+            <span class="level-start">
+                <span class="level-item">Web Security</span>
+            </span>
+            <span class="level-end">
+                <span class="level-item tag">7</span>
+            </span>
+        </a></li><li>
+        <a class="level is-marginless" href="/categories/Wireless-Security/">
+            <span class="level-start">
+                <span class="level-item">Wireless Security</span>
+            </span>
+            <span class="level-end">
+                <span class="level-item tag">1</span>
+            </span>
+        </a></li>
+            </ul>
+        </div>
+    </div>
+</div>
+    
+        
+<div class="card widget">
+    <div class="card-content">
+        <h3 class="menu-label">
+            标签云
+        </h3>
+        <a href="/tags/Axios/" style="font-size: 10px;">Axios</a> <a href="/tags/Browser-Plugin/" style="font-size: 10px;">Browser Plugin</a> <a href="/tags/CSRF/" style="font-size: 13.33px;">CSRF</a> <a href="/tags/DSL/" style="font-size: 10px;">DSL</a> <a href="/tags/Elasticsearch/" style="font-size: 10px;">Elasticsearch</a> <a href="/tags/Electron/" style="font-size: 10px;">Electron</a> <a href="/tags/JavaScript/" style="font-size: 16.67px;">JavaScript</a> <a href="/tags/Kibana/" style="font-size: 10px;">Kibana</a> <a href="/tags/Koa/" style="font-size: 10px;">Koa</a> <a href="/tags/Linux/" style="font-size: 10px;">Linux</a> <a href="/tags/Markdown/" style="font-size: 10px;">Markdown</a> <a href="/tags/NodeJs/" style="font-size: 10px;">NodeJs</a> <a href="/tags/Promise/" style="font-size: 10px;">Promise</a> <a href="/tags/Python/" style="font-size: 10px;">Python</a> <a href="/tags/React/" style="font-size: 10px;">React</a> <a href="/tags/Virtualization/" style="font-size: 10px;">Virtualization</a> <a href="/tags/Vue/" style="font-size: 13.33px;">Vue</a> <a href="/tags/WAF/" style="font-size: 10px;">WAF</a> <a href="/tags/Web-Security/" style="font-size: 20px;">Web Security</a> <a href="/tags/Wireless-Security/" style="font-size: 10px;">Wireless Security</a> <a href="/tags/XSS/" style="font-size: 13.33px;">XSS</a>
+    </div>
+</div>
+
+    
+    
+        <div class="column-right-shadow is-hidden-widescreen ">
+        
+            
+<div class="card widget">
+    <div class="card-content">
+        <h3 class="menu-label">
+            最新文章
+        </h3>
+        
+        <article class="media">
+            
+            <a href="/2018/12/30/reading-notes-from-lucene-to-elasticsearch-full-text-search/" class="media-left">
+                <p class="image is-64x64">
+                    <img class="thumbnail" src="/images/thumbnail/globalworming_43986209_2220823381486696_8628271851625393205_n.jpg" alt="读书笔记：从Lucene到Elasticsearch:全文检索实战">
+                </p>
+            </a>
+            
+            <div class="media-content">
+                <div class="content">
+                    <div><time class="has-text-grey is-size-7 is-uppercase" datetime="2018-12-30T14:52:05.000Z">2018-12-30</time></div>
+                    <a href="/2018/12/30/reading-notes-from-lucene-to-elasticsearch-full-text-search/" class="has-link-black-ter is-size-6">读书笔记：从Lucene到Elasticsearch:全文检索实战</a>
+                    <p class="is-size-7 is-uppercase">
+                        <a class="has-link-grey -link" href="/categories/Elasticsearch/">Elasticsearch</a>
+                    </p>
+                </div>
+            </div>
+        </article>
+        
+        <article class="media">
+            
+            <a href="/2018/08/24/javaScript-integration-sentry/" class="media-left">
+                <p class="image is-64x64">
+                    <img class="thumbnail" src="/images/thumbnail/portrait-of-deer-in-forest-at-sunset.jpg" alt="JavaScript集成Sentry">
+                </p>
+            </a>
+            
+            <div class="media-content">
+                <div class="content">
+                    <div><time class="has-text-grey is-size-7 is-uppercase" datetime="2018-08-24T01:16:33.000Z">2018-08-24</time></div>
+                    <a href="/2018/08/24/javaScript-integration-sentry/" class="has-link-black-ter is-size-6">JavaScript集成Sentry</a>
+                    <p class="is-size-7 is-uppercase">
+                        <a class="has-link-grey -link" href="/categories/JavaScript/">JavaScript</a>
+                    </p>
+                </div>
+            </div>
+        </article>
+        
+        <article class="media">
+            
+            <a href="/2018/04/14/analyz-the-axios-source-to-find-out-why-you-cant-use-all-and-spread-methods/" class="media-left">
+                <p class="image is-64x64">
+                    <img class="thumbnail" src="/images/thumbnail/parisexplorer_43915379_1186317334867380_3406866474572309396_n.jpg" alt="分析axios源码来找出无法使用all和spread等方法的原因">
+                </p>
+            </a>
+            
+            <div class="media-content">
+                <div class="content">
+                    <div><time class="has-text-grey is-size-7 is-uppercase" datetime="2018-04-14T05:37:29.000Z">2018-04-14</time></div>
+                    <a href="/2018/04/14/analyz-the-axios-source-to-find-out-why-you-cant-use-all-and-spread-methods/" class="has-link-black-ter is-size-6">分析axios源码来找出无法使用all和spread等方法的原因</a>
+                    <p class="is-size-7 is-uppercase">
+                        <a class="has-link-grey -link" href="/categories/JavaScript/">JavaScript</a>
+                    </p>
+                </div>
+            </div>
+        </article>
+        
+        <article class="media">
+            
+            <a href="/2018/04/12/simplemde-realizes-some-thoughts-on-drag-and-drop-and-paste-function/" class="media-left">
+                <p class="image is-64x64">
+                    <img class="thumbnail" src="/images/thumbnail/punkodelish_43018283_328080891311441_4977042715385938518_n.jpg" alt="基于vue-simplemde实现图片拖拽、粘贴功能的一些思考">
+                </p>
+            </a>
+            
+            <div class="media-content">
+                <div class="content">
+                    <div><time class="has-text-grey is-size-7 is-uppercase" datetime="2018-04-12T03:00:12.000Z">2018-04-12</time></div>
+                    <a href="/2018/04/12/simplemde-realizes-some-thoughts-on-drag-and-drop-and-paste-function/" class="has-link-black-ter is-size-6">基于vue-simplemde实现图片拖拽、粘贴功能的一些思考</a>
+                    <p class="is-size-7 is-uppercase">
+                        <a class="has-link-grey -link" href="/categories/JavaScript/">JavaScript</a>
+                    </p>
+                </div>
+            </div>
+        </article>
+        
+        <article class="media">
+            
+            <a href="/2018/01/23/run-qcow2-image-in-vmware/" class="media-left">
+                <p class="image is-64x64">
+                    <img class="thumbnail" src="/images/thumbnail/pexels-photo-1183434.jpeg" alt="在vmware里运行qcow2镜像">
+                </p>
+            </a>
+            
+            <div class="media-content">
+                <div class="content">
+                    <div><time class="has-text-grey is-size-7 is-uppercase" datetime="2018-01-23T01:12:31.000Z">2018-01-23</time></div>
+                    <a href="/2018/01/23/run-qcow2-image-in-vmware/" class="has-link-black-ter is-size-6">在vmware里运行qcow2镜像</a>
+                    <p class="is-size-7 is-uppercase">
+                        <a class="has-link-grey -link" href="/categories/Virtualization/">Virtualization</a>
+                    </p>
+                </div>
+            </div>
+        </article>
+        
+    </div>
+</div>
+
+        
+            <div class="card widget">
+    <div class="card-content">
+        <div class="menu">
+        <h3 class="menu-label">
+            归档
+        </h3>
+        <ul class="menu-list">
+        
+        <li>
+            <a class="level is-marginless" href="/archives/2018/12/">
+                <span class="level-start">
+                    <span class="level-item">十二月 2018</span>
+                </span>
+                <span class="level-end">
+                    <span class="level-item tag">1</span>
+                </span>
+            </a>
+        </li>
+        
+        <li>
+            <a class="level is-marginless" href="/archives/2018/08/">
+                <span class="level-start">
+                    <span class="level-item">八月 2018</span>
+                </span>
+                <span class="level-end">
+                    <span class="level-item tag">1</span>
+                </span>
+            </a>
+        </li>
+        
+        <li>
+            <a class="level is-marginless" href="/archives/2018/04/">
+                <span class="level-start">
+                    <span class="level-item">四月 2018</span>
+                </span>
+                <span class="level-end">
+                    <span class="level-item tag">2</span>
+                </span>
+            </a>
+        </li>
+        
+        <li>
+            <a class="level is-marginless" href="/archives/2018/01/">
+                <span class="level-start">
+                    <span class="level-item">一月 2018</span>
+                </span>
+                <span class="level-end">
+                    <span class="level-item tag">2</span>
+                </span>
+            </a>
+        </li>
+        
+        <li>
+            <a class="level is-marginless" href="/archives/2017/11/">
+                <span class="level-start">
+                    <span class="level-item">十一月 2017</span>
+                </span>
+                <span class="level-end">
+                    <span class="level-item tag">2</span>
+                </span>
+            </a>
+        </li>
+        
+        <li>
+            <a class="level is-marginless" href="/archives/2017/03/">
+                <span class="level-start">
+                    <span class="level-item">三月 2017</span>
+                </span>
+                <span class="level-end">
+                    <span class="level-item tag">1</span>
+                </span>
+            </a>
+        </li>
+        
+        <li>
+            <a class="level is-marginless" href="/archives/2016/12/">
+                <span class="level-start">
+                    <span class="level-item">十二月 2016</span>
+                </span>
+                <span class="level-end">
+                    <span class="level-item tag">2</span>
+                </span>
+            </a>
+        </li>
+        
+        <li>
+            <a class="level is-marginless" href="/archives/2016/10/">
+                <span class="level-start">
+                    <span class="level-item">十月 2016</span>
+                </span>
+                <span class="level-end">
+                    <span class="level-item tag">1</span>
+                </span>
+            </a>
+        </li>
+        
+        <li>
+            <a class="level is-marginless" href="/archives/2016/08/">
+                <span class="level-start">
+                    <span class="level-item">八月 2016</span>
+                </span>
+                <span class="level-end">
+                    <span class="level-item tag">2</span>
+                </span>
+            </a>
+        </li>
+        
+        <li>
+            <a class="level is-marginless" href="/archives/2016/06/">
+                <span class="level-start">
+                    <span class="level-item">六月 2016</span>
+                </span>
+                <span class="level-end">
+                    <span class="level-item tag">2</span>
+                </span>
+            </a>
+        </li>
+        
+        <li>
+            <a class="level is-marginless" href="/archives/2016/05/">
+                <span class="level-start">
+                    <span class="level-item">五月 2016</span>
+                </span>
+                <span class="level-end">
+                    <span class="level-item tag">1</span>
+                </span>
+            </a>
+        </li>
+        
+        </ul>
+        </div>
+    </div>
+</div>
+        
+            <div class="card widget">
+    <div class="card-content">
+        <div class="menu">
+            <h3 class="menu-label">
+                标签
+            </h3>
+            <ul class="menu-list">
+                
+                <li>
+                    <a class="level is-marginless" href="/tags/Axios/">
+                        <span class="level-start">
+                            <span class="level-item">Axios</span>
+                        </span>
+                        <span class="level-end">
+                            <span class="level-item tag">1</span>
+                        </span>
+                    </a>
+                </li>
+                
+                <li>
+                    <a class="level is-marginless" href="/tags/Browser-Plugin/">
+                        <span class="level-start">
+                            <span class="level-item">Browser Plugin</span>
+                        </span>
+                        <span class="level-end">
+                            <span class="level-item tag">1</span>
+                        </span>
+                    </a>
+                </li>
+                
+                <li>
+                    <a class="level is-marginless" href="/tags/CSRF/">
+                        <span class="level-start">
+                            <span class="level-item">CSRF</span>
+                        </span>
+                        <span class="level-end">
+                            <span class="level-item tag">2</span>
+                        </span>
+                    </a>
+                </li>
+                
+                <li>
+                    <a class="level is-marginless" href="/tags/DSL/">
+                        <span class="level-start">
+                            <span class="level-item">DSL</span>
+                        </span>
+                        <span class="level-end">
+                            <span class="level-item tag">1</span>
+                        </span>
+                    </a>
+                </li>
+                
+                <li>
+                    <a class="level is-marginless" href="/tags/Elasticsearch/">
+                        <span class="level-start">
+                            <span class="level-item">Elasticsearch</span>
+                        </span>
+                        <span class="level-end">
+                            <span class="level-item tag">1</span>
+                        </span>
+                    </a>
+                </li>
+                
+                <li>
+                    <a class="level is-marginless" href="/tags/Electron/">
+                        <span class="level-start">
+                            <span class="level-item">Electron</span>
+                        </span>
+                        <span class="level-end">
+                            <span class="level-item tag">1</span>
+                        </span>
+                    </a>
+                </li>
+                
+                <li>
+                    <a class="level is-marginless" href="/tags/JavaScript/">
+                        <span class="level-start">
+                            <span class="level-item">JavaScript</span>
+                        </span>
+                        <span class="level-end">
+                            <span class="level-item tag">5</span>
+                        </span>
+                    </a>
+                </li>
+                
+                <li>
+                    <a class="level is-marginless" href="/tags/Kibana/">
+                        <span class="level-start">
+                            <span class="level-item">Kibana</span>
+                        </span>
+                        <span class="level-end">
+                            <span class="level-item tag">1</span>
+                        </span>
+                    </a>
+                </li>
+                
+                <li>
+                    <a class="level is-marginless" href="/tags/Koa/">
+                        <span class="level-start">
+                            <span class="level-item">Koa</span>
+                        </span>
+                        <span class="level-end">
+                            <span class="level-item tag">1</span>
+                        </span>
+                    </a>
+                </li>
+                
+                <li>
+                    <a class="level is-marginless" href="/tags/Linux/">
+                        <span class="level-start">
+                            <span class="level-item">Linux</span>
+                        </span>
+                        <span class="level-end">
+                            <span class="level-item tag">1</span>
+                        </span>
+                    </a>
+                </li>
+                
+                <li>
+                    <a class="level is-marginless" href="/tags/Markdown/">
+                        <span class="level-start">
+                            <span class="level-item">Markdown</span>
+                        </span>
+                        <span class="level-end">
+                            <span class="level-item tag">1</span>
+                        </span>
+                    </a>
+                </li>
+                
+                <li>
+                    <a class="level is-marginless" href="/tags/NodeJs/">
+                        <span class="level-start">
+                            <span class="level-item">NodeJs</span>
+                        </span>
+                        <span class="level-end">
+                            <span class="level-item tag">1</span>
+                        </span>
+                    </a>
+                </li>
+                
+                <li>
+                    <a class="level is-marginless" href="/tags/Promise/">
+                        <span class="level-start">
+                            <span class="level-item">Promise</span>
+                        </span>
+                        <span class="level-end">
+                            <span class="level-item tag">1</span>
+                        </span>
+                    </a>
+                </li>
+                
+                <li>
+                    <a class="level is-marginless" href="/tags/Python/">
+                        <span class="level-start">
+                            <span class="level-item">Python</span>
+                        </span>
+                        <span class="level-end">
+                            <span class="level-item tag">1</span>
+                        </span>
+                    </a>
+                </li>
+                
+                <li>
+                    <a class="level is-marginless" href="/tags/React/">
+                        <span class="level-start">
+                            <span class="level-item">React</span>
+                        </span>
+                        <span class="level-end">
+                            <span class="level-item tag">1</span>
+                        </span>
+                    </a>
+                </li>
+                
+                <li>
+                    <a class="level is-marginless" href="/tags/Virtualization/">
+                        <span class="level-start">
+                            <span class="level-item">Virtualization</span>
+                        </span>
+                        <span class="level-end">
+                            <span class="level-item tag">1</span>
+                        </span>
+                    </a>
+                </li>
+                
+                <li>
+                    <a class="level is-marginless" href="/tags/Vue/">
+                        <span class="level-start">
+                            <span class="level-item">Vue</span>
+                        </span>
+                        <span class="level-end">
+                            <span class="level-item tag">2</span>
+                        </span>
+                    </a>
+                </li>
+                
+                <li>
+                    <a class="level is-marginless" href="/tags/WAF/">
+                        <span class="level-start">
+                            <span class="level-item">WAF</span>
+                        </span>
+                        <span class="level-end">
+                            <span class="level-item tag">1</span>
+                        </span>
+                    </a>
+                </li>
+                
+                <li>
+                    <a class="level is-marginless" href="/tags/Web-Security/">
+                        <span class="level-start">
+                            <span class="level-item">Web Security</span>
+                        </span>
+                        <span class="level-end">
+                            <span class="level-item tag">7</span>
+                        </span>
+                    </a>
+                </li>
+                
+                <li>
+                    <a class="level is-marginless" href="/tags/Wireless-Security/">
+                        <span class="level-start">
+                            <span class="level-item">Wireless Security</span>
+                        </span>
+                        <span class="level-end">
+                            <span class="level-item tag">1</span>
+                        </span>
+                    </a>
+                </li>
+                
+                <li>
+                    <a class="level is-marginless" href="/tags/XSS/">
+                        <span class="level-start">
+                            <span class="level-item">XSS</span>
+                        </span>
+                        <span class="level-end">
+                            <span class="level-item tag">2</span>
+                        </span>
+                    </a>
+                </li>
+                
+            </ul>
+        </div>
+    </div>
+</div>
+        
+        </div>
+    
+</div>
+
+                
+
+
+
+
+<div class="column is-4-tablet is-4-desktop is-3-widescreen is-hidden-touch is-hidden-desktop-only has-order-3 column-right ">
+    
+        
+<div class="card widget">
+    <div class="card-content">
+        <h3 class="menu-label">
+            最新文章
+        </h3>
+        
+        <article class="media">
+            
+            <a href="/2018/12/30/reading-notes-from-lucene-to-elasticsearch-full-text-search/" class="media-left">
+                <p class="image is-64x64">
+                    <img class="thumbnail" src="/images/thumbnail/globalworming_43986209_2220823381486696_8628271851625393205_n.jpg" alt="读书笔记：从Lucene到Elasticsearch:全文检索实战">
+                </p>
+            </a>
+            
+            <div class="media-content">
+                <div class="content">
+                    <div><time class="has-text-grey is-size-7 is-uppercase" datetime="2018-12-30T14:52:05.000Z">2018-12-30</time></div>
+                    <a href="/2018/12/30/reading-notes-from-lucene-to-elasticsearch-full-text-search/" class="has-link-black-ter is-size-6">读书笔记：从Lucene到Elasticsearch:全文检索实战</a>
+                    <p class="is-size-7 is-uppercase">
+                        <a class="has-link-grey -link" href="/categories/Elasticsearch/">Elasticsearch</a>
+                    </p>
+                </div>
+            </div>
+        </article>
+        
+        <article class="media">
+            
+            <a href="/2018/08/24/javaScript-integration-sentry/" class="media-left">
+                <p class="image is-64x64">
+                    <img class="thumbnail" src="/images/thumbnail/portrait-of-deer-in-forest-at-sunset.jpg" alt="JavaScript集成Sentry">
+                </p>
+            </a>
+            
+            <div class="media-content">
+                <div class="content">
+                    <div><time class="has-text-grey is-size-7 is-uppercase" datetime="2018-08-24T01:16:33.000Z">2018-08-24</time></div>
+                    <a href="/2018/08/24/javaScript-integration-sentry/" class="has-link-black-ter is-size-6">JavaScript集成Sentry</a>
+                    <p class="is-size-7 is-uppercase">
+                        <a class="has-link-grey -link" href="/categories/JavaScript/">JavaScript</a>
+                    </p>
+                </div>
+            </div>
+        </article>
+        
+        <article class="media">
+            
+            <a href="/2018/04/14/analyz-the-axios-source-to-find-out-why-you-cant-use-all-and-spread-methods/" class="media-left">
+                <p class="image is-64x64">
+                    <img class="thumbnail" src="/images/thumbnail/parisexplorer_43915379_1186317334867380_3406866474572309396_n.jpg" alt="分析axios源码来找出无法使用all和spread等方法的原因">
+                </p>
+            </a>
+            
+            <div class="media-content">
+                <div class="content">
+                    <div><time class="has-text-grey is-size-7 is-uppercase" datetime="2018-04-14T05:37:29.000Z">2018-04-14</time></div>
+                    <a href="/2018/04/14/analyz-the-axios-source-to-find-out-why-you-cant-use-all-and-spread-methods/" class="has-link-black-ter is-size-6">分析axios源码来找出无法使用all和spread等方法的原因</a>
+                    <p class="is-size-7 is-uppercase">
+                        <a class="has-link-grey -link" href="/categories/JavaScript/">JavaScript</a>
+                    </p>
+                </div>
+            </div>
+        </article>
+        
+        <article class="media">
+            
+            <a href="/2018/04/12/simplemde-realizes-some-thoughts-on-drag-and-drop-and-paste-function/" class="media-left">
+                <p class="image is-64x64">
+                    <img class="thumbnail" src="/images/thumbnail/punkodelish_43018283_328080891311441_4977042715385938518_n.jpg" alt="基于vue-simplemde实现图片拖拽、粘贴功能的一些思考">
+                </p>
+            </a>
+            
+            <div class="media-content">
+                <div class="content">
+                    <div><time class="has-text-grey is-size-7 is-uppercase" datetime="2018-04-12T03:00:12.000Z">2018-04-12</time></div>
+                    <a href="/2018/04/12/simplemde-realizes-some-thoughts-on-drag-and-drop-and-paste-function/" class="has-link-black-ter is-size-6">基于vue-simplemde实现图片拖拽、粘贴功能的一些思考</a>
+                    <p class="is-size-7 is-uppercase">
+                        <a class="has-link-grey -link" href="/categories/JavaScript/">JavaScript</a>
+                    </p>
+                </div>
+            </div>
+        </article>
+        
+        <article class="media">
+            
+            <a href="/2018/01/23/run-qcow2-image-in-vmware/" class="media-left">
+                <p class="image is-64x64">
+                    <img class="thumbnail" src="/images/thumbnail/pexels-photo-1183434.jpeg" alt="在vmware里运行qcow2镜像">
+                </p>
+            </a>
+            
+            <div class="media-content">
+                <div class="content">
+                    <div><time class="has-text-grey is-size-7 is-uppercase" datetime="2018-01-23T01:12:31.000Z">2018-01-23</time></div>
+                    <a href="/2018/01/23/run-qcow2-image-in-vmware/" class="has-link-black-ter is-size-6">在vmware里运行qcow2镜像</a>
+                    <p class="is-size-7 is-uppercase">
+                        <a class="has-link-grey -link" href="/categories/Virtualization/">Virtualization</a>
+                    </p>
+                </div>
+            </div>
+        </article>
+        
+    </div>
+</div>
+
+    
+        <div class="card widget">
+    <div class="card-content">
+        <div class="menu">
+        <h3 class="menu-label">
+            归档
+        </h3>
+        <ul class="menu-list">
+        
+        <li>
+            <a class="level is-marginless" href="/archives/2018/12/">
+                <span class="level-start">
+                    <span class="level-item">十二月 2018</span>
+                </span>
+                <span class="level-end">
+                    <span class="level-item tag">1</span>
+                </span>
+            </a>
+        </li>
+        
+        <li>
+            <a class="level is-marginless" href="/archives/2018/08/">
+                <span class="level-start">
+                    <span class="level-item">八月 2018</span>
+                </span>
+                <span class="level-end">
+                    <span class="level-item tag">1</span>
+                </span>
+            </a>
+        </li>
+        
+        <li>
+            <a class="level is-marginless" href="/archives/2018/04/">
+                <span class="level-start">
+                    <span class="level-item">四月 2018</span>
+                </span>
+                <span class="level-end">
+                    <span class="level-item tag">2</span>
+                </span>
+            </a>
+        </li>
+        
+        <li>
+            <a class="level is-marginless" href="/archives/2018/01/">
+                <span class="level-start">
+                    <span class="level-item">一月 2018</span>
+                </span>
+                <span class="level-end">
+                    <span class="level-item tag">2</span>
+                </span>
+            </a>
+        </li>
+        
+        <li>
+            <a class="level is-marginless" href="/archives/2017/11/">
+                <span class="level-start">
+                    <span class="level-item">十一月 2017</span>
+                </span>
+                <span class="level-end">
+                    <span class="level-item tag">2</span>
+                </span>
+            </a>
+        </li>
+        
+        <li>
+            <a class="level is-marginless" href="/archives/2017/03/">
+                <span class="level-start">
+                    <span class="level-item">三月 2017</span>
+                </span>
+                <span class="level-end">
+                    <span class="level-item tag">1</span>
+                </span>
+            </a>
+        </li>
+        
+        <li>
+            <a class="level is-marginless" href="/archives/2016/12/">
+                <span class="level-start">
+                    <span class="level-item">十二月 2016</span>
+                </span>
+                <span class="level-end">
+                    <span class="level-item tag">2</span>
+                </span>
+            </a>
+        </li>
+        
+        <li>
+            <a class="level is-marginless" href="/archives/2016/10/">
+                <span class="level-start">
+                    <span class="level-item">十月 2016</span>
+                </span>
+                <span class="level-end">
+                    <span class="level-item tag">1</span>
+                </span>
+            </a>
+        </li>
+        
+        <li>
+            <a class="level is-marginless" href="/archives/2016/08/">
+                <span class="level-start">
+                    <span class="level-item">八月 2016</span>
+                </span>
+                <span class="level-end">
+                    <span class="level-item tag">2</span>
+                </span>
+            </a>
+        </li>
+        
+        <li>
+            <a class="level is-marginless" href="/archives/2016/06/">
+                <span class="level-start">
+                    <span class="level-item">六月 2016</span>
+                </span>
+                <span class="level-end">
+                    <span class="level-item tag">2</span>
+                </span>
+            </a>
+        </li>
+        
+        <li>
+            <a class="level is-marginless" href="/archives/2016/05/">
+                <span class="level-start">
+                    <span class="level-item">五月 2016</span>
+                </span>
+                <span class="level-end">
+                    <span class="level-item tag">1</span>
+                </span>
+            </a>
+        </li>
+        
+        </ul>
+        </div>
+    </div>
+</div>
+    
+        <div class="card widget">
+    <div class="card-content">
+        <div class="menu">
+            <h3 class="menu-label">
+                标签
+            </h3>
+            <ul class="menu-list">
+                
+                <li>
+                    <a class="level is-marginless" href="/tags/Axios/">
+                        <span class="level-start">
+                            <span class="level-item">Axios</span>
+                        </span>
+                        <span class="level-end">
+                            <span class="level-item tag">1</span>
+                        </span>
+                    </a>
+                </li>
+                
+                <li>
+                    <a class="level is-marginless" href="/tags/Browser-Plugin/">
+                        <span class="level-start">
+                            <span class="level-item">Browser Plugin</span>
+                        </span>
+                        <span class="level-end">
+                            <span class="level-item tag">1</span>
+                        </span>
+                    </a>
+                </li>
+                
+                <li>
+                    <a class="level is-marginless" href="/tags/CSRF/">
+                        <span class="level-start">
+                            <span class="level-item">CSRF</span>
+                        </span>
+                        <span class="level-end">
+                            <span class="level-item tag">2</span>
+                        </span>
+                    </a>
+                </li>
+                
+                <li>
+                    <a class="level is-marginless" href="/tags/DSL/">
+                        <span class="level-start">
+                            <span class="level-item">DSL</span>
+                        </span>
+                        <span class="level-end">
+                            <span class="level-item tag">1</span>
+                        </span>
+                    </a>
+                </li>
+                
+                <li>
+                    <a class="level is-marginless" href="/tags/Elasticsearch/">
+                        <span class="level-start">
+                            <span class="level-item">Elasticsearch</span>
+                        </span>
+                        <span class="level-end">
+                            <span class="level-item tag">1</span>
+                        </span>
+                    </a>
+                </li>
+                
+                <li>
+                    <a class="level is-marginless" href="/tags/Electron/">
+                        <span class="level-start">
+                            <span class="level-item">Electron</span>
+                        </span>
+                        <span class="level-end">
+                            <span class="level-item tag">1</span>
+                        </span>
+                    </a>
+                </li>
+                
+                <li>
+                    <a class="level is-marginless" href="/tags/JavaScript/">
+                        <span class="level-start">
+                            <span class="level-item">JavaScript</span>
+                        </span>
+                        <span class="level-end">
+                            <span class="level-item tag">5</span>
+                        </span>
+                    </a>
+                </li>
+                
+                <li>
+                    <a class="level is-marginless" href="/tags/Kibana/">
+                        <span class="level-start">
+                            <span class="level-item">Kibana</span>
+                        </span>
+                        <span class="level-end">
+                            <span class="level-item tag">1</span>
+                        </span>
+                    </a>
+                </li>
+                
+                <li>
+                    <a class="level is-marginless" href="/tags/Koa/">
+                        <span class="level-start">
+                            <span class="level-item">Koa</span>
+                        </span>
+                        <span class="level-end">
+                            <span class="level-item tag">1</span>
+                        </span>
+                    </a>
+                </li>
+                
+                <li>
+                    <a class="level is-marginless" href="/tags/Linux/">
+                        <span class="level-start">
+                            <span class="level-item">Linux</span>
+                        </span>
+                        <span class="level-end">
+                            <span class="level-item tag">1</span>
+                        </span>
+                    </a>
+                </li>
+                
+                <li>
+                    <a class="level is-marginless" href="/tags/Markdown/">
+                        <span class="level-start">
+                            <span class="level-item">Markdown</span>
+                        </span>
+                        <span class="level-end">
+                            <span class="level-item tag">1</span>
+                        </span>
+                    </a>
+                </li>
+                
+                <li>
+                    <a class="level is-marginless" href="/tags/NodeJs/">
+                        <span class="level-start">
+                            <span class="level-item">NodeJs</span>
+                        </span>
+                        <span class="level-end">
+                            <span class="level-item tag">1</span>
+                        </span>
+                    </a>
+                </li>
+                
+                <li>
+                    <a class="level is-marginless" href="/tags/Promise/">
+                        <span class="level-start">
+                            <span class="level-item">Promise</span>
+                        </span>
+                        <span class="level-end">
+                            <span class="level-item tag">1</span>
+                        </span>
+                    </a>
+                </li>
+                
+                <li>
+                    <a class="level is-marginless" href="/tags/Python/">
+                        <span class="level-start">
+                            <span class="level-item">Python</span>
+                        </span>
+                        <span class="level-end">
+                            <span class="level-item tag">1</span>
+                        </span>
+                    </a>
+                </li>
+                
+                <li>
+                    <a class="level is-marginless" href="/tags/React/">
+                        <span class="level-start">
+                            <span class="level-item">React</span>
+                        </span>
+                        <span class="level-end">
+                            <span class="level-item tag">1</span>
+                        </span>
+                    </a>
+                </li>
+                
+                <li>
+                    <a class="level is-marginless" href="/tags/Virtualization/">
+                        <span class="level-start">
+                            <span class="level-item">Virtualization</span>
+                        </span>
+                        <span class="level-end">
+                            <span class="level-item tag">1</span>
+                        </span>
+                    </a>
+                </li>
+                
+                <li>
+                    <a class="level is-marginless" href="/tags/Vue/">
+                        <span class="level-start">
+                            <span class="level-item">Vue</span>
+                        </span>
+                        <span class="level-end">
+                            <span class="level-item tag">2</span>
+                        </span>
+                    </a>
+                </li>
+                
+                <li>
+                    <a class="level is-marginless" href="/tags/WAF/">
+                        <span class="level-start">
+                            <span class="level-item">WAF</span>
+                        </span>
+                        <span class="level-end">
+                            <span class="level-item tag">1</span>
+                        </span>
+                    </a>
+                </li>
+                
+                <li>
+                    <a class="level is-marginless" href="/tags/Web-Security/">
+                        <span class="level-start">
+                            <span class="level-item">Web Security</span>
+                        </span>
+                        <span class="level-end">
+                            <span class="level-item tag">7</span>
+                        </span>
+                    </a>
+                </li>
+                
+                <li>
+                    <a class="level is-marginless" href="/tags/Wireless-Security/">
+                        <span class="level-start">
+                            <span class="level-item">Wireless Security</span>
+                        </span>
+                        <span class="level-end">
+                            <span class="level-item tag">1</span>
+                        </span>
+                    </a>
+                </li>
+                
+                <li>
+                    <a class="level is-marginless" href="/tags/XSS/">
+                        <span class="level-start">
+                            <span class="level-item">XSS</span>
+                        </span>
+                        <span class="level-end">
+                            <span class="level-item tag">2</span>
+                        </span>
+                    </a>
+                </li>
+                
+            </ul>
+        </div>
+    </div>
+</div>
+    
+    
+</div>
+
+            </div>
+        </div>
+    </section>
+    <footer class="footer">
+    <div class="container">
+        <div class="level">
+            <div class="level-start has-text-centered-mobile">
+                <a class="footer-logo is-block has-mb-6" href="/">
+                
+                    <img src="/images/logo.png" alt="JavaScript集成Sentry" height="28">
+                
+                </a>
+                <p class="is-size-7">
+                &copy; 2019 Black-Hole&nbsp;
+                Powered by <a href="http://hexo.io/" target="_blank">Hexo</a> & <a href="http://github.com/ppoffice/hexo-theme-icarus">Icarus</a>
+                </p>
+            </div>
+            <div class="level-end">
+            
+            </div>
+        </div>
+    </div>
+</footer>
+    <script src="https://cdn.jsdelivr.net/npm/jquery@3.3.1/dist/jquery.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/moment@2.22.2/min/moment-with-locales.min.js"></script>
+<script>moment.locale("zh-CN");</script>
+
+
+    
+    
+    
+    <script src="/js/animation.js"></script>
+    
+
+    
+    
+    
+    <script src="https://cdn.jsdelivr.net/npm/lightgallery@1.6.8/dist/js/lightgallery.min.js" defer></script>
+    <script src="https://cdn.jsdelivr.net/npm/justifiedGallery@3.7.0/dist/js/jquery.justifiedGallery.min.js" defer></script>
+    <script src="/js/gallery.js" defer></script>
+    
+
+    
+    
+
+<div id="outdated">
+    <h6>Your browser is out-of-date!</h6>
+    <p>Update your browser to view this website correctly. <a id="btnUpdateBrowser" href="http://outdatedbrowser.com/">Update
+            my browser now </a></p>
+    <p class="last"><a href="#" id="btnCloseUpdateBrowser" title="Close">&times;</a></p>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/outdatedbrowser@1.1.5/outdatedbrowser/outdatedbrowser.min.js" defer></script>
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        outdatedBrowser({
+            bgColor: '#f25648',
+            color: '#ffffff',
+            lowerThan: 'flex'
+        });
+    });
+</script>
+
+
+    
+    
+<script src="https://cdn.jsdelivr.net/npm/mathjax@2.7.5/unpacked/MathJax.js?config=TeX-MML-AM_CHTML" defer></script>
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    MathJax.Hub.Config({
+        'HTML-CSS': {matchFontHeight: false},
+        SVG: {matchFontHeight: false},
+        CommonHTML: {matchFontHeight: false}
+    });
+});
+</script>
+
+    
+    
+
+<a id="back-to-top" title="回到顶端" href="javascript:;">
+    <i class="fas fa-chevron-up"></i>
+</a>
+<script src="/js/back-to-top.js" defer></script>
+
+
+    
+    
+
+    
+    
+    
+    
+
+    
+    
+    
+    
+    
+    <script src="https://cdn.jsdelivr.net/npm/clipboard@2.0.4/dist/clipboard.min.js" defer></script>
+    <script src="/js/clipboard.js" defer></script>
+    
+
+    
+
+
+<script src="/js/main.js" defer></script>
+
+    
+    <div class="searchbox ins-search">
+    <div class="searchbox-container ins-search-container">
+        <div class="searchbox-input-wrapper">
+            <input type="text" class="searchbox-input ins-search-input" placeholder="想要查找什么...">
+            <span class="searchbox-close ins-close ins-selectable"><i class="fa fa-times-circle"></i></span>
+        </div>
+        <div class="searchbox-result-wrapper ins-section-wrapper">
+            <div class="ins-section-container"></div>
+        </div>
+    </div>
+</div>
+<script>
+    (function (window) {
+        var INSIGHT_CONFIG = {
+            TRANSLATION: {
+                POSTS: '文章',
+                PAGES: '页面',
+                CATEGORIES: '分类',
+                TAGS: '标签',
+                UNTITLED: '(无标题)',
+            },
+            CONTENT_URL: '/content.json',
+        };
+        window.INSIGHT_CONFIG = INSIGHT_CONFIG;
+    })(window);
+</script>
+<script src="/js/insight.js" defer></script>
+<link rel="stylesheet" href="/css/search.css">
+<link rel="stylesheet" href="/css/insight.css">
+    
+</body>
+</html>
