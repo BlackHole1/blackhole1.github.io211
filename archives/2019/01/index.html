@@ -2,32 +2,28 @@
 <html lang="zh">
 <head><meta name="generator" content="Hexo 3.8.0">
     <meta charset="utf-8">
-<title>基于URLProtocol攻击的一些想法 - Black-Hole&#39;s Blog</title>
+<title>归档: 2019/1 - Black-Hole&#39;s Blog</title>
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
 
 
 
-    <meta name="description" content="浏览器调起本地应用的原理是URLProtocol技术，详情可以在  http://www.cnblogs.com/wang726zq/archive/2012/12/11/UrlProtocol.html http://blog.csdn.net/zssureqh/article/details/25828683  里查看。 其中 在注册表的 [HKEY_CLASSES_ROOT]主键下，我们可以">
-<meta name="keywords" content="JavaScript,Web Security">
-<meta property="og:type" content="article">
-<meta property="og:title" content="基于URLProtocol攻击的一些想法">
-<meta property="og:url" content="http://bugs.cc/2017/03/26/some-ideas-based-on-URLProtocol-attacks/index.html">
+    <meta name="description" content="Black-Hole&apos;s Blog">
+<meta name="keywords" content="JavaScript">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Black-Hole&#39;s Blog">
+<meta property="og:url" content="http://bugs.cc/archives/2019/01/index.html">
 <meta property="og:site_name" content="Black-Hole&#39;s Blog">
-<meta property="og:description" content="浏览器调起本地应用的原理是URLProtocol技术，详情可以在  http://www.cnblogs.com/wang726zq/archive/2012/12/11/UrlProtocol.html http://blog.csdn.net/zssureqh/article/details/25828683  里查看。 其中 在注册表的 [HKEY_CLASSES_ROOT]主键下，我们可以">
+<meta property="og:description" content="Black-Hole&apos;s Blog">
 <meta property="og:locale" content="zh-CN">
-<meta property="og:image" content="http://on7r0tqgu.bkt.clouddn.com/Fi_2w3-zHnbp-WB6W0lJlMxkNsmN.png">
-<meta property="og:image" content="http://on7r0tqgu.bkt.clouddn.com/FvRZnSDiZhAqgGzlDKf-Lre-Gbmo.png">
-<meta property="og:updated_time" content="2018-12-31T15:12:40.614Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="基于URLProtocol攻击的一些想法">
-<meta name="twitter:description" content="浏览器调起本地应用的原理是URLProtocol技术，详情可以在  http://www.cnblogs.com/wang726zq/archive/2012/12/11/UrlProtocol.html http://blog.csdn.net/zssureqh/article/details/25828683  里查看。 其中 在注册表的 [HKEY_CLASSES_ROOT]主键下，我们可以">
-<meta name="twitter:image" content="http://on7r0tqgu.bkt.clouddn.com/Fi_2w3-zHnbp-WB6W0lJlMxkNsmN.png">
+<meta name="twitter:title" content="Black-Hole&#39;s Blog">
+<meta name="twitter:description" content="Black-Hole&apos;s Blog">
 <meta name="twitter:creator" content="@Free_BlackHole">
 <meta name="twitter:site" content="https://twitter.com/Free_BlackHole">
 
 
 
-<link rel="alternative" href="/atom.xml" title="基于URLProtocol攻击的一些想法" type="application/atom+xml">
+<link rel="alternative" href="/atom.xml" title="Black-Hole&#39;s Blog" type="application/atom+xml">
 
 
 
@@ -104,7 +100,7 @@
         <div class="navbar-brand is-flex-center">
             <a class="navbar-item navbar-logo" href="/">
             
-                <img src="/images/logo.png" alt="基于URLProtocol攻击的一些想法" height="28">
+                <img src="/images/logo.png" alt="Black-Hole&#39;s Blog" height="28">
             
             </a>
         </div>
@@ -153,175 +149,45 @@
     <section class="section">
         <div class="container">
             <div class="columns">
-                <div class="column is-8-tablet is-8-desktop is-6-widescreen has-order-2 column-main"><div class="card">
-    
-    <div class="card-image">
-        <span class="image is-7by1">
-            <img class="thumbnail" src="/images/thumbnail/portrait-of-squirrel-in-forest.jpg" alt="基于URLProtocol攻击的一些想法">
-        </span>
-    </div>
-    
-    <div class="card-content article ">
-        
-        <div class="level article-meta is-size-7 is-uppercase is-mobile is-overflow-x-auto">
-            <div class="level-left">
-                <time class="level-item has-text-grey" datetime="2017-03-26T08:33:52.000Z">2017-03-26</time>
-                
-                <div class="level-item">
-                <a class="has-link-grey -link" href="/categories/Web-Security/">Web Security</a>
-                </div>
-                
-                
-                <span class="level-item has-text-grey">
-                    
-                    
-                    5 分钟 读完 (大约 789 个字)
-                </span>
-                
-            </div>
-        </div>
-        
-        <h1 class="title is-size-3 is-size-4-mobile has-text-weight-normal">
-            
-                基于URLProtocol攻击的一些想法
-            
-        </h1>
-        <div class="content">
-            <p>浏览器调起本地应用的原理是<code>URLProtocol</code>技术，详情可以在</p>
-<ol>
-<li><a href="http://www.cnblogs.com/wang726zq/archive/2012/12/11/UrlProtocol.html" target="_blank" rel="noopener">http://www.cnblogs.com/wang726zq/archive/2012/12/11/UrlProtocol.html</a></li>
-<li><a href="http://blog.csdn.net/zssureqh/article/details/25828683" target="_blank" rel="noopener">http://blog.csdn.net/zssureqh/article/details/25828683</a></li>
-</ol>
-<p>里查看。</p>
-<p>其中 在注册表的 <code>[HKEY_CLASSES_ROOT]</code>主键下，我们可以看到很多的<code>URLProtocol</code>。<br><a id="more"></a><br>比如阿里旺旺的：</p>
-<p><img src="http://on7r0tqgu.bkt.clouddn.com/Fi_2w3-zHnbp-WB6W0lJlMxkNsmN.png" alt=""></p>
-<p>而阿里旺旺在网页端的<code>和我联系</code>按钮，是跳转到<code>https://amos.alicdn.com/getcid.aw?v=3&amp;groupid=0&amp;s=1&amp;charset=utf-8&amp;uid=淘宝店铺名&amp;site=cntaobao&amp;groupid=0&amp;s=1&amp;fromid=cntaobao淘宝用户名</code>链接的，而这个页面调用了下面的javascript代码：</p>
-<figure class="highlight javascript hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line">!<span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params"></span>) </span>&#123;</span><br><span class="line">    <span class="hljs-keyword">var</span> a = <span class="hljs-built_in">window</span>,</span><br><span class="line">    b = <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params"></span>) </span>&#123;</span><br><span class="line">        <span class="hljs-keyword">try</span> &#123;</span><br><span class="line">            <span class="hljs-built_in">window</span>.open(<span class="hljs-string">""</span>, <span class="hljs-string">"_top"</span>),</span><br><span class="line">            a.opener = <span class="hljs-literal">null</span>,</span><br><span class="line">            a.close()</span><br><span class="line">        &#125; <span class="hljs-keyword">catch</span>(b) &#123;&#125;</span><br><span class="line">    &#125;,</span><br><span class="line">    c = <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params"></span>) </span>&#123;</span><br><span class="line">        a.location.href = <span class="hljs-string">"aliim:sendmsg?touid="</span> + a.site + a.touid + <span class="hljs-string">"&amp;site="</span> + a.site + <span class="hljs-string">"&amp;status=1"</span>,</span><br><span class="line">        setTimeout(<span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params"></span>) </span>&#123;</span><br><span class="line">            b()</span><br><span class="line">        &#125;,</span><br><span class="line">        <span class="hljs-number">6e3</span>)</span><br><span class="line">    &#125;;</span><br><span class="line">    a.isInstalled ? a.isInstalled(<span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">b</span>) </span>&#123;</span><br><span class="line">        <span class="hljs-keyword">if</span> (b) c();</span><br><span class="line">        <span class="hljs-keyword">else</span> &#123;</span><br><span class="line">            <span class="hljs-keyword">var</span> d = confirm(<span class="hljs-string">"\u68c0\u6d4b\u5230\u4f60\u672a\u5b89\u88c5\u963f\u91cc\u65fa\u65fa\u5ba2\u6237\u7aef,\u662f\u5426\u8981\u8df3\u8f6c\u5230\u5b98\u7f51\u4e0b\u8f7d?"</span>);</span><br><span class="line">            d === !<span class="hljs-number">0</span> &amp;&amp; (a.location.href = <span class="hljs-string">"https://wangwang.taobao.com"</span>)</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;) : c()</span><br><span class="line">&#125; ();</span><br></pre></td></tr></table></figure>
-<p>其中最核心的代码就是<code>a.location.href = &quot;aliim:sendmsg?touid=&quot; + a.site + a.touid + &quot;&amp;site=&quot; + a.site + &quot;&amp;status=1&quot;</code>代码，而这段代码的aliim就是在注册表的 <code>[HKEY_CLASSES_ROOT]</code>主键下的阿里旺旺主键名。</p>
-<p>在上面的图中，我们可以看到当打开时，调用了<code>&quot;D:\Program Files (x86)\AliWangWang\8.60.03C\wwcmd.exe&quot; %1</code>命令，wwcmd.exe就是阿里旺旺处理网页端信息的API接口，当处理成功时，就会调起回话窗口。%1就是<code>sendmsg?touid=&quot; + a.site + a.touid + &quot;&amp;site=&quot; + a.site + &quot;&amp;status=1&quot;</code>这段参数。让我们替换下WWCmd.exe。看下是如何传递参数的：</p>
-<figure class="highlight cpp hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="hljs-meta">#<span class="hljs-meta-keyword">include</span><span class="hljs-meta-string">&lt;stdio.h&gt;</span></span></span><br><span class="line"><span class="hljs-function"><span class="hljs-keyword">int</span> <span class="hljs-title">main</span><span class="hljs-params">(<span class="hljs-keyword">int</span> argc,<span class="hljs-keyword">char</span> **argv)</span> </span>&#123;</span><br><span class="line">     FILE *fp = fopen(<span class="hljs-string">"c:/123.txt"</span>,<span class="hljs-string">"w+"</span>);</span><br><span class="line">     <span class="hljs-keyword">if</span>(<span class="hljs-literal">NULL</span> == fp)</span><br><span class="line">         <span class="hljs-keyword">return</span> <span class="hljs-number">-1</span>;</span><br><span class="line">     <span class="hljs-keyword">while</span>(argc--&gt;<span class="hljs-number">0</span>)&#123;</span><br><span class="line">         <span class="hljs-built_in">fputs</span>(*++argv,fp);</span><br><span class="line">         <span class="hljs-built_in">fputs</span>(<span class="hljs-string">" "</span>,fp);</span><br><span class="line">     &#125;</span><br><span class="line">     <span class="hljs-keyword">return</span> <span class="hljs-number">0</span>;</span><br><span class="line"> &#125;</span><br></pre></td></tr></table></figure>
-<p>这段C语言代码是会把后面的参数另存为c盘下的123.txt文件，替换掉WWCmd.exe后，点击<code>和我联系</code>，C盘下存在了一个123.txt文件</p>
-<p><img src="http://on7r0tqgu.bkt.clouddn.com/FvRZnSDiZhAqgGzlDKf-Lre-Gbmo.png" alt=""></p>
-<p>发现，把<code>aliim:</code>也传递进去了，按照这个请求的话，我们可以构造一个exe程序，来进行接收参数了。个人能力有限，说说大体的思路吧。</p>
-<p>exe程序替换掉原有的<code>WWCmd.exe</code>程序，然后来生成特定的插件，植入到浏览器里，然后用户每打开一个网站都会从服务器端接收一个特定的base64编码后的shell代码。然后执行<code>aliim:cmd=服务端的base64</code>，然后运行。当参数为<code>sendmsg</code>时，调起阿里旺旺，当为<code>cmd</code>时执行代码。这样的话，木马的隐藏及唤醒条件都达到了。同理迅雷下载等也都可以。</p>
-<p>好处是在哪呢，一般来说浏览器调起阿里旺旺、迅雷等应用都会弹窗，但是一般用户都会点击 不在提示。这样的话，目标就打成了。</p>
-<p>这只是一个思路，不太成熟。欢迎大家补充。</p>
+                <div class="column is-8-tablet is-8-desktop is-6-widescreen has-order-2 column-main">
 
-        </div>
-        
-        <div class="level is-size-7 is-uppercase">
-            <div class="level-start">
-                <div class="level-item">
-                    <span class="is-size-6 has-text-grey has-mr-7">#</span>
-                    <a class="has-link-grey -link" href="/tags/JavaScript/">JavaScript</a>, <a class="has-link-grey -link" href="/tags/Web-Security/">Web Security</a>
-                </div>
-            </div>
-        </div>
-        
-        
-        
-        
-<div class="sharethis-inline-share-buttons"></div>
-<script type="text/javascript" src="//platform-api.sharethis.com/js/sharethis.js#property=5c2a1d4fd02b6e0010eca6e3&amp;product=sticky-share-buttons" async="async"></script>
-
-        
-    </div>
-</div>
-
-
-
-<div class="card">
+<div class="card widget">
     <div class="card-content">
-        <h3 class="menu-label has-text-centered">喜欢这篇文章？打赏一下作者吧</h3>
-        <div class="buttons is-centered">
-            
+        <h3 class="tag is-link">
+        一月 2019
+        </h3>
+        <div class="timeline">
+        
+            <article class="media">
                 
-<a class="button is-info donate">
-    <span class="icon is-small">
-        <i class="fab fa-alipay"></i>
-    </span>
-    <span>支付宝</span>
-    <div class="qrcode"><img src="/images/alipay.jpg" alt="支付宝"></div>
-</a>
-
+                <a href="/2019/01/12/rxjs-error-retry/" class="media-left">
+                    <p class="image is-64x64">
+                        <img class="thumbnail" src="/images/thumbnail/portrait-of-squirrel-in-forest.jpg" alt="聊聊RxJS中的错误重试">
+                    </p>
+                </a>
                 
-                
-<a class="button is-success donate">
-    <span class="icon is-small">
-        <i class="fab fa-weixin"></i>
-    </span>
-    <span>微信</span>
-    <div class="qrcode"><img src="/images/wechat.jpg" alt="微信"></div>
-</a>
-
-                
-                <!-- Visit https://www.paypal.com/donate/buttons/ to get your donate button -->
-
-<a class="button is-warning donate" onclick="document.getElementById(&#39;paypal-donate-form&#39;).submit()">
-    <span class="icon is-small">
-        <i class="fab fa-paypal"></i>
-    </span>
-    <span>Paypal</span>
-</a>
-<form action="https://www.paypal.com/cgi-bin/webscr" method="post" target="_blank" id="paypal-donate-form">
-    <input type="hidden" name="cmd" value="_donations">
-    <input type="hidden" name="business" value="158blackhole@gmail.com">
-    <input type="hidden" name="currency_code" value="USD">
-</form>
-
-                
+                <div class="media-content">
+                    <div class="content">
+                        <time class="has-text-grey is-size-7 is-block is-uppercase" datetime="2019-01-12T06:16:33.000Z">2019-01-12</time>
+                        <a href="/2019/01/12/rxjs-error-retry/" class="has-link-black-ter is-size-6">聊聊RxJS中的错误重试</a>
+                        <div class="level article-meta is-mobile">
+                            <div class="level-left">
+                                
+                                <div class="level-item is-size-7 is-uppercase">
+                                <a class="has-link-grey -link" href="/categories/JavaScript/">JavaScript</a>
+                                </div>
+                                
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </article>
+        
         </div>
     </div>
 </div>
 
 
-
-<div class="card card-transparent">
-    <div class="level post-navigation is-flex-wrap is-mobile">
-        
-        <div class="level-start">
-            <a class="level level-item has-link-grey  article-nav-prev" href="/2017/11/07/Koa-pm2-configuration/">
-                <i class="level-item fas fa-chevron-left"></i>
-                <span class="level-item">基于Vue+Koa的pm2配置</span>
-            </a>
-        </div>
-        
-        
-        <div class="level-end">
-            <a class="level level-item has-link-grey  article-nav-next" href="/2016/12/14/browser-plugin-attack-vector/">
-                <span class="level-item">浏览器插件的攻击向量</span>
-                <i class="level-item fas fa-chevron-right"></i>
-            </a>
-        </div>
-        
-    </div>
-</div>
-
-
-
-<div class="card">
-    <div class="card-content">
-        <h3 class="title is-5 has-text-weight-normal">评论</h3>
-        
-<script>
-    var disqus_config = function () {
-        this.page.url = 'http://bugs.cc/2017/03/26/some-ideas-based-on-URLProtocol-attacks/';
-        this.page.identifier = '2017/03/26/some-ideas-based-on-URLProtocol-attacks/';
-    };
-    (function() {
-        var d = document, s = d.createElement('script');  
-        s.src = '//' + 'blackhole-1' + '.disqus.com/embed.js';
-        s.setAttribute('data-timestamp', +new Date());
-        (d.head || d.body).appendChild(s);
-    })();
-</script>
-
-<div id="disqus_thread">
-    
-    <noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
-</div>
-    </div>
-</div>
 </div>
                 
 
@@ -1626,7 +1492,7 @@
             <div class="level-start has-text-centered-mobile">
                 <a class="footer-logo is-block has-mb-6" href="/">
                 
-                    <img src="/images/logo.png" alt="基于URLProtocol攻击的一些想法" height="28">
+                    <img src="/images/logo.png" alt="Black-Hole&#39;s Blog" height="28">
                 
                 </a>
                 <p class="is-size-7">

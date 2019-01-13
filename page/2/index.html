@@ -153,6 +153,71 @@
     <div class="card">
     
     <div class="card-image">
+        <a href="/2016/12/14/browser-plugin-attack-vector/" class="image is-7by1">
+            <img class="thumbnail" src="/images/thumbnail/globalworming_44570472_627388220997032_7556431747131459228_n.jpg" alt="浏览器插件的攻击向量">
+        </a>
+    </div>
+    
+    <div class="card-content article ">
+        
+        <div class="level article-meta is-size-7 is-uppercase is-mobile is-overflow-x-auto">
+            <div class="level-left">
+                <time class="level-item has-text-grey" datetime="2016-12-14T14:40:25.000Z">2016-12-14</time>
+                
+                <div class="level-item">
+                <a class="has-link-grey -link" href="/categories/Web-Security/">Web Security</a>
+                </div>
+                
+                
+                <span class="level-item has-text-grey">
+                    
+                    
+                    1 小时 读完 (大约 7269 个字)
+                </span>
+                
+            </div>
+        </div>
+        
+        <h1 class="title is-size-3 is-size-4-mobile has-text-weight-normal">
+            
+                <a class="has-link-black-ter" href="/2016/12/14/browser-plugin-attack-vector/">浏览器插件的攻击向量</a>
+            
+        </h1>
+        <div class="content">
+            <blockquote>
+<h3 id="0x01-前言："><a href="#0x01-前言：" class="headerlink" title="0x01 前言："></a>0x01 前言：</h3></blockquote>
+<p>很多人都认为XSS只能做盗取cookies的活。以至于有些SRC、厂商对待反射型XSS视而不见，或者说是根本不重视。</p>
+<p>直到“黑哥”在之前的演讲中提到XSS入侵内网，情况才得以好转。但是经过本人测试，黑哥所说的XSS内网入侵，应该是包含了浏览器漏洞。那没有浏览器漏洞该如何呢？就像0x_Jin之前在乌云报道的搜狐漏洞那样：<a href="http://www.wooyun.org/bugs/wooyun-2014-076685" target="_blank" rel="noopener">http://www.wooyun.org/bugs/wooyun-2014-076685</a></p>
+<p>这里有几个需要注意的地方：由于浏览器的同源策略问题导致没有办法做到真正意义上的内网入侵，当然如果你又浏览器的0day，那事情就另当别论了。</p>
+<p>而0x_Jin在乌云中的那篇漏洞报告，我自己本人也去问了。答复就是只是检测了开放的80端口，就没有后续了。黑哥没有公布完整的代码，0x_Jin没有深入。既然都没有，就交给我吧。这里我将会使用其他办法“绕过浏览器的同源策略”。</p>
+<blockquote>
+<h3 id="0x02构架："><a href="#0x02构架：" class="headerlink" title="0x02构架："></a>0x02构架：</h3></blockquote>
+<p>代码采用了类似XSS平台那种实时反馈机制。在这里我先把变量介绍一遍：<br><figure class="highlight javascript hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="hljs-keyword">var</span> onlyString           = <span class="hljs-string">"abc"</span>;</span><br><span class="line"><span class="hljs-keyword">var</span> ipList               = [];</span><br><span class="line"><span class="hljs-keyword">var</span> survivalIpLIst       = [];</span><br><span class="line"><span class="hljs-keyword">var</span> deathIpLIst          = [];</span><br><span class="line"><span class="hljs-keyword">var</span> sendsurvivalIp       = <span class="hljs-string">"http://webrtcxss.cn/Api/survivalIp"</span>;</span><br><span class="line"><span class="hljs-keyword">var</span> snedIteratesIpUrl    = <span class="hljs-string">"http://webrtcxss.cn/Api/survivalPortIp"</span>;</span><br><span class="line"><span class="hljs-keyword">var</span> snedIteratesCmsIpUrl = <span class="hljs-string">"http://webrtcxss.cn/Api/survivalCmsIp"</span>;</span><br><span class="line"><span class="hljs-keyword">var</span> sendExistenceVul     = <span class="hljs-string">"http://webrtcxss.cn/Api/existenceVul"</span>;</span><br></pre></td></tr></table></figure></p>
+        </div>
+        
+        
+        <div class="level is-mobile">
+            <div class="level-start">
+                <div class="level-item">
+                <a class="button is-size-7 is-light" href="/2016/12/14/browser-plugin-attack-vector/#more">阅读更多</a>
+                </div>
+            </div>
+        </div>
+        
+        
+    </div>
+</div>
+
+
+
+
+
+
+
+
+    <div class="card">
+    
+    <div class="card-image">
         <a href="/2016/12/13/company-wifi-security/" class="image is-7by1">
             <img class="thumbnail" src="/images/thumbnail/kavalaomer_44670024_2123706224612427_4779410066719402445_n.jpg" alt="公司wifi安全">
         </a>
@@ -651,7 +716,7 @@
                         文章
                     </p>
                     <p class="title has-text-weight-normal">
-                        17
+                        18
                     </p>
                 </div>
             </div>
@@ -671,7 +736,7 @@
                         标签
                     </p>
                     <p class="title has-text-weight-normal">
-                        21
+                        22
                     </p>
                 </div>
             </div>
@@ -809,7 +874,7 @@
                 <span class="level-item">JavaScript</span>
             </span>
             <span class="level-end">
-                <span class="level-item tag">4</span>
+                <span class="level-item tag">5</span>
             </span>
         </a></li><li>
         <a class="level is-marginless" href="/categories/Linux/">
@@ -871,7 +936,7 @@
         <h3 class="menu-label">
             标签云
         </h3>
-        <a href="/tags/Axios/" style="font-size: 10px;">Axios</a> <a href="/tags/Browser-Plugin/" style="font-size: 10px;">Browser Plugin</a> <a href="/tags/CSRF/" style="font-size: 13.33px;">CSRF</a> <a href="/tags/DSL/" style="font-size: 10px;">DSL</a> <a href="/tags/Elasticsearch/" style="font-size: 10px;">Elasticsearch</a> <a href="/tags/Electron/" style="font-size: 10px;">Electron</a> <a href="/tags/JavaScript/" style="font-size: 16.67px;">JavaScript</a> <a href="/tags/Kibana/" style="font-size: 10px;">Kibana</a> <a href="/tags/Koa/" style="font-size: 10px;">Koa</a> <a href="/tags/Linux/" style="font-size: 10px;">Linux</a> <a href="/tags/Markdown/" style="font-size: 10px;">Markdown</a> <a href="/tags/NodeJs/" style="font-size: 10px;">NodeJs</a> <a href="/tags/Promise/" style="font-size: 10px;">Promise</a> <a href="/tags/Python/" style="font-size: 10px;">Python</a> <a href="/tags/React/" style="font-size: 10px;">React</a> <a href="/tags/Virtualization/" style="font-size: 10px;">Virtualization</a> <a href="/tags/Vue/" style="font-size: 13.33px;">Vue</a> <a href="/tags/WAF/" style="font-size: 10px;">WAF</a> <a href="/tags/Web-Security/" style="font-size: 20px;">Web Security</a> <a href="/tags/Wireless-Security/" style="font-size: 10px;">Wireless Security</a> <a href="/tags/XSS/" style="font-size: 13.33px;">XSS</a>
+        <a href="/tags/Axios/" style="font-size: 10px;">Axios</a> <a href="/tags/Browser-Plugin/" style="font-size: 10px;">Browser Plugin</a> <a href="/tags/CSRF/" style="font-size: 13.33px;">CSRF</a> <a href="/tags/DSL/" style="font-size: 10px;">DSL</a> <a href="/tags/Elasticsearch/" style="font-size: 10px;">Elasticsearch</a> <a href="/tags/Electron/" style="font-size: 10px;">Electron</a> <a href="/tags/JavaScript/" style="font-size: 16.67px;">JavaScript</a> <a href="/tags/Kibana/" style="font-size: 10px;">Kibana</a> <a href="/tags/Koa/" style="font-size: 10px;">Koa</a> <a href="/tags/Linux/" style="font-size: 10px;">Linux</a> <a href="/tags/Markdown/" style="font-size: 10px;">Markdown</a> <a href="/tags/NodeJs/" style="font-size: 10px;">NodeJs</a> <a href="/tags/Promise/" style="font-size: 10px;">Promise</a> <a href="/tags/Python/" style="font-size: 10px;">Python</a> <a href="/tags/React/" style="font-size: 10px;">React</a> <a href="/tags/RxJS/" style="font-size: 10px;">RxJS</a> <a href="/tags/Virtualization/" style="font-size: 10px;">Virtualization</a> <a href="/tags/Vue/" style="font-size: 13.33px;">Vue</a> <a href="/tags/WAF/" style="font-size: 10px;">WAF</a> <a href="/tags/Web-Security/" style="font-size: 20px;">Web Security</a> <a href="/tags/Wireless-Security/" style="font-size: 10px;">Wireless Security</a> <a href="/tags/XSS/" style="font-size: 13.33px;">XSS</a>
     </div>
 </div>
 
@@ -885,6 +950,25 @@
         <h3 class="menu-label">
             最新文章
         </h3>
+        
+        <article class="media">
+            
+            <a href="/2019/01/12/rxjs-error-retry/" class="media-left">
+                <p class="image is-64x64">
+                    <img class="thumbnail" src="/images/thumbnail/portrait-of-squirrel-in-forest.jpg" alt="聊聊RxJS中的错误重试">
+                </p>
+            </a>
+            
+            <div class="media-content">
+                <div class="content">
+                    <div><time class="has-text-grey is-size-7 is-uppercase" datetime="2019-01-12T06:16:33.000Z">2019-01-12</time></div>
+                    <a href="/2019/01/12/rxjs-error-retry/" class="has-link-black-ter is-size-6">聊聊RxJS中的错误重试</a>
+                    <p class="is-size-7 is-uppercase">
+                        <a class="has-link-grey -link" href="/categories/JavaScript/">JavaScript</a>
+                    </p>
+                </div>
+            </div>
+        </article>
         
         <article class="media">
             
@@ -962,25 +1046,6 @@
             </div>
         </article>
         
-        <article class="media">
-            
-            <a href="/2018/01/23/run-qcow2-image-in-vmware/" class="media-left">
-                <p class="image is-64x64">
-                    <img class="thumbnail" src="/images/thumbnail/pexels-photo-1183434.jpeg" alt="在vmware里运行qcow2镜像">
-                </p>
-            </a>
-            
-            <div class="media-content">
-                <div class="content">
-                    <div><time class="has-text-grey is-size-7 is-uppercase" datetime="2018-01-23T01:12:31.000Z">2018-01-23</time></div>
-                    <a href="/2018/01/23/run-qcow2-image-in-vmware/" class="has-link-black-ter is-size-6">在vmware里运行qcow2镜像</a>
-                    <p class="is-size-7 is-uppercase">
-                        <a class="has-link-grey -link" href="/categories/Virtualization/">Virtualization</a>
-                    </p>
-                </div>
-            </div>
-        </article>
-        
     </div>
 </div>
 
@@ -992,6 +1057,17 @@
             归档
         </h3>
         <ul class="menu-list">
+        
+        <li>
+            <a class="level is-marginless" href="/archives/2019/01/">
+                <span class="level-start">
+                    <span class="level-item">一月 2019</span>
+                </span>
+                <span class="level-end">
+                    <span class="level-item tag">1</span>
+                </span>
+            </a>
+        </li>
         
         <li>
             <a class="level is-marginless" href="/archives/2018/12/">
@@ -1199,7 +1275,7 @@
                             <span class="level-item">JavaScript</span>
                         </span>
                         <span class="level-end">
-                            <span class="level-item tag">5</span>
+                            <span class="level-item tag">6</span>
                         </span>
                     </a>
                 </li>
@@ -1285,6 +1361,17 @@
                     <a class="level is-marginless" href="/tags/React/">
                         <span class="level-start">
                             <span class="level-item">React</span>
+                        </span>
+                        <span class="level-end">
+                            <span class="level-item tag">1</span>
+                        </span>
+                    </a>
+                </li>
+                
+                <li>
+                    <a class="level is-marginless" href="/tags/RxJS/">
+                        <span class="level-start">
+                            <span class="level-item">RxJS</span>
                         </span>
                         <span class="level-end">
                             <span class="level-item tag">1</span>
@@ -1383,6 +1470,25 @@
         
         <article class="media">
             
+            <a href="/2019/01/12/rxjs-error-retry/" class="media-left">
+                <p class="image is-64x64">
+                    <img class="thumbnail" src="/images/thumbnail/portrait-of-squirrel-in-forest.jpg" alt="聊聊RxJS中的错误重试">
+                </p>
+            </a>
+            
+            <div class="media-content">
+                <div class="content">
+                    <div><time class="has-text-grey is-size-7 is-uppercase" datetime="2019-01-12T06:16:33.000Z">2019-01-12</time></div>
+                    <a href="/2019/01/12/rxjs-error-retry/" class="has-link-black-ter is-size-6">聊聊RxJS中的错误重试</a>
+                    <p class="is-size-7 is-uppercase">
+                        <a class="has-link-grey -link" href="/categories/JavaScript/">JavaScript</a>
+                    </p>
+                </div>
+            </div>
+        </article>
+        
+        <article class="media">
+            
             <a href="/2018/12/30/reading-notes-from-lucene-to-elasticsearch-full-text-search/" class="media-left">
                 <p class="image is-64x64">
                     <img class="thumbnail" src="/images/thumbnail/globalworming_43986209_2220823381486696_8628271851625393205_n.jpg" alt="读书笔记：从Lucene到Elasticsearch:全文检索实战">
@@ -1457,25 +1563,6 @@
             </div>
         </article>
         
-        <article class="media">
-            
-            <a href="/2018/01/23/run-qcow2-image-in-vmware/" class="media-left">
-                <p class="image is-64x64">
-                    <img class="thumbnail" src="/images/thumbnail/pexels-photo-1183434.jpeg" alt="在vmware里运行qcow2镜像">
-                </p>
-            </a>
-            
-            <div class="media-content">
-                <div class="content">
-                    <div><time class="has-text-grey is-size-7 is-uppercase" datetime="2018-01-23T01:12:31.000Z">2018-01-23</time></div>
-                    <a href="/2018/01/23/run-qcow2-image-in-vmware/" class="has-link-black-ter is-size-6">在vmware里运行qcow2镜像</a>
-                    <p class="is-size-7 is-uppercase">
-                        <a class="has-link-grey -link" href="/categories/Virtualization/">Virtualization</a>
-                    </p>
-                </div>
-            </div>
-        </article>
-        
     </div>
 </div>
 
@@ -1487,6 +1574,17 @@
             归档
         </h3>
         <ul class="menu-list">
+        
+        <li>
+            <a class="level is-marginless" href="/archives/2019/01/">
+                <span class="level-start">
+                    <span class="level-item">一月 2019</span>
+                </span>
+                <span class="level-end">
+                    <span class="level-item tag">1</span>
+                </span>
+            </a>
+        </li>
         
         <li>
             <a class="level is-marginless" href="/archives/2018/12/">
@@ -1694,7 +1792,7 @@
                             <span class="level-item">JavaScript</span>
                         </span>
                         <span class="level-end">
-                            <span class="level-item tag">5</span>
+                            <span class="level-item tag">6</span>
                         </span>
                     </a>
                 </li>
@@ -1780,6 +1878,17 @@
                     <a class="level is-marginless" href="/tags/React/">
                         <span class="level-start">
                             <span class="level-item">React</span>
+                        </span>
+                        <span class="level-end">
+                            <span class="level-item tag">1</span>
+                        </span>
+                    </a>
+                </li>
+                
+                <li>
+                    <a class="level is-marginless" href="/tags/RxJS/">
+                        <span class="level-start">
+                            <span class="level-item">RxJS</span>
                         </span>
                         <span class="level-end">
                             <span class="level-item tag">1</span>
