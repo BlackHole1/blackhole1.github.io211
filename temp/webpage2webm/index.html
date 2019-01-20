@@ -17,12 +17,12 @@
   <script>
     if (({}).toString.call(window.webpage2webm) === '[object Object]') {
       const flag = Object.keys(window.webpage2webm).every((key) => ['start', 'pause', 'resume', 'stop'].includes(key))
-      if (!flag) return;
-
-      window.webpage2webm.start('webpage2webm-demo');
-      setTimeout(() => {
-        webpage2webm.stop();
-      }, 10000)
+      if (flag) {
+        window.webpage2webm.start('webpage2webm-demo');
+        setTimeout(() => {
+          webpage2webm.stop();
+        }, 10000)
+      }
     }
   </script>
 </html>
