@@ -6,6 +6,19 @@
   <body>
       <div id="container"></div>
   </body>
+  <script>
+    setTimeout(() => {
+      if (({}).toString.call(window.webpage2webm) === '[object Object]') {
+        const flag = Object.keys(window.webpage2webm).every((key) => ['start', 'pause', 'resume', 'stop'].includes(key))
+        if (flag) {
+          window.webpage2webm.start('webpage2webm-demo');
+          setTimeout(() => {
+            webpage2webm.stop();
+          }, 10000)
+        }
+      }
+    }, 2000)    
+  </script>
   <script src='./three.min.js'></script>
   <script src='./CopyShader.js'></script>
   <script src='./EffectComposer.js'></script>
@@ -14,15 +27,4 @@
   <script src='./ShaderPass.js'></script>
   <script src='./RenderPass.js'></script>
   <script src='./index.js'></script>
-  <script>
-    if (({}).toString.call(window.webpage2webm) === '[object Object]') {
-      const flag = Object.keys(window.webpage2webm).every((key) => ['start', 'pause', 'resume', 'stop'].includes(key))
-      if (flag) {
-        window.webpage2webm.start('webpage2webm-demo');
-        setTimeout(() => {
-          webpage2webm.stop();
-        }, 10000)
-      }
-    }
-  </script>
 </html>
