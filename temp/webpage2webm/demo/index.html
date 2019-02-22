@@ -9,7 +9,7 @@
   <script>
     setTimeout(() => {
       if (({}).toString.call(window.webpage2webm) === '[object Object]') {
-        const flag = Object.keys(window.webpage2webm).every((key) => ['start', 'pause', 'resume', 'stop'].includes(key))
+        const flag = Object.keys(window.webpage2webm).every((key) => ['start', 'pause', 'resume', 'stop', 'setContainerName'].includes(key))
         if (flag) {
           window.webpage2webm.start('webpage2webm-demo');
           setTimeout(() => {
