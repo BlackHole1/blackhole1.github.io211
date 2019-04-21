@@ -19,7 +19,11 @@
 <meta property="og:image" content="https://i.imgur.com/8wtUb4d.png">
 <meta property="og:image" content="https://i.imgur.com/kKmDhRR.png">
 <meta property="og:image" content="https://i.imgur.com/6bNDpJX.png">
+<<<<<<< HEAD
 <meta property="og:updated_time" content="2019-01-13T01:59:15.549Z">
+=======
+<meta property="og:updated_time" content="2019-04-21T02:35:41.946Z">
+>>>>>>> c183f8b... 更新todo
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="聊聊RxJS中的错误重试">
 <meta name="twitter:description" content="前言最近工作中有一个需求是：如果这个请求超时，则进行重试，且重试次数可配置。 首先我们发请求使用的库为：Axios，其处理请求的位置，是在 redux-observable 中的 epic 里。 那么如果要完成重试机制的话，有两种办法：  在对 Axios 封装的函数里添加重试代码 在 epic 里，使用 RxJS 操作符进行重试。  关于 Axios 重试的，其实比较麻烦的，而且需要在原有封装好">
@@ -167,7 +171,11 @@
         
         <div class="level article-meta is-size-7 is-uppercase is-mobile is-overflow-x-auto">
             <div class="level-left">
+<<<<<<< HEAD
                 <time class="level-item has-text-grey" datetime="2019-01-12T06:16:33.000Z">2019-01-12</time>
+=======
+                <time class="level-item has-text-grey" datetime="2019-01-12T10:52:05.000Z">2019-01-12</time>
+>>>>>>> c183f8b... 更新todo
                 
                 <div class="level-item">
                 <a class="has-link-grey -link" href="/categories/JavaScript/">JavaScript</a>
@@ -177,7 +185,11 @@
                 <span class="level-item has-text-grey">
                     
                     
+<<<<<<< HEAD
                     13 分钟 读完 (大约 1895 个字)
+=======
+                    12 分钟 读完 (大约 1859 个字)
+>>>>>>> c183f8b... 更新todo
                 </span>
                 
             </div>
@@ -221,7 +233,11 @@
 <h4 id="retry-retryWhen"><a href="#retry-retryWhen" class="headerlink" title="retry + retryWhen"></a>retry + retryWhen</h4><p>这个时候，我们发现 <code>retry</code> 可以设置重试次数，<code>retryWhen</code> 可以设置重试逻辑。</p>
 <p>但是我们想设置重试次数，又想设置重试逻辑，那应该怎么办呢？</p>
 <p>OK，先让我们看看 <code>retryWhen</code> 操作符。这个操作符如果内部触发了 <code>Error</code> 或者 <code>Completed</code>，那么就会停止重试，将会把内部触发的 <code>Error</code> 或者 <code>Completed</code> 交给 <code>subscribe</code> 的订阅操作符。可能这样说，比较麻烦，我们先上 <code>Demo</code>，按照 <code>Demo</code> 来说，会有助于理解：</p>
+<<<<<<< HEAD
 <figure class="highlight typescript hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="hljs-keyword">const</span> source = Rx.Observable.interval(<span class="hljs-number">1000</span>)</span><br><span class="line"></span><br><span class="line"><span class="hljs-keyword">const</span> example = source.map(<span class="hljs-function"><span class="hljs-params">val</span> =&gt;</span> &#123;</span><br><span class="line">  <span class="hljs-keyword">if</span> (val === <span class="hljs-number">2</span>) &#123;</span><br><span class="line">    <span class="hljs-keyword">throw</span> <span class="hljs-built_in">Error</span>(<span class="hljs-string">'error'</span>)</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="hljs-keyword">return</span> val;</span><br><span class="line">&#125;).retryWhen(<span class="hljs-function"><span class="hljs-params">err</span> =&gt;</span> &#123;</span><br><span class="line">  <span class="hljs-keyword">return</span> err</span><br><span class="line">    .scan(<span class="hljs-function">(<span class="hljs-params">acc, curr</span>) =&gt;</span> &#123;</span><br><span class="line">      <span class="hljs-keyword">if</span> (acc &gt; <span class="hljs-number">2</span>) &#123;</span><br><span class="line">        <span class="hljs-keyword">throw</span> curr</span><br><span class="line">      &#125;</span><br><span class="line">      <span class="hljs-keyword">return</span> acc + <span class="hljs-number">1</span></span><br><span class="line">    &#125;, <span class="hljs-number">1</span>)</span><br><span class="line">&#125;)</span><br><span class="line"></span><br><span class="line">example.subscribe(&#123;</span><br><span class="line">  next: <span class="hljs-function"><span class="hljs-params">val</span> =&gt;</span> <span class="hljs-built_in">console</span>.log(val),</span><br><span class="line">  error: <span class="hljs-function"><span class="hljs-params">val</span> =&gt;</span> <span class="hljs-built_in">console</span>.log(val.message)</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
+=======
+<figure class="highlight typescript hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="hljs-keyword">const</span> source = Rx.Observable.interval(<span class="hljs-number">1000</span>)</span><br><span class="line"></span><br><span class="line"><span class="hljs-keyword">const</span> example = source.map(<span class="hljs-function"><span class="hljs-params">val</span> =&gt;</span> &#123;</span><br><span class="line">  <span class="hljs-keyword">if</span> (val === <span class="hljs-number">2</span>) &#123;</span><br><span class="line">    <span class="hljs-keyword">throw</span> <span class="hljs-built_in">Error</span>(<span class="hljs-string">'error'</span>)</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="hljs-keyword">return</span> val;</span><br><span class="line">&#125;).retryWhen(<span class="hljs-function"><span class="hljs-params">err</span> =&gt;</span> &#123;</span><br><span class="line">  <span class="hljs-keyword">return</span> err</span><br><span class="line">    .scan(<span class="hljs-function">(<span class="hljs-params">acc, curr</span>) =&gt;</span> &#123;</span><br><span class="line">      <span class="hljs-keyword">if</span> (acc &gt; <span class="hljs-number">2</span>) &#123;</span><br><span class="line">        <span class="hljs-keyword">throw</span> curr</span><br><span class="line">      &#125; </span><br><span class="line">      <span class="hljs-keyword">return</span> acc + <span class="hljs-number">1</span></span><br><span class="line">    &#125;, <span class="hljs-number">1</span>)</span><br><span class="line">&#125;)</span><br><span class="line"></span><br><span class="line">example.subscribe(&#123;</span><br><span class="line">  next: <span class="hljs-function"><span class="hljs-params">val</span> =&gt;</span> <span class="hljs-built_in">console</span>.log(val),</span><br><span class="line">  error: <span class="hljs-function"><span class="hljs-params">val</span> =&gt;</span> <span class="hljs-built_in">console</span>.log(val.message)</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
+>>>>>>> c183f8b... 更新todo
 <p><a href="https://jsbin.com/zixeqin/16/edit?js,console" target="_blank" rel="noopener">在线运行</a></p>
 <p>结果如图：</p>
 <p><img src="https://i.imgur.com/kKmDhRR.png" alt="Imgur"></p>
@@ -237,6 +253,7 @@
 <p>我们可以使用 <code>defer</code> 操作符，现在来简单说明下这个操作符的用处。</p>
 <p><code>defer</code> 接受一个函数参数，其函数不会运行，只有你使用 <code>subscribe</code> 去订阅的时候，才会去运行函数。并且运行函数，都是在独立的运行空间内，也就说，即使我们使用 <code>Promise</code>，也不会造成无法重试的情况，因为它不是复用之前的结果，而是重新开启一个新的内存空间，去运行函数，返回函数结果。</p>
 <p>那么我们就可以把代码写成下面这样:</p>
+<<<<<<< HEAD
 <figure class="highlight typescript hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="hljs-keyword">const</span> getInfo: AxiosPromise = axios.get(<span class="hljs-string">'http://xxx.com'</span>)</span><br><span class="line"><span class="hljs-keyword">const</span> exp = defer(<span class="hljs-function"><span class="hljs-params">()</span> =&gt;</span> getInfo)</span><br><span class="line">  .retryWhen(<span class="hljs-function"><span class="hljs-params">err</span> =&gt;</span> &#123;</span><br><span class="line">    <span class="hljs-keyword">return</span> err.scan(<span class="hljs-function">(<span class="hljs-params">acc, curr</span>) =&gt;</span> &#123;</span><br><span class="line">      <span class="hljs-keyword">if</span> (acc &gt; <span class="hljs-number">2</span>) &#123;</span><br><span class="line">        <span class="hljs-keyword">throw</span> curr</span><br><span class="line">      &#125;</span><br><span class="line"></span><br><span class="line">      <span class="hljs-keyword">return</span> acc + <span class="hljs-number">1</span></span><br><span class="line">    &#125;, <span class="hljs-number">1</span>)</span><br><span class="line">  &#125;)</span><br><span class="line"></span><br><span class="line">example.subscribe(&#123;</span><br><span class="line">  next: <span class="hljs-function"><span class="hljs-params">val</span> =&gt;</span> <span class="hljs-built_in">console</span>.log(val),</span><br><span class="line">  error: <span class="hljs-function"><span class="hljs-params">val</span> =&gt;</span> <span class="hljs-built_in">console</span>.log(val.message)</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
 <h3 id="作者信息"><a href="#作者信息" class="headerlink" title="作者信息"></a>作者信息</h3><blockquote>
 <p><a href="158blackhole@gmail.com">Black-Hole</a></p>
@@ -251,6 +268,9 @@
 <p>Twitter:<a href="https://twitter.com/Free_BlackHole" target="_blank" rel="noopener">https://twitter.com/Free_BlackHole</a></p>
 </blockquote>
 
+=======
+<figure class="highlight typescript hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="hljs-keyword">const</span> getInfo: AxiosPromise = axios.get(<span class="hljs-string">'http://xxx.com'</span>)</span><br><span class="line"><span class="hljs-keyword">const</span> exp = defer(<span class="hljs-function"><span class="hljs-params">()</span> =&gt;</span> getInfo)</span><br><span class="line">  .retryWhen(<span class="hljs-function"><span class="hljs-params">err</span> =&gt;</span> &#123;</span><br><span class="line">    <span class="hljs-keyword">return</span> err.scan(<span class="hljs-function">(<span class="hljs-params">acc, curr</span>) =&gt;</span> &#123;</span><br><span class="line">      <span class="hljs-keyword">if</span> (acc &gt; <span class="hljs-number">2</span>) &#123;</span><br><span class="line">        <span class="hljs-keyword">throw</span> curr</span><br><span class="line">      &#125;</span><br><span class="line">      </span><br><span class="line">      <span class="hljs-keyword">return</span> acc + <span class="hljs-number">1</span></span><br><span class="line">    &#125;, <span class="hljs-number">1</span>)</span><br><span class="line">  &#125;)</span><br><span class="line"></span><br><span class="line">example.subscribe(&#123;</span><br><span class="line">  next: <span class="hljs-function"><span class="hljs-params">val</span> =&gt;</span> <span class="hljs-built_in">console</span>.log(val),</span><br><span class="line">  error: <span class="hljs-function"><span class="hljs-params">val</span> =&gt;</span> <span class="hljs-built_in">console</span>.log(val.message)</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
+>>>>>>> c183f8b... 更新todo
         </div>
         
         <div class="level is-size-7 is-uppercase">
@@ -645,7 +665,11 @@
             
             <div class="media-content">
                 <div class="content">
+<<<<<<< HEAD
                     <div><time class="has-text-grey is-size-7 is-uppercase" datetime="2019-01-12T06:16:33.000Z">2019-01-12</time></div>
+=======
+                    <div><time class="has-text-grey is-size-7 is-uppercase" datetime="2019-01-12T10:52:05.000Z">2019-01-12</time></div>
+>>>>>>> c183f8b... 更新todo
                     <a href="/2019/01/12/rxjs-error-retry/" class="has-link-black-ter is-size-6">聊聊RxJS中的错误重试</a>
                     <p class="is-size-7 is-uppercase">
                         <a class="has-link-grey -link" href="/categories/JavaScript/">JavaScript</a>
@@ -1162,7 +1186,11 @@
             
             <div class="media-content">
                 <div class="content">
+<<<<<<< HEAD
                     <div><time class="has-text-grey is-size-7 is-uppercase" datetime="2019-01-12T06:16:33.000Z">2019-01-12</time></div>
+=======
+                    <div><time class="has-text-grey is-size-7 is-uppercase" datetime="2019-01-12T10:52:05.000Z">2019-01-12</time></div>
+>>>>>>> c183f8b... 更新todo
                     <a href="/2019/01/12/rxjs-error-retry/" class="has-link-black-ter is-size-6">聊聊RxJS中的错误重试</a>
                     <p class="is-size-7 is-uppercase">
                         <a class="has-link-grey -link" href="/categories/JavaScript/">JavaScript</a>
