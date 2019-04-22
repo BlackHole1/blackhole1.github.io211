@@ -2,28 +2,34 @@
 <html lang="zh">
 <head><meta name="generator" content="Hexo 3.8.0">
     <meta charset="utf-8">
-<title>标签: Wireless Security - Black-Hole&#39;s Blog</title>
+<title>通过Webkit远程调试协议监听网页崩溃. - Black-Hole&#39;s Blog</title>
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
 
 
 
-    <meta name="description" content="Black-Hole&apos;s Blog">
-<meta name="keywords" content="JavaScript">
-<meta property="og:type" content="website">
-<meta property="og:title" content="Black-Hole&#39;s Blog">
-<meta property="og:url" content="http://bugs.cc/tags/Wireless-Security/index.html">
+    <meta name="description" content="背景介绍因为正在开发一个项目，而这个项目使用到了puppeteer，其中有个功能是在puppeteer打开的chrome里打开多个Tab，并进行管理。虽然puppeteer可以打开多个网站，但是并不利于管理，所有我使用的是插件的方式，通过插件来打开多网站，并进行管理。 但是这里有个需求是，当网站崩溃时，我要做出一些操作。但是目前网上没有一个好的办法去监听当前网站是否崩溃。 可能有同学会说：pupp">
+<meta name="keywords" content="JavaScript,NodeJs,Webkit,puppeteer,chrome">
+<meta property="og:type" content="article">
+<meta property="og:title" content="通过Webkit远程调试协议监听网页崩溃.">
+<meta property="og:url" content="http://bugs.cc/2019/04/22/webkit-remote-debugging-protocol-listening-crash/index.html">
 <meta property="og:site_name" content="Black-Hole&#39;s Blog">
-<meta property="og:description" content="Black-Hole&apos;s Blog">
+<meta property="og:description" content="背景介绍因为正在开发一个项目，而这个项目使用到了puppeteer，其中有个功能是在puppeteer打开的chrome里打开多个Tab，并进行管理。虽然puppeteer可以打开多个网站，但是并不利于管理，所有我使用的是插件的方式，通过插件来打开多网站，并进行管理。 但是这里有个需求是，当网站崩溃时，我要做出一些操作。但是目前网上没有一个好的办法去监听当前网站是否崩溃。 可能有同学会说：pupp">
 <meta property="og:locale" content="zh-CN">
+<meta property="og:image" content="https://i.imgur.com/yT7VrbF.png">
+<meta property="og:image" content="https://i.imgur.com/hzJblJb.png">
+<meta property="og:image" content="https://i.imgur.com/HbaHdZY.png">
+<meta property="og:image" content="https://i.imgur.com/squ9IRU.png">
+<meta property="og:updated_time" content="2019-04-22T07:55:25.127Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="Black-Hole&#39;s Blog">
-<meta name="twitter:description" content="Black-Hole&apos;s Blog">
+<meta name="twitter:title" content="通过Webkit远程调试协议监听网页崩溃.">
+<meta name="twitter:description" content="背景介绍因为正在开发一个项目，而这个项目使用到了puppeteer，其中有个功能是在puppeteer打开的chrome里打开多个Tab，并进行管理。虽然puppeteer可以打开多个网站，但是并不利于管理，所有我使用的是插件的方式，通过插件来打开多网站，并进行管理。 但是这里有个需求是，当网站崩溃时，我要做出一些操作。但是目前网上没有一个好的办法去监听当前网站是否崩溃。 可能有同学会说：pupp">
+<meta name="twitter:image" content="https://i.imgur.com/yT7VrbF.png">
 <meta name="twitter:creator" content="@Free_BlackHole">
 <meta name="twitter:site" content="https://twitter.com/Free_BlackHole">
 
 
 
-<link rel="alternative" href="/atom.xml" title="Black-Hole&#39;s Blog" type="application/atom+xml">
+<link rel="alternative" href="/atom.xml" title="通过Webkit远程调试协议监听网页崩溃." type="application/atom+xml">
 
 
 
@@ -100,7 +106,7 @@
         <div class="navbar-brand is-flex-center">
             <a class="navbar-item navbar-logo" href="/">
             
-                <img src="/images/logo.png" alt="Black-Hole&#39;s Blog" height="28">
+                <img src="/images/logo.png" alt="通过Webkit远程调试协议监听网页崩溃." height="28">
             
             </a>
         </div>
@@ -150,39 +156,28 @@
         <div class="container">
             <div class="columns">
                 <div class="column is-8-tablet is-8-desktop is-6-widescreen has-order-2 column-main"><div class="card">
-    <div class="card-content">
-        <nav class="breadcrumb" aria-label="breadcrumbs">
-        <ul>
-            <li><a href="/tags">标签</a></li>
-            <li class="is-active"><a href="#" aria-current="page">Wireless Security</a></li>
-        </ul>
-        </nav>
-    </div>
-</div>
-
-    <div class="card">
     
     <div class="card-image">
-        <a href="/2016/12/13/company-wifi-security/" class="image is-7by1">
-            <img class="thumbnail" src="/images/thumbnail/kavalaomer_44670024_2123706224612427_4779410066719402445_n.jpg" alt="公司wifi安全">
-        </a>
+        <span class="image is-7by1">
+            <img class="thumbnail" src="/images/thumbnail/susonsjack_42869646_453810475110563_1990119818303225384_n.jpg" alt="通过Webkit远程调试协议监听网页崩溃.">
+        </span>
     </div>
     
     <div class="card-content article ">
         
         <div class="level article-meta is-size-7 is-uppercase is-mobile is-overflow-x-auto">
             <div class="level-left">
-                <time class="level-item has-text-grey" datetime="2016-12-13T03:00:48.000Z">2016-12-13</time>
+                <time class="level-item has-text-grey" datetime="2019-04-22T07:51:25.000Z">2019-04-22</time>
                 
                 <div class="level-item">
-                <a class="has-link-grey -link" href="/categories/Wireless-Security/">Wireless Security</a>
+                <a class="has-link-grey -link" href="/categories/NodeJs/">NodeJs</a>
                 </div>
                 
                 
                 <span class="level-item has-text-grey">
                     
                     
-                    10 分钟 读完 (大约 1455 个字)
+                    12 分钟 读完 (大约 1780 个字)
                 </span>
                 
             </div>
@@ -190,39 +185,179 @@
         
         <h1 class="title is-size-3 is-size-4-mobile has-text-weight-normal">
             
-                <a class="has-link-black-ter" href="/2016/12/13/company-wifi-security/">公司wifi安全</a>
+                通过Webkit远程调试协议监听网页崩溃.
             
         </h1>
         <div class="content">
-            <h4 id="0x0-前言："><a href="#0x0-前言：" class="headerlink" title="0x0 前言："></a>0x0 前言：</h4><hr>
-<p>很多的公司都没有安全团队，只有运维来负责整个公司的安全，从而安全问题也大打折扣。我最近一直在给各个公司做安全检测，就把自己的心得写下来，有什么不足之处还望补充。</p>
-<h4 id="0x1-无线安全："><a href="#0x1-无线安全：" class="headerlink" title="0x1 无线安全："></a>0x1 无线安全：</h4><hr>
-<p>很多的公司都有不怎么注重公司的无线电安全，有钱的公司买设备，没钱的公司搞人力。但是人的技术在好，没有设备的辅助，单纯的人力在厉害也没什么用。</p>
-<p>很多的公司WIFI认证基本都是WPA/WPA2然后加个WEB二次认证，认为这样就万无一失了，而其实这并没有什么用。破解WPA，可以使用aircrack-ng、airmon-ng、airodump-ng、aireplay-ng来实现破解，WPA2使用字典穷举。</p>
-<p>当然也可以使用大菠萝伪造一个WIFI。而大家也都知道有一款神器叫做“wifi万能钥匙”，可以先去看看wifi万能钥匙能不能解，不能解的话再破。连上WIFI后，将会提示你需要进行WEB二次认证。这里你完全可以弃之不理，因为它并没有什么用。</p>
-<p>因为你是WPA/WPA2的认证方式，你连上WIFI之后，交换机就会马上分配给你一个内网IP（我遇到的是交换机，也可能是路由器）一个黑客要你外网干什么，他需要的是公司的内网资源。<br></p>
+            <h2 id="背景介绍"><a href="#背景介绍" class="headerlink" title="背景介绍"></a>背景介绍</h2><p>因为正在开发一个项目，而这个项目使用到了<code>puppeteer</code>，其中有个功能是在<code>puppeteer</code>打开的chrome里打开多个<code>Tab</code>，并进行管理。<br>虽然<code>puppeteer</code>可以打开多个网站，但是并不利于管理，所有我使用的是插件的方式，通过插件来打开多网站，并进行管理。</p>
+<p>但是这里有个需求是，当网站崩溃时，我要做出一些操作。但是目前网上没有一个好的办法去监听当前网站是否崩溃。</p>
+<p>可能有同学会说：<code>puppeteer</code>不是提供了一个<code>page.on(&#39;error&#39;, fn)</code>的方法，来进行监听么？</p>
+<p>请注意上文中提到的，使用插件打开多个网站，<code>puppeteer</code>提供的方法只能对自己打开的网站起作用，没有使用<code>puppeteer</code>打开的网站，<code>page.on(&#39;error&#39;, fn)</code>方法无能为力。</p>
+<h2 id="使用Service-Workers"><a href="#使用Service-Workers" class="headerlink" title="使用Service Workers"></a>使用Service Workers</h2><p>这个方法是由我同事<a href="https://github.com/liubiantao" target="_blank" rel="noopener">Haitao</a>提出来的思路。</p>
+<p>在当前网站上运行一个<code>Service Workers</code>，因为在运行的时候<code>Service Workers</code>会再启动一个单独的进程，当前网站和<code>Service Workers</code>是两个单独的进程。也就是说当网站崩溃时，并不影响<code>Service Workers</code>进程。所以可通过<code>心跳检测</code>来进行判断网站是否崩溃。</p>
+<a id="more"></a>
+<p>网上也有阿里的同学写的相关文章：<a href="https://zhuanlan.zhihu.com/p/40273861" target="_blank" rel="noopener">如何监控网页崩溃？</a></p>
+<p>但是我并没有使用这个方式，因为当<code>Service Workers</code>崩溃了，那就没有任何办法了，可能有同学会说：网站和<code>Service Workers</code>互相发<code>心跳检测</code>。这可能是一种办法，但是我不太喜欢这种方式。</p>
+<h2 id="使用Webkit的远程调试协议"><a href="#使用Webkit的远程调试协议" class="headerlink" title="使用Webkit的远程调试协议"></a>使用Webkit的远程调试协议</h2><h3 id="介绍"><a href="#介绍" class="headerlink" title="介绍"></a>介绍</h3><p>在开始前，我们先去看下<code>puppeteer</code>的源码，为什么<code>puppeteer</code>可以监听到网页的崩溃。</p>
+<p>其代码在<code>lib/Page.js</code>文件里。</p>
+<p>首先可以看到Page是一个<code>Class</code>，其继承了<code>EventEmitter</code>，<code>EventEmitter</code>为<code>page</code>提供了<code>on</code>方法，也就是我们之前看到的：<code>page.on(&#39;error&#39;, fn)</code></p>
+<p>从这里就可知，在<code>Page Class</code>里，有地方调用了<code>this.emit(&#39;error&#39;)</code>来触发<code>error event</code>。搜了一下，发现其代码在<code>_onTargetCrashed</code>方法里。如：</p>
+<p><img src="https://i.imgur.com/yT7VrbF.png" alt="Imgur"></p>
+<p>触发<code>crash</code>的方法，我们找到了。那这个<code>_onTargetCrashed</code>又是在哪触发的呢？</p>
+<p><img src="https://i.imgur.com/hzJblJb.png" alt="Imgur"></p>
+<p>可见，是一个叫<code>client</code>的方法监听到了<code>Inspector.targetCrashed</code>事件，而这个事件触发了<code>_onTargetCrashed</code>函数，<code>clinet</code>方法就不再跟了，因为跳地方较多，只需要知道，最终<code>client</code>是一个<code>websocket</code>的产物。而<code>websocket</code>创建的代码在<code>lib/Launcher.js</code>里。<a href="https://github.com/GoogleChrome/puppeteer/blob/19606a3b79/lib/Launcher.js#L169-L179" target="_blank" rel="noopener">代码位置</a></p>
+<p><img src="https://i.imgur.com/HbaHdZY.png" alt="Imgur"></p>
+<p>注意这两行：</p>
+<figure class="highlight js hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="hljs-keyword">const</span> transport = <span class="hljs-keyword">new</span> PipeTransport((chromeProcess.stdio[<span class="hljs-number">3</span>]), (chromeProcess.stdio[<span class="hljs-number">4</span>]));</span><br><span class="line"></span><br><span class="line">connection = <span class="hljs-keyword">new</span> Connection(<span class="hljs-string">''</span>, transport, slowMo);</span><br></pre></td></tr></table></figure>
+<p><code>chromeProcess</code>是<code>nodejs</code>中的<code>spawn</code>产物，代码为：</p>
+<p><a href="https://github.com/GoogleChrome/puppeteer/blob/19606a3b79/lib/Launcher.js#L126-L137" target="_blank" rel="noopener">代码位置</a></p>
+<figure class="highlight js hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="hljs-keyword">const</span> chromeProcess = childProcess.spawn(</span><br><span class="line">  chromeExecutable,</span><br><span class="line">  chromeArguments,</span><br><span class="line">  &#123;</span><br><span class="line">    detached: process.platform !== <span class="hljs-string">'win32'</span>,</span><br><span class="line">    env,</span><br><span class="line">    stdio</span><br><span class="line">  &#125;</span><br><span class="line">);</span><br></pre></td></tr></table></figure>
+<p>其中<code>chromeArguments</code>是<code>chrome</code>启动的参数列表，此列表是有一个<code>--remote-debugging-</code>的：</p>
+<p><a href="https://github.com/GoogleChrome/puppeteer/blob/19606a3b79/lib/Launcher.js#L108-L109" target="_blank" rel="noopener">代码位置</a></p>
+<figure class="highlight js hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="hljs-keyword">if</span> (!chromeArguments.some(<span class="hljs-function"><span class="hljs-params">argument</span> =&gt;</span> argument.startsWith(<span class="hljs-string">'--remote-debugging-'</span>)))</span><br><span class="line">  chromeArguments.push(pipe ? <span class="hljs-string">'--remote-debugging-pipe'</span> : <span class="hljs-string">'--remote-debugging-port=0'</span>);</span><br></pre></td></tr></table></figure>
+<p>现在就明朗多了，<code>Inspector.targetCrashed</code>这个事件，是由<code>Webkit远程调试协议</code>也就是<code>remote debugging protocol</code>提供的。</p>
+<p>其定义在webkit的<code>Inspector.json</code>里: <a href="https://github.com/WebKit/webkit/blob/255ba17d1d7e0ad1530d503f28ee5d93d7c5351e/Source/WebCore/inspector/Inspector.json#L39-L42" target="_blank" rel="noopener">Source/WebCore/inspector/Inspector.json#L39-L42</a></p>
+<p>关于这个<code>event</code>的commit url为：<a href="https://github.com/WebKit/webkit/commit/255ba17d1d7e0ad1530d503f28ee5d93d7c5351e#diff-4681ce2c9384e770dfac03ab133f133b" target="_blank" rel="noopener">https://github.com/WebKit/webkit/commit/255ba17d1d7e0ad1530d503f28ee5d93d7c5351e#diff-4681ce2c9384e770dfac03ab133f133b</a></p>
+<h3 id="编写解决方案代码"><a href="#编写解决方案代码" class="headerlink" title="编写解决方案代码"></a>编写解决方案代码</h3><p>现在我们知道了，只要能监听到<code>Inspector.targetCrashed</code>事件，就可以知道网站是否关闭了。我们先在<code>puppeteer</code>的启动参数里，增加一行启动参数：</p>
+<figure class="highlight js hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">puppeteer.launch(&#123;</span><br><span class="line">  <span class="hljs-string">'--remote-debugging-port=9222'</span>,</span><br><span class="line">  <span class="hljs-comment">// other args</span></span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
+<p>当<code>puppeteer</code>启动时，会监听本地的<code>9222</code>端口，其中路径<code>/json</code>为当前的详情。如：</p>
+<p><img src="https://i.imgur.com/squ9IRU.png" alt="Imgur"></p>
+<p>其格式为：</p>
+<figure class="highlight json hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">[</span><br><span class="line">  &#123;</span><br><span class="line">    <span class="hljs-attr">"description"</span>: <span class="hljs-string">""</span>,</span><br><span class="line">    <span class="hljs-attr">"devtoolsFrontendUrl"</span>: <span class="hljs-string">"/devtools/inspector.html?ws=127.0.0.1:9222/devtools/page/A1CB5A9CC25A7EE8A99C6A4A1876E4D3"</span>,</span><br><span class="line">    <span class="hljs-attr">"faviconUrl"</span>: <span class="hljs-string">"https://s.ytimg.com/yts/img/favicon_32-vflOogEID.png"</span>,</span><br><span class="line">    <span class="hljs-attr">"id"</span>: <span class="hljs-string">"A1CB5A9CC25A7EE8A99C6A4A1876E4D3"</span>,</span><br><span class="line">    <span class="hljs-attr">"title"</span>: <span class="hljs-string">"張三李四 Chang and Lee 【等無此人 Waiting】 - YouTube"</span>,</span><br><span class="line">    <span class="hljs-attr">"type"</span>: <span class="hljs-string">"page"</span>,</span><br><span class="line">    <span class="hljs-attr">"url"</span>: <span class="hljs-string">"https://www.youtube.com/watch?v=lAcUGvpRkig&amp;list=PL3p0C_7POnMHG-b0dzkeTVdNuM6yRE5iQ&amp;index=10&amp;t=0s"</span>,</span><br><span class="line">    <span class="hljs-attr">"webSocketDebuggerUrl"</span>: <span class="hljs-string">"ws://127.0.0.1:9222/devtools/page/A1CB5A9CC25A7EE8A99C6A4A1876E4D3"</span></span><br><span class="line">  &#125;,</span><br><span class="line">  // other</span><br><span class="line">&#123;</span><br></pre></td></tr></table></figure>
+<p>其中的<code>type</code>为当前进程的详情：</p>
+<ul>
+<li>page: 网页</li>
+<li>iframe: 网页嵌套的iframe</li>
+<li>background_page: 插件页面</li>
+<li>service_worker: Service Workers</li>
+</ul>
+<p>这个type的作用在于，你只想监听某一类型的崩溃。</p>
+<p>还有一个更主要的字段：<code>webSocketDebuggerUrl</code>。我们将使用这个字段的值，来进行获取消息。有一个简单的demo：</p>
+<figure class="highlight js hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="hljs-keyword">const</span> http =  <span class="hljs-built_in">require</span>(<span class="hljs-string">'http'</span>);</span><br><span class="line"><span class="hljs-keyword">const</span> WebSocket = <span class="hljs-built_in">require</span>(<span class="hljs-string">'ws'</span>);</span><br><span class="line"></span><br><span class="line">http.get(<span class="hljs-string">'http://127.0.0.1:9222/json'</span>, res =&gt; &#123;</span><br><span class="line">  res.addListener(<span class="hljs-string">'data'</span>, data =&gt; &#123;</span><br><span class="line">    <span class="hljs-keyword">const</span> result = <span class="hljs-built_in">JSON</span>.parse(data.toString());</span><br><span class="line">    result.forEach(<span class="hljs-function"><span class="hljs-params">info</span> =&gt;</span> &#123;</span><br><span class="line">      <span class="hljs-keyword">const</span> client = <span class="hljs-keyword">new</span> WebSocket(info.webSocketDebuggerUrl);</span><br><span class="line">      client.on(<span class="hljs-string">'message'</span>, data =&gt; &#123;</span><br><span class="line">        <span class="hljs-keyword">if</span> (data.indexOf(<span class="hljs-string">'"method":"Inspector.targetCrashed"'</span>) !== <span class="hljs-number">-1</span>) &#123;</span><br><span class="line">          <span class="hljs-built_in">console</span>.error(<span class="hljs-string">'crash!'</span>);</span><br><span class="line">        &#125;</span><br><span class="line">      &#125;);</span><br><span class="line">    &#125;);</span><br><span class="line">  &#125;)</span><br><span class="line">&#125;)</span><br></pre></td></tr></table></figure>
+<p>先看懂这段代码，后面的代码才好理解，因为代码过于简单，这里就不再介绍了。</p>
+<p>这段代码有个问题是，插件打开网站时，会存在一定的延迟，可能会导致某些网站没有被监听到，而且当这段代码运行后，插件再打开网站时，也不会监听到。针对这个问题，优化了下代码：</p>
+<figure class="highlight js hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br></pre></td><td class="code"><pre><span class="line"><span class="hljs-keyword">const</span> http =  <span class="hljs-built_in">require</span>(<span class="hljs-string">'http'</span>);</span><br><span class="line"><span class="hljs-keyword">const</span> WebSocket = <span class="hljs-built_in">require</span>(<span class="hljs-string">'ws'</span>);</span><br><span class="line"></span><br><span class="line"><span class="hljs-built_in">module</span>.exports = <span class="hljs-function"><span class="hljs-params">()</span> =&gt;</span> &#123;</span><br><span class="line">  <span class="hljs-keyword">const</span> wsList = &#123;&#125;;</span><br><span class="line">  <span class="hljs-keyword">let</span> crashStaus = <span class="hljs-literal">false</span>;</span><br><span class="line"></span><br><span class="line">  <span class="hljs-keyword">const</span> getWsList = <span class="hljs-function"><span class="hljs-params">()</span> =&gt;</span> &#123;</span><br><span class="line">    <span class="hljs-keyword">return</span> <span class="hljs-keyword">new</span> <span class="hljs-built_in">Promise</span>(<span class="hljs-function">(<span class="hljs-params">resolve</span>) =&gt;</span> &#123;</span><br><span class="line">      http.get(<span class="hljs-string">'http://127.0.0.1:9222/json'</span>, res =&gt; &#123;</span><br><span class="line">        res.addListener(<span class="hljs-string">'data'</span>, data =&gt; &#123;</span><br><span class="line">          <span class="hljs-keyword">try</span> &#123;</span><br><span class="line">            <span class="hljs-keyword">const</span> result = <span class="hljs-built_in">JSON</span>.parse(data.toString());</span><br><span class="line">            <span class="hljs-keyword">const</span> tempWsList = &#123;&#125;;</span><br><span class="line"></span><br><span class="line">            result.forEach(<span class="hljs-function"><span class="hljs-params">info</span> =&gt;</span> &#123;</span><br><span class="line">              <span class="hljs-keyword">if</span> (<span class="hljs-keyword">typeof</span> wsList[info.id] === <span class="hljs-string">'undefined'</span>) &#123;</span><br><span class="line">                tempWsList[info.id] = info.webSocketDebuggerUrl;</span><br><span class="line">                wsList[info.id] = info.webSocketDebuggerUrl;</span><br><span class="line">              &#125;</span><br><span class="line">            &#125;);</span><br><span class="line"></span><br><span class="line">            <span class="hljs-keyword">if</span> (<span class="hljs-built_in">Object</span>.keys(tempWsList).length !== <span class="hljs-number">0</span>) &#123;</span><br><span class="line">              resolve(tempWsList);</span><br><span class="line">            &#125;</span><br><span class="line">          &#125; <span class="hljs-keyword">catch</span> (e) &#123;</span><br><span class="line">            <span class="hljs-built_in">console</span>.error(e);</span><br><span class="line">          &#125;</span><br><span class="line">        &#125;);</span><br><span class="line">      &#125;);</span><br><span class="line">    &#125;);</span><br><span class="line">  &#125;;</span><br><span class="line"></span><br><span class="line">  setInterval(<span class="hljs-function"><span class="hljs-params">()</span> =&gt;</span> &#123;</span><br><span class="line">    getWsList().then(<span class="hljs-function"><span class="hljs-params">list</span> =&gt;</span> &#123;</span><br><span class="line">      <span class="hljs-built_in">Object</span>.values(list).forEach(<span class="hljs-function"><span class="hljs-params">wsUrl</span> =&gt;</span> &#123;</span><br><span class="line">        <span class="hljs-keyword">const</span> client = <span class="hljs-keyword">new</span> WebSocket(wsUrl);</span><br><span class="line">        client.on(<span class="hljs-string">'message'</span>, data =&gt; &#123;</span><br><span class="line">          <span class="hljs-keyword">if</span> (data.indexOf(<span class="hljs-string">'"method":"Inspector.targetCrashed"'</span>) !== <span class="hljs-number">-1</span>) &#123;</span><br><span class="line">            <span class="hljs-keyword">if</span> (!crashStaus) &#123;</span><br><span class="line">              crashStaus = <span class="hljs-literal">true</span>;</span><br><span class="line">              <span class="hljs-built_in">console</span>.log(<span class="hljs-string">'crash!!!'</span>);</span><br><span class="line">            &#125;</span><br><span class="line">          &#125;</span><br><span class="line">        &#125;);</span><br><span class="line">      &#125;)</span><br><span class="line">    &#125;);</span><br><span class="line">  &#125;, <span class="hljs-number">1000</span>);</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+<p>其中需要说明一下这段代码：</p>
+<figure class="highlight js hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="hljs-keyword">if</span> (!crashStaus) &#123;</span><br><span class="line">  crashStaus = <span class="hljs-literal">true</span>;</span><br><span class="line">  <span class="hljs-built_in">console</span>.log(<span class="hljs-string">'crash!!!'</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>因为我的需求是，任何一个进程<code>crash</code>了，就关闭整个服务，重新运行。所以如果有多个进程同时<code>crash</code>了。我的代码只走一次，不想让他走多次。这个是针对我这里的需求，各位同学可以根据自己的需求更改代码。</p>
+<h2 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h2><p><a href="http://taobaofed.org/blog/2015/11/20/webkit-remote-debug-test/" target="_blank" rel="noopener">Webkit 远程调试协议初探</a></p>
+<p><a href="http://fex.baidu.com/blog/2014/06/remote-debugging-protocol/" target="_blank" rel="noopener">Chrome 远程调试协议分析与实战</a></p>
+<h2 id="作者信息："><a href="#作者信息：" class="headerlink" title="作者信息："></a>作者信息：</h2><ul>
+<li>Author: Black-Hole</li>
+<li>Blog: <a href="http://bugs.cc/">http://bugs.cc/</a></li>
+<li>github: <a href="https://github.com/BlackHole1/" target="_blank" rel="noopener">https://github.com/BlackHole1/</a></li>
+<li>Twitter: <a href="https://twitter.com/Free_BlackHole" target="_blank" rel="noopener">https://twitter.com/Free_BlackHole</a></li>
+<li>Email: <a href="mailto:158blackhole@gmail.com" target="_blank" rel="noopener">158blackhole@gmail.com</a></li>
+</ul>
+
         </div>
         
-        
-        <div class="level is-mobile">
+        <div class="level is-size-7 is-uppercase">
             <div class="level-start">
                 <div class="level-item">
-                <a class="button is-size-7 is-light" href="/2016/12/13/company-wifi-security/#more">阅读更多</a>
+                    <span class="is-size-6 has-text-grey has-mr-7">#</span>
+                    <a class="has-link-grey -link" href="/tags/JavaScript/">JavaScript</a>, <a class="has-link-grey -link" href="/tags/NodeJs/">NodeJs</a>, <a class="has-link-grey -link" href="/tags/Webkit/">Webkit</a>, <a class="has-link-grey -link" href="/tags/chrome/">chrome</a>, <a class="has-link-grey -link" href="/tags/puppeteer/">puppeteer</a>
                 </div>
             </div>
         </div>
         
+        
+        
+        
+<div class="sharethis-inline-share-buttons"></div>
+<script type="text/javascript" src="//platform-api.sharethis.com/js/sharethis.js#property=5c2a1d4fd02b6e0010eca6e3&amp;product=sticky-share-buttons" async="async"></script>
+
         
     </div>
 </div>
 
 
 
+<div class="card">
+    <div class="card-content">
+        <h3 class="menu-label has-text-centered">喜欢这篇文章？打赏一下作者吧</h3>
+        <div class="buttons is-centered">
+            
+                
+<a class="button is-info donate">
+    <span class="icon is-small">
+        <i class="fab fa-alipay"></i>
+    </span>
+    <span>支付宝</span>
+    <div class="qrcode"><img src="/images/alipay.jpg" alt="支付宝"></div>
+</a>
+
+                
+                
+<a class="button is-success donate">
+    <span class="icon is-small">
+        <i class="fab fa-weixin"></i>
+    </span>
+    <span>微信</span>
+    <div class="qrcode"><img src="/images/wechat.jpg" alt="微信"></div>
+</a>
+
+                
+                <!-- Visit https://www.paypal.com/donate/buttons/ to get your donate button -->
+
+<a class="button is-warning donate" onclick="document.getElementById(&#39;paypal-donate-form&#39;).submit()">
+    <span class="icon is-small">
+        <i class="fab fa-paypal"></i>
+    </span>
+    <span>Paypal</span>
+</a>
+<form action="https://www.paypal.com/cgi-bin/webscr" method="post" target="_blank" id="paypal-donate-form">
+    <input type="hidden" name="cmd" value="_donations">
+    <input type="hidden" name="business" value="158blackhole@gmail.com">
+    <input type="hidden" name="currency_code" value="USD">
+</form>
+
+                
+        </div>
+    </div>
+</div>
 
 
 
+<div class="card card-transparent">
+    <div class="level post-navigation is-flex-wrap is-mobile">
+        
+        
+        <div class="level-end">
+            <a class="level level-item has-link-grey  article-nav-next" href="/2019/01/12/rxjs-error-retry/">
+                <span class="level-item">聊聊RxJS中的错误重试</span>
+                <i class="level-item fas fa-chevron-right"></i>
+            </a>
+        </div>
+        
+    </div>
+</div>
 
 
+
+<div class="card">
+    <div class="card-content">
+        <h3 class="title is-5 has-text-weight-normal">评论</h3>
+        
+<script>
+    var disqus_config = function () {
+        this.page.url = 'http://bugs.cc/2019/04/22/webkit-remote-debugging-protocol-listening-crash/';
+        this.page.identifier = '2019/04/22/webkit-remote-debugging-protocol-listening-crash/';
+    };
+    (function() {
+        var d = document, s = d.createElement('script');  
+        s.src = '//' + 'blackhole-1' + '.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+    })();
+</script>
+
+<div id="disqus_thread">
+    
+    <noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+    </div>
+</div>
 </div>
                 
 
@@ -1615,7 +1750,7 @@
             <div class="level-start has-text-centered-mobile">
                 <a class="footer-logo is-block has-mb-6" href="/">
                 
-                    <img src="/images/logo.png" alt="Black-Hole&#39;s Blog" height="28">
+                    <img src="/images/logo.png" alt="通过Webkit远程调试协议监听网页崩溃." height="28">
                 
                 </a>
                 <p class="is-size-7">
