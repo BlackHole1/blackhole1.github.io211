@@ -19,7 +19,7 @@
 <meta property="og:image" content="https://i.imgur.com/8wtUb4d.png">
 <meta property="og:image" content="https://i.imgur.com/kKmDhRR.png">
 <meta property="og:image" content="https://i.imgur.com/6bNDpJX.png">
-<meta property="og:updated_time" content="2019-04-22T07:49:40.067Z">
+<meta property="og:updated_time" content="2019-05-22T13:35:21.791Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="聊聊RxJS中的错误重试">
 <meta name="twitter:description" content="前言最近工作中有一个需求是：如果这个请求超时，则进行重试，且重试次数可配置。 首先我们发请求使用的库为：Axios，其处理请求的位置，是在 redux-observable 中的 epic 里。 那么如果要完成重试机制的话，有两种办法：  在对 Axios 封装的函数里添加重试代码 在 epic 里，使用 RxJS 操作符进行重试。  关于 Axios 重试的，其实比较麻烦的，而且需要在原有封装好">
